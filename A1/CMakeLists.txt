@@ -1,5 +1,5 @@
 # create executable for A1
-add_executable(comp_354_a1
+add_executable(comp_345_a1
 	src/MainDriver.cpp
 	src/core/player/Player.cpp
 	src/core/player/PlayerDriver.cpp
@@ -11,7 +11,7 @@ add_executable(comp_354_a1
 )
 
 # headers from other directories
-target_include_directories(comp_354_a1 PRIVATE
+target_include_directories(comp_345_a1 PRIVATE
 	include
 	src/core
 	src/core/player

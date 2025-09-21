@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 4.0)
-project(comp_354)
+project(comp_345)
 
 # set c++ standard
 set(CMAKE_CXX_STANDARD 20)
