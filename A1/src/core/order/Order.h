@@ -74,7 +74,7 @@ public:
 
 class OrderList {
 public:
-  std::vector<Order>* orders;
+  std::vector<Order*>* orders;
 
   OrderList();
   OrderList(const OrderList& other);
