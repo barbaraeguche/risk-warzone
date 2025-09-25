@@ -136,7 +136,11 @@ void OrderList::move(int fromIndex, int toIndex) {
     if (!validateIndex(fromIndex) || !validateIndex(toIndex)) {
         return;
     }
-    std::iter_swap(orders->begin() + fromIndex, orders->begin() + toIndex);
+    
+    //Remove order from the list and reinsert it at the new index
+    Order* order = orders->at(fromIndex);
+    orders->erase(orders->begin() + fromIndex);
+    orders->insert(orders->begin() + toIndex, order);
 }
 
 OrderList::~OrderList() {
