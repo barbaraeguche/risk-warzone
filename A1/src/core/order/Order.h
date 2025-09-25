@@ -7,8 +7,8 @@ class Order {
 public:
   virtual bool validate() = 0;
   virtual void execute() = 0;
-  virtual Order& operator=(const Order& other) = 0;
   virtual std::ostream& print(std::ostream& os) const = 0;
+  virtual Order* clone() const = 0;
   virtual ~Order() = default;
 };
 
@@ -20,6 +20,7 @@ public:
   void execute() override;
   OrderDeploy& operator=(const OrderDeploy& other);
   std::ostream& print(std::ostream& os) const override;
+  Order* clone() const override;
 };
 
 class OrderAdvance : public Order {
@@ -30,6 +31,7 @@ public:
   void execute() override;
   OrderAdvance& operator=(const OrderAdvance& other);
   std::ostream& print(std::ostream& os) const override;
+  Order* clone() const override;
 };
 
 class OrderBomb : public Order {
@@ -40,6 +42,7 @@ public:
   void execute() override;
   OrderBomb& operator=(const OrderBomb& other);
   std::ostream& print(std::ostream& os) const override;
+  Order* clone() const override;
 };
 
 class OrderBlockade : public Order {
@@ -50,6 +53,7 @@ public:
   void execute() override;
   OrderBlockade& operator=(const OrderBlockade& other);
   std::ostream& print(std::ostream& os) const override;
+  Order* clone() const override;
 };
 
 class OrderAirlift : public Order {
@@ -60,6 +64,7 @@ public:
   void execute() override;
   OrderAirlift& operator=(const OrderAirlift& other);
   std::ostream& print(std::ostream& os) const override;
+  Order* clone() const override;
 };
 
 class OrderNegotiate : public Order {
@@ -70,6 +75,7 @@ public:
   void execute() override;
   OrderNegotiate& operator=(const OrderNegotiate& other);
   std::ostream& print(std::ostream& os) const override;
+  Order* clone() const override;
 };
 
 class OrderList {
@@ -84,4 +90,7 @@ public:
   void remove(int index);
   void move(int fromIndex, int toIndex);
   ~OrderList();
+
+private:
+  bool validateIndex(int index);
 };
