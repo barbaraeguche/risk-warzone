@@ -8,11 +8,11 @@ bool OrderDeploy::validate() { return false; }
 void OrderDeploy::execute() {}
 
 Order* OrderDeploy::clone() const { 
-    return new OrderDeploy(*this); 
+  return new OrderDeploy(*this); 
 }
 
 std::ostream& OrderDeploy::print(std::ostream& os) const { 
-    os << "A Deploy Order."; return os; 
+  os << "A Deploy Order."; return os; 
 }
 
 //  OrderAdvance 
@@ -23,11 +23,11 @@ bool OrderAdvance::validate() { return false; }
 void OrderAdvance::execute() {}
 
 Order* OrderAdvance::clone() const { 
-    return new OrderAdvance(*this); 
+  return new OrderAdvance(*this); 
 }
 
 std::ostream& OrderAdvance::print(std::ostream& os) const { 
-    os << "A Advance Order."; return os; 
+  os << "A Advance Order."; return os; 
 }
 
 //  OrderBomb 
@@ -38,11 +38,11 @@ bool OrderBomb::validate() { return false; }
 void OrderBomb::execute() {}
 
 Order* OrderBomb::clone() const { 
-    return new OrderBomb(*this); 
+  return new OrderBomb(*this); 
 }
 
 std::ostream& OrderBomb::print(std::ostream& os) const { 
-    os << "A Bomb Order."; return os; 
+  os << "A Bomb Order."; return os; 
 }
 
 //  OrderBlockade 
@@ -53,11 +53,11 @@ bool OrderBlockade::validate() { return false; }
 void OrderBlockade::execute() {}
 
 Order* OrderBlockade::clone() const { 
-    return new OrderBlockade(*this); 
+  return new OrderBlockade(*this); 
 }
 
 std::ostream& OrderBlockade::print(std::ostream& os) const { 
-    os << "A Blockade Order."; return os; 
+  os << "A Blockade Order."; return os; 
 }
 
 //  OrderAirlift 
@@ -68,11 +68,11 @@ bool OrderAirlift::validate() { return false; }
 void OrderAirlift::execute() {}
 
 Order* OrderAirlift::clone() const { 
-    return new OrderAirlift(*this); 
+  return new OrderAirlift(*this); 
 }
 
 std::ostream& OrderAirlift::print(std::ostream& os) const { 
-    os << "A Airlift Order."; return os; 
+  os << "A Airlift Order."; return os; 
 }
 
 //  OrderNegotiate 
@@ -83,72 +83,72 @@ bool OrderNegotiate::validate() { return false; }
 void OrderNegotiate::execute() {}
 
 Order* OrderNegotiate::clone() const { 
-    return new OrderNegotiate(*this); 
+  return new OrderNegotiate(*this); 
 }
 
 std::ostream& OrderNegotiate::print(std::ostream& os) const { 
-    os << "A Negotiate Order."; return os; 
+  os << "A Negotiate Order."; return os; 
 }
 
 //  OrderList 
 OrderList::OrderList() {
-    orders = new std::vector<Order*>();
+  orders = new std::vector<Order*>();
 }
 
 OrderList::OrderList(const OrderList& other) {
-    orders = new std::vector<Order*>();
-    for (const auto& order : *other.orders) {
-        orders->push_back(order->clone());
-    }
+  orders = new std::vector<Order*>();
+  for (const auto& order : *other.orders) {
+    orders->push_back(order->clone());
+  }
 }
 
 OrderList& OrderList::operator=(const OrderList& other) {
-    if (this != &other) {
-        delete orders;
-        orders = new std::vector<Order*>();
-        for (const auto& order : *other.orders) {
-            orders->push_back(order->clone());
-        }
+  if (this != &other) {
+    delete orders;
+    orders = new std::vector<Order*>();
+    for (const auto& order : *other.orders) {
+      orders->push_back(order->clone());
     }
-    return *this;
+  }
+  return *this;
 }
 
 std::ostream& OrderList::print(std::ostream& os) const {
-    os << "A Order List"; return os;
+  os << "A Order List"; return os;
 }
 
 bool OrderList::validateIndex(int index) {
-    return index >= 0 && index < orders->size();
+  return index >= 0 && index < orders->size();
 }
 
 void OrderList::add(Order* order) {
-    orders->push_back(order);
+  orders->push_back(order);
 }
 
 void OrderList::remove(int index) {
-    if (!validateIndex(index)) {
-        return;
-    }
-    orders->erase(orders->begin() + index);
+  if (!validateIndex(index)) {
+    return;
+  }
+  orders->erase(orders->begin() + index);
 }
 
 void OrderList::move(int fromIndex, int toIndex) {
-    if (!validateIndex(fromIndex) || !validateIndex(toIndex)) {
-        return;
-    }
+  if (!validateIndex(fromIndex) || !validateIndex(toIndex)) {
+    return;
+  }
     
     //Remove order from the list and reinsert it at the new index
     Order* order = orders->at(fromIndex);
-    orders->erase(orders->begin() + fromIndex);
-    orders->insert(orders->begin() + toIndex, order);
+  orders->erase(orders->begin() + fromIndex);
+  orders->insert(orders->begin() + toIndex, order);
 }
 
 OrderList::~OrderList() {
-    //assume that OrderList owns the orders and is responsible for deleting them
-    for (const auto& order : *orders) {
-        delete order;
-    }
+  //assume that OrderList owns the orders and is responsible for deleting them
+  for (const auto& order : *orders) {
+    delete order;
+  }
 
-    delete orders;
+  delete orders;
 }
 
