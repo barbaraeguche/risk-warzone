@@ -11,7 +11,7 @@ Order* OrderDeploy::clone() const {
   return new OrderDeploy(*this); 
 }
 
-std::ostream& OrderDeploy::print(std::ostream& os) const { 
+std::ostream& operator<<(std::ostream& os, const OrderDeploy& order) { 
   os << "A Deploy Order."; return os; 
 }
 
@@ -26,7 +26,7 @@ Order* OrderAdvance::clone() const {
   return new OrderAdvance(*this); 
 }
 
-std::ostream& OrderAdvance::print(std::ostream& os) const { 
+std::ostream& operator<<(std::ostream& os, const OrderAdvance& order) { 
   os << "A Advance Order."; return os; 
 }
 
@@ -41,7 +41,7 @@ Order* OrderBomb::clone() const {
   return new OrderBomb(*this); 
 }
 
-std::ostream& OrderBomb::print(std::ostream& os) const { 
+std::ostream& operator<<(std::ostream& os, const OrderBomb& order) { 
   os << "A Bomb Order."; return os; 
 }
 
@@ -56,7 +56,7 @@ Order* OrderBlockade::clone() const {
   return new OrderBlockade(*this); 
 }
 
-std::ostream& OrderBlockade::print(std::ostream& os) const { 
+std::ostream& operator<<(std::ostream& os, const OrderBlockade& order) { 
   os << "A Blockade Order."; return os; 
 }
 
@@ -71,7 +71,7 @@ Order* OrderAirlift::clone() const {
   return new OrderAirlift(*this); 
 }
 
-std::ostream& OrderAirlift::print(std::ostream& os) const { 
+std::ostream& operator<<(std::ostream& os, const OrderAirlift& order) { 
   os << "A Airlift Order."; return os; 
 }
 
@@ -86,7 +86,7 @@ Order* OrderNegotiate::clone() const {
   return new OrderNegotiate(*this); 
 }
 
-std::ostream& OrderNegotiate::print(std::ostream& os) const { 
+std::ostream& operator<<(std::ostream& os, const OrderNegotiate& order) { 
   os << "A Negotiate Order."; return os; 
 }
 
@@ -113,7 +113,7 @@ OrderList& OrderList::operator=(const OrderList& other) {
   return *this;
 }
 
-std::ostream& OrderList::print(std::ostream& os) const {
+std::ostream& operator<<(std::ostream& os, const OrderList& orderList) {
   os << "A Order List"; return os;
 }
 

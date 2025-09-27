@@ -7,7 +7,6 @@ class Order {
 public:
   virtual bool validate() = 0;
   virtual void execute() = 0;
-  virtual std::ostream& print(std::ostream& os) const = 0;
   virtual Order* clone() const = 0;
   virtual ~Order() = default;
 };
@@ -19,7 +18,7 @@ public:
   bool validate() override;
   void execute() override;
   OrderDeploy& operator=(const OrderDeploy& other);
-  std::ostream& print(std::ostream& os) const override;
+  friend std::ostream& operator<<(std::ostream& os, const OrderDeploy& order);
   Order* clone() const override;
 };
 
@@ -30,7 +29,7 @@ public:
   bool validate() override;
   void execute() override;
   OrderAdvance& operator=(const OrderAdvance& other);
-  std::ostream& print(std::ostream& os) const override;
+  friend std::ostream& operator<<(std::ostream& os, const OrderAdvance& order);
   Order* clone() const override;
 };
 
@@ -41,7 +40,7 @@ public:
   bool validate() override;
   void execute() override;
   OrderBomb& operator=(const OrderBomb& other);
-  std::ostream& print(std::ostream& os) const override;
+  friend std::ostream& operator<<(std::ostream& os, const OrderBomb& order);
   Order* clone() const override;
 };
 
@@ -52,7 +51,7 @@ public:
   bool validate() override;
   void execute() override;
   OrderBlockade& operator=(const OrderBlockade& other);
-  std::ostream& print(std::ostream& os) const override;
+  friend std::ostream& operator<<(std::ostream& os, const OrderBlockade& order);
   Order* clone() const override;
 };
 
@@ -63,7 +62,7 @@ public:
   bool validate() override;
   void execute() override;
   OrderAirlift& operator=(const OrderAirlift& other);
-  std::ostream& print(std::ostream& os) const override;
+  friend std::ostream& operator<<(std::ostream& os, const OrderAirlift& order);
   Order* clone() const override;
 };
 
@@ -74,7 +73,7 @@ public:
   bool validate() override;
   void execute() override;
   OrderNegotiate& operator=(const OrderNegotiate& other);
-  std::ostream& print(std::ostream& os) const override;
+  friend std::ostream& operator<<(std::ostream& os, const OrderNegotiate& order);
   Order* clone() const override;
 };
 
@@ -85,7 +84,7 @@ public:
   OrderList();
   OrderList(const OrderList& other);
   OrderList& operator=(const OrderList& other);
-  std::ostream& print(std::ostream& os) const;
+  friend std::ostream& operator<<(std::ostream& os, const OrderList& orderlist);
   void add(Order* order);
   void remove(int index);
   void move(int fromIndex, int toIndex);
