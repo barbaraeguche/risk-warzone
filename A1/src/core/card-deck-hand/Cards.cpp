@@ -83,10 +83,31 @@ void DiplomacyCard::play(Player* player, OrdersList* ordersList, Deck* deck) {
     }
 }
 
+Card* cloneCard(const Card* card) {
+    if (card->getType() == "bomb") return new BombCard();
+    else if (card->getType() == "reinforcement") return new ReinforcementCard();
+    else if (card->getType() == "blockade") return new BlockadeCard();
+    else if (card->getType() == "airlift") return new AirliftCard();
+    else if (card->getType() == "diplomacy") return new DiplomacyCard();
+    return nullptr;
+}
+
 // Deck
+void Deck::clearCards() {
+    for (auto* c : *cards) delete c;
+    delete cards;
+}
+
+void Deck::copyCardsFrom(const std::vector<Card*>* sourceCards) {
+    cards = new std::vector<Card*>();
+    for (auto* c : *sourceCards) {
+        cards->push_back(cloneCard(c));
+    }
+}
+
 Deck::Deck() {
     cards = new std::vector<Card*>();
-    // Create multiple cards of each type (as per assignment requirements)
+    // Create multiple cards of each type
     for (int i = 0; i < 3; i++) {
         cards->push_back(new BombCard());
         cards->push_back(new ReinforcementCard());
@@ -98,35 +119,19 @@ Deck::Deck() {
 }
 
 Deck::Deck(const Deck& other) {
-    cards = new std::vector<Card*>();
-    for (auto* c : *other.cards) {
-        if (c->getType() == "bomb") cards->push_back(new BombCard());
-        else if (c->getType() == "reinforcement") cards->push_back(new ReinforcementCard());
-        else if (c->getType() == "blockade") cards->push_back(new BlockadeCard());
-        else if (c->getType() == "airlift") cards->push_back(new AirliftCard());
-        else if (c->getType() == "diplomacy") cards->push_back(new DiplomacyCard());
-    }
+    copyCardsFrom(other.cards);
 }
 
 Deck& Deck::operator=(const Deck& other) {
     if (this != &other) {
-        for (auto* c : *cards) delete c;
-        delete cards;
-        cards = new std::vector<Card*>();
-        for (auto* c : *other.cards) {
-            if (c->getType() == "bomb") cards->push_back(new BombCard());
-            else if (c->getType() == "reinforcement") cards->push_back(new ReinforcementCard());
-            else if (c->getType() == "blockade") cards->push_back(new BlockadeCard());
-            else if (c->getType() == "airlift") cards->push_back(new AirliftCard());
-            else if (c->getType() == "diplomacy") cards->push_back(new DiplomacyCard());
-        }
+        clearCards();
+        copyCardsFrom(other.cards);
     }
     return *this;
 }
 
 Deck::~Deck() {
-    for (auto* c : *cards) delete c;
-    delete cards;
+    clearCards();
 }
 
 Card* Deck::draw() {
@@ -152,40 +157,36 @@ std::ostream& operator<<(std::ostream& out, const Deck& deck) {
 }
 
 // Hand
+void Hand::clearCards() {
+    for (auto* c : *handCards) delete c;
+    delete handCards;
+}
+
+void Hand::copyCardsFrom(const std::vector<Card*>* sourceCards) {
+    handCards = new std::vector<Card*>();
+    for (auto* c : *sourceCards) {
+        handCards->push_back(cloneCard(c));
+    }
+}
+
 Hand::Hand() {
     handCards = new std::vector<Card*>();
 }
 
 Hand::Hand(const Hand& other) {
-    handCards = new std::vector<Card*>();
-    for (auto* c : *other.handCards) {
-        if (c->getType() == "bomb") handCards->push_back(new BombCard());
-        else if (c->getType() == "reinforcement") handCards->push_back(new ReinforcementCard());
-        else if (c->getType() == "blockade") handCards->push_back(new BlockadeCard());
-        else if (c->getType() == "airlift") handCards->push_back(new AirliftCard());
-        else if (c->getType() == "diplomacy") handCards->push_back(new DiplomacyCard());
-    }
+    copyCardsFrom(other.handCards);
 }
 
 Hand& Hand::operator=(const Hand& other) {
     if (this != &other) {
-        for (auto* c : *handCards) delete c;
-        delete handCards;
-        handCards = new std::vector<Card*>();
-        for (auto* c : *other.handCards) {
-            if (c->getType() == "bomb") handCards->push_back(new BombCard());
-            else if (c->getType() == "reinforcement") handCards->push_back(new ReinforcementCard());
-            else if (c->getType() == "blockade") handCards->push_back(new BlockadeCard());
-            else if (c->getType() == "airlift") handCards->push_back(new AirliftCard());
-            else if (c->getType() == "diplomacy") handCards->push_back(new DiplomacyCard());
-        }
+        clearCards();
+        copyCardsFrom(other.handCards);
     }
     return *this;
 }
 
 Hand::~Hand() {
-    for (auto* c : *handCards) delete c;
-    delete handCards;
+    clearCards();
 }
 
 void Hand::addCard(Card* card) {
@@ -220,6 +221,9 @@ int Hand::size() const {
 }
 
 std::ostream& operator<<(std::ostream& out, const Hand& hand) {
+    out << "Hand with " << hand.handCards->size() << " cards";
+    return out;
+}
     out << "Hand with " << hand.handCards->size() << " cards";
     return out;
 }
