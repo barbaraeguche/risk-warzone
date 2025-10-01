@@ -4,7 +4,7 @@
 class Player {};
 class OrdersList {};
 
-// Test driver for Part 4
+// Test driver
 void testCards() {
     std::cout << "\n=== Testing Cards Deck/Hand ===" << std::endl;
 
@@ -73,12 +73,26 @@ void testCards() {
 
     // Test copy constructor and assignment operator
     std::cout << "\n6. Testing copy constructor and assignment operator:" << std::endl;
+
+    // Add cards to hand before testing copy
+    std::cout << "Drawing 3 cards for copy testing..." << std::endl;
+    for (int i = 0; i < 3; i++) {
+        Card* card = deck.draw();
+        if (card) {
+            hand.addCard(card);
+        }
+    }
+    std::cout << "Original hand before copying: " << hand << std::endl;
+    hand.printHand();
+
     Hand hand2(hand);
     std::cout << "Copied hand: " << hand2 << std::endl;
+    hand2.printHand();
 
     Hand hand3;
     hand3 = hand;
     std::cout << "Assigned hand: " << hand3 << std::endl;
+    hand3.printHand();
 
     Deck deck2(deck);
     std::cout << "Copied deck: " << deck2 << std::endl;
