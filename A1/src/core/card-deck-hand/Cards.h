@@ -37,7 +37,7 @@ protected:
     Card();
 };
 
-//Derived Card Types 
+// Derived Card Types
 class BombCard : public Card {
 public:
     BombCard();
@@ -96,9 +96,13 @@ public:
 /**
  * Represents the deck of cards.
  */
+Card* cloneCard(const Card* card);
+
 class Deck {
 private:
     std::vector<Card*>* cards;
+    void clearCards();
+    void copyCardsFrom(const std::vector<Card*>* sourceCards);
 
 public:
     Deck();
@@ -120,6 +124,8 @@ public:
 class Hand {
 private:
     std::vector<Card*>* handCards;
+    void clearCards();
+    void copyCardsFrom(const std::vector<Card*>* sourceCards);
 
 public:
     Hand();
