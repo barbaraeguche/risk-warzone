@@ -1,5 +1,4 @@
-#ifndef COMP_354_GAMEENGINE_H
-#define COMP_354_GAMEENGINE_H
+#pragma once
 
 #include <iostream>
 #include <string>
@@ -99,5 +98,3 @@ public:
 };
 
 void testGameStates();
-
-#endif //COMP_354_GAMEENGINE_H

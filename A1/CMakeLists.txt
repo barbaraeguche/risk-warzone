@@ -1,6 +1,8 @@
 # create executable for A1
 add_executable(comp_345_a1
 	src/MainDriver.cpp
+	src/core/map/Map.cpp
+	src/core/map/MapDriver.cpp
 	src/core/player/Player.cpp
 	src/core/player/PlayerDriver.cpp
 	src/core/order/Order.cpp
@@ -14,6 +16,7 @@ add_executable(comp_345_a1
 target_include_directories(comp_345_a1 PRIVATE
 	include
 	src/core
+	src/core/map
 	src/core/player
 	src/core/order
 	src/core/card-deck-hand
