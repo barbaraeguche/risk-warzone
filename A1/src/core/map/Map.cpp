@@ -2,8 +2,6 @@
 
 #include <iostream>
 #include <unordered_set>
-#include <queue>
-#include <algorithm>
 
 // ==================== Territory Class Implementation ====================
 
@@ -51,7 +49,7 @@ Territory::~Territory() {
 
 // --- MANAGEMENT ---
 bool Territory::isAdjacentTo(Territory* territory) const {
-  return std::find(adjTerritories.begin(), adjTerritories.end(), territory) != adjTerritories.end();
+  return std::ranges::find(adjTerritories, territory) != adjTerritories.end();
 }
 
 void Territory::addAdjacentTerritory(Territory* territory) {
@@ -61,7 +59,7 @@ void Territory::addAdjacentTerritory(Territory* territory) {
 }
 
 void Territory::removeAdjacentTerritory(Territory* territory) {
-  adjTerritories.erase(std::remove(adjTerritories.begin(), adjTerritories.end(), territory), adjTerritories.end());
+  std::erase(adjTerritories, territory);
 }
 
 // --- UTILITY ---
@@ -131,7 +129,7 @@ Continent::~Continent() {
 
 // --- MANAGEMENT ---
 bool Continent::containsTerritory(Territory* territory) const {
-  return std::find(territories.begin(), territories.end(), territory) != territories.end();
+  return std::ranges::find(territories, territory) != territories.end();
 }
 
 void Continent::addTerritory(Territory* territory) {
@@ -142,7 +140,7 @@ void Continent::addTerritory(Territory* territory) {
 }
 
 void Continent::removeTerritory(Territory* territory) {
-  territories.erase(std::remove(territories.begin(), territories.end(), territory), territories.end());
+  std::erase(territories, territory);
   if (territory) {
     territory->setContinent(nullptr);
   }
@@ -167,7 +165,7 @@ bool Continent::isConnected() const {
 
     for (Territory* adj : current->getAdjTerritories()) {
       // only check territories that belong to the current continent and haven't previously traversed
-      if (adj->getContinent() == this && visited.find(adj) == visited.end()) {
+      if (adj->getContinent() == this && !visited.contains(adj)) {
         visited.insert(adj);
         queue.push(adj);
       }

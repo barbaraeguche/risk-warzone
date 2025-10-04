@@ -77,18 +77,18 @@ public:
   Order* clone() const override;
 };
 
-class OrdersList {
+class OrderList {
 public:
   std::vector<Order*>* orders;
 
-  OrdersList();
-  OrdersList(const OrdersList& other);
-  OrdersList& operator=(const OrdersList& other);
-  friend std::ostream& operator<<(std::ostream& os, const OrdersList& orderlist);
+  OrderList();
+  OrderList(const OrderList& other);
+  OrderList& operator=(const OrderList& other);
+  friend std::ostream& operator<<(std::ostream& os, const OrderList& orderlist);
   void add(Order* order);
   void remove(int index);
   void move(int fromIndex, int toIndex);
-  ~OrdersList();
+  ~OrderList();
 
 private:
   bool validateIndex(int index);

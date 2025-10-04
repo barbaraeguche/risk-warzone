@@ -2,7 +2,7 @@
 #include "Order.h"
 
 void testOrdersLists() {
-  OrdersList ordersList;
+  OrderList ordersList;
   ordersList.add(new OrderDeploy());
   ordersList.add(new OrderAdvance());
   ordersList.add(new OrderBomb());
@@ -28,7 +28,7 @@ void testOrdersLists() {
   }
 
   std::cout << "Cloned OrderList:" << '\n';
-  OrdersList clonedList = ordersList;
+  OrderList clonedList = ordersList;
   for (const auto& order : *clonedList.orders) {
     std::cout << order << '\n';
   }

@@ -7,7 +7,6 @@ add_executable(comp_345_a1
 	src/core/player/PlayerDriver.cpp
 	src/core/order/Order.cpp
 	src/core/order/OrderDriver.cpp
-	src/core/card-deck-hand/Cards.cpp
 	src/core/card-deck-hand/CardsDriver.cpp
 	src/core/game-engine/GameEngine.cpp
 	src/core/game-engine/GameEngineDriver.cpp
