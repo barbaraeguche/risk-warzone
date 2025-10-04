@@ -224,6 +224,3 @@ std::ostream& operator<<(std::ostream& out, const Hand& hand) {
     out << "Hand with " << hand.handCards->size() << " cards";
     return out;
 }
-    out << "Hand with " << hand.handCards->size() << " cards";
-    return out;
-}
