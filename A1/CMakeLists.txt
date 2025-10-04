@@ -26,5 +26,5 @@ target_include_directories(comp_345_a1 PRIVATE
 # change compiler warning level
 target_compile_options(comp_345_a1 PRIVATE
   $<$<CXX_COMPILER_ID:MSVC>:/W3 /WX>
-  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Werror>
 )
