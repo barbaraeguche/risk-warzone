@@ -90,19 +90,19 @@ std::ostream& operator<<(std::ostream& os, const OrderNegotiate& order) {
   os << "A Negotiate Order."; return os; 
 }
 
-//  OrderList 
-OrderList::OrderList() {
+//  OrdersList 
+OrdersList::OrdersList() {
   orders = new std::vector<Order*>();
 }
 
-OrderList::OrderList(const OrderList& other) {
+OrdersList::OrdersList(const OrdersList& other) {
   orders = new std::vector<Order*>();
   for (const auto& order : *other.orders) {
     orders->push_back(order->clone());
   }
 }
 
-OrderList& OrderList::operator=(const OrderList& other) {
+OrdersList& OrdersList::operator=(const OrdersList& other) {
   if (this != &other) {
     delete orders;
     orders = new std::vector<Order*>();
@@ -113,26 +113,26 @@ OrderList& OrderList::operator=(const OrderList& other) {
   return *this;
 }
 
-std::ostream& operator<<(std::ostream& os, const OrderList& orderList) {
-  os << "A Order List"; return os;
+std::ostream& operator<<(std::ostream& os, const OrdersList& orderList) {
+  os << "A Orders List"; return os;
 }
 
-bool OrderList::validateIndex(int index) {
+bool OrdersList::validateIndex(int index) {
   return index >= 0 && index < orders->size();
 }
 
-void OrderList::add(Order* order) {
+void OrdersList::add(Order* order) {
   orders->push_back(order);
 }
 
-void OrderList::remove(int index) {
+void OrdersList::remove(int index) {
   if (!validateIndex(index)) {
     return;
   }
   orders->erase(orders->begin() + index);
 }
 
-void OrderList::move(int fromIndex, int toIndex) {
+void OrdersList::move(int fromIndex, int toIndex) {
   if (!validateIndex(fromIndex) || !validateIndex(toIndex)) {
     return;
   }
@@ -143,8 +143,8 @@ void OrderList::move(int fromIndex, int toIndex) {
   orders->insert(orders->begin() + toIndex, order);
 }
 
-OrderList::~OrderList() {
-  //assume that OrderList owns the orders and is responsible for deleting them
+OrdersList::~OrdersList() {
+  //assume that OrdersList owns the orders and is responsible for deleting them
   for (const auto& order : *orders) {
     delete order;
   }
