@@ -55,37 +55,47 @@ public:
 	bool operator==(const Territory& other) const; // equality operator
 };
 
+
 /**
  * Continent class representing a connected subgraph of territories
  */
 class Continent {
 private:
 	std::string* continentName;
-// 	int continentId{};
-// 	std::vector<Territory*> territories;
-//
+	int* continentId;
+	std::vector<Territory*> territories;
+
 public:
-// 	// constructors
-// 	Continent();
-// 	Continent(const std::string& name, int id);
-// 	Continent(const Continent& other); // copy constructor
-// 	Continent& operator=(const Continent& other); // copy assignment
-// 	~Continent(); // destructor
-//
-// 	// getters
+	// constructors
+	Continent();
+	Continent(const std::string& name, int id);
+	Continent(const Continent& other); // copy constructor
+	Continent& operator=(const Continent& other); // copy assignment
+	~Continent(); // destructor
+
+	// getters
 	std::string getName() const { return *continentName; }
-// 	int getId() const { return continentId; }
-// 	const std::vector<Territory*>& getTerritories() const { return territories; }
-//
-// 	// setters
-// 	void setName(const std::string& name) { this->continentName = name; }
-// 	void setId(int id) { this->continentId = id; }
-//
-// 	// utility
-// 	void displayInfo() const;
-// 	bool operator==(const Continent& other) const;
+	int getId() const { return *continentId; }
+	const std::vector<Territory*>& getTerritories() const { return territories; }
+
+	// setters
+	void setName(const std::string& name) const { *continentName = name; }
+	void setId(int id) const { *continentId = id; }
+
+	// territory management
+	bool containsTerritory(Territory* territory) const;
+	void addTerritory(Territory* territory);
+	void removeTerritory(Territory* territory);
+
+	// validation
+	bool isConnected() const;
+
+	// utility
+	void displayInfo() const;
+	bool operator==(const Continent& other) const;
 };
-//
+
+
 // /**
 //  * Map class representing the entire game map as a connected graph
 //  */
@@ -123,7 +133,8 @@ public:
 // 	int getNumberOfTerritories() const { return territories.size(); }
 // 	int getNumberOfContinents() const { return continents.size(); }
 // };
-//
+
+
 // /**
 //  * MapLoader class for loading maps from .map files
 //  */
