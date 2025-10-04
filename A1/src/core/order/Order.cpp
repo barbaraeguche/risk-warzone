@@ -90,19 +90,19 @@ std::ostream& operator<<(std::ostream& os, const OrderNegotiate& order) {
   os << "A Negotiate Order."; return os; 
 }
 
-//  OrdersList 
-OrdersList::OrdersList() {
+//  OrderList 
+OrderList::OrderList() {
   orders = new std::vector<Order*>();
 }
 
-OrdersList::OrdersList(const OrdersList& other) {
+OrderList::OrderList(const OrderList& other) {
   orders = new std::vector<Order*>();
   for (const auto& order : *other.orders) {
     orders->push_back(order->clone());
   }
 }
 
-OrdersList& OrdersList::operator=(const OrdersList& other) {
+OrderList& OrderList::operator=(const OrderList& other) {
   if (this != &other) {
     delete orders;
     orders = new std::vector<Order*>();
@@ -113,26 +113,26 @@ OrdersList& OrdersList::operator=(const OrdersList& other) {
   return *this;
 }
 
-std::ostream& operator<<(std::ostream& os, const OrdersList& orderList) {
-  os << "A Orders List"; return os;
+std::ostream& operator<<(std::ostream& os, const OrderList& orderList) {
+  os << "A Order List"; return os;
 }
 
-bool OrdersList::validateIndex(int index) {
+bool OrderList::validateIndex(int index) {
   return index >= 0 && index < orders->size();
 }
 
-void OrdersList::add(Order* order) {
+void OrderList::add(Order* order) {
   orders->push_back(order);
 }
 
-void OrdersList::remove(int index) {
+void OrderList::remove(int index) {
   if (!validateIndex(index)) {
     return;
   }
   orders->erase(orders->begin() + index);
 }
 
-void OrdersList::move(int fromIndex, int toIndex) {
+void OrderList::move(int fromIndex, int toIndex) {
   if (!validateIndex(fromIndex) || !validateIndex(toIndex)) {
     return;
   }
@@ -143,8 +143,8 @@ void OrdersList::move(int fromIndex, int toIndex) {
   orders->insert(orders->begin() + toIndex, order);
 }
 
-OrdersList::~OrdersList() {
-  //assume that OrdersList owns the orders and is responsible for deleting them
+OrderList::~OrderList() {
+  //assume that OrderList owns the orders and is responsible for deleting them
   for (const auto& order : *orders) {
     delete order;
   }
