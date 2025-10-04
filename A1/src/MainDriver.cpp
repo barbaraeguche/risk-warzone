@@ -24,11 +24,11 @@ int main() {
         // std::cout << std::string(50, '=') << std::endl;
         // testLoadMaps();
         //
-        // // Part 2: Player Testing
-        // std::cout << "\n" << std::string(50, '=') << std::endl;
-        // std::cout << "PART 2: PLAYER TESTING" << std::endl;
-        // std::cout << std::string(50, '=') << std::endl;
-        // testPlayers();
+        // Part 2: Player Testing
+        std::cout << "\n" << std::string(50, '=') << std::endl;
+        std::cout << "PART 2: PLAYER TESTING" << std::endl;
+        std::cout << std::string(50, '=') << std::endl;
+        testPlayers();
         //
         // // Part 3: Orders Testing
         // std::cout << "\n" << std::string(50, '=') << std::endl;
@@ -42,11 +42,11 @@ int main() {
         // std::cout << std::string(50, '=') << std::endl;
         // testCards();
 
-        // Part 5: Game Engine Testing
-        std::cout << "\n" << std::string(50, '=') << std::endl;
-        std::cout << "PART 5: GAME ENGINE TESTING" << std::endl;
-        std::cout << std::string(50, '=') << std::endl;
-        testGameStates();
+        // // Part 5: Game Engine Testing
+        // std::cout << "\n" << std::string(50, '=') << std::endl;
+        // std::cout << "PART 5: GAME ENGINE TESTING" << std::endl;
+        // std::cout << std::string(50, '=') << std::endl;
+        // testGameStates();
 
         std::cout << "\n" << std::string(50, '=') << std::endl;
         std::cout << "ALL TESTS COMPLETED SUCCESSFULLY" << std::endl;
