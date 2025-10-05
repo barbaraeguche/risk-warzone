@@ -54,6 +54,9 @@ public:
 	// utility
 	void displayInfo() const;
 	bool operator==(const Territory& other) const; // equality operator
+
+	// stream insertion operator
+	friend std::ostream& operator<<(std::ostream& os, const Territory& territory);
 };
 
 
@@ -94,6 +97,9 @@ public:
 	// utility
 	void displayInfo() const;
 	bool operator==(const Continent& other) const;
+
+	// stream insertion operator
+	friend std::ostream& operator<<(std::ostream& os, const Continent& continent);
 };
 
 
@@ -152,6 +158,9 @@ public:
 	int getNumberOfTerritories() const { return territories.size(); }
 	int getNumberOfContinents() const { return continents.size(); }
 
+	// stream insertion operator
+	friend std::ostream& operator<<(std::ostream& os, const Map& map);
+
 private:
 	// helpers
 	static void dfsVisit(Territory* territory, std::unordered_set<Territory*>& visited);
@@ -183,6 +192,9 @@ public:
 	// map loading
 	std::unique_ptr<Map> loadMap(const std::string& filename);
 	static bool canReadFile(const std::string& filename);
+
+	// stream insertion operator
+	friend std::ostream& operator<<(std::ostream& os, const MapLoader& mapLoader);
 
 private:
 	// helpers

@@ -93,6 +93,23 @@ bool Territory::operator==(const Territory& other) const {
 	return territoryId == other.territoryId && territoryName == other.territoryName;
 }
 
+std::ostream& operator<<(std::ostream& os, const Territory& territory) {
+  os << "Territory["
+     << (territory.territoryName ? *territory.territoryName : "<Unnamed>")
+     << " (ID:" << (territory.territoryId ? *territory.territoryId : -1) << "), ";
+
+  os << "Owner:"
+     << ((territory.ownerPlayer && !territory.ownerPlayer->empty())
+     ? *territory.ownerPlayer
+        : "None")
+     << ", ";
+
+  os << "Armies:" << territory.armies << ", ";
+  os << "Continent:" << (territory.continent ? territory.continent->getName() : "None") << ", ";
+  os << "Adjacent:" << territory.adjTerritories.size() << "]";
+  return os;
+}
+
 
 // ==================== Continent Class Implementation ====================
 
@@ -200,6 +217,14 @@ void Continent::displayInfo() const {
 
 bool Continent::operator==(const Continent& other) const {
 	return continentId == other.continentId && continentName == other.continentName;
+}
+
+std::ostream& operator<<(std::ostream& os, const Continent& continent) {
+  os << "Continent["
+     << (continent.continentName ? *continent.continentName : "<Unnamed>")
+     << " (ID:" << (continent.continentId ? *continent.continentId : -1) << "), "
+     << "Territories:" << continent.territories.size() << "]";
+  return os;
 }
 
 
@@ -464,6 +489,15 @@ void Map::rebuildMaps() {
   }
 }
 
+std::ostream& operator<<(std::ostream& os, const Map& map) {
+  os << "Map["
+     << (map.mapName ? *map.mapName : "<Unnamed>") << ", "
+     << "Territories:" << map.territories.size() << ", "
+     << "Continents:" << map.continents.size() << ", "
+     << "Valid:" << (map.validate() ? "YES" : "NO") << "]";
+  return os;
+}
+
 
 // ==================== MapLoader Class Implementation ====================
 
@@ -686,4 +720,16 @@ void MapLoader::linkTerritoryAdjacencies(const Map* map, Territory* territory, c
                 << "' not found for territory '" << territory->getName() << "'" << std::endl;
     }
   }
+}
+
+std::ostream& operator<<(std::ostream& os, const MapLoader& mapLoader) {
+  os << "MapLoader[Current State: ";
+  switch(mapLoader.currentState) {
+    case MapLoader::ParseState::NONE: os << "NONE"; break;
+    case MapLoader::ParseState::MAP_INFO: os << "MAP_INFO"; break;
+    case MapLoader::ParseState::CONTINENTS: os << "CONTINENTS"; break;
+    case MapLoader::ParseState::TERRITORIES: os << "TERRITORIES"; break;
+  }
+  os << "]";
+  return os;
 }
