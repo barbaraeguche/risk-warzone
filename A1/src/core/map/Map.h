@@ -144,7 +144,7 @@ public:
 
 	// graph operations
 	void addAdjacency(const std::string& territory1, const std::string& territory2) const;
-	static void addAdjacency(Territory* territory1, Territory* territory2);
+	void addAdjacency(Territory* territory1, Territory* territory2);
 
 	// validation
 	bool validate() const;
@@ -184,14 +184,15 @@ public:
 	// constructors
 	MapLoader();
 	MapLoader(const MapLoader& other); // copy constructor
-	bool operator==(MapLoader* mapLoader) const;
-
 	MapLoader& operator=(const MapLoader& other); // copy assignment
 	~MapLoader(); // destructor
 
 	// map loading
 	std::unique_ptr<Map> loadMap(const std::string& filename);
 	static bool canReadFile(const std::string& filename);
+
+  // utility
+	bool operator==(MapLoader* other) const;
 
 	// stream insertion operator
 	friend std::ostream& operator<<(std::ostream& os, const MapLoader& mapLoader);

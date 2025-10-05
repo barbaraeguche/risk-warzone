@@ -1,7 +1,9 @@
 #include "Map.h"
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <queue>
 #include <sstream>
 #include <unordered_set>
 
@@ -70,7 +72,7 @@ void Territory::displayInfo() const {
             << " (ID: " << (territoryId ? *territoryId : -1) << ")" << std::endl;
 
   std::cout << "  Owner: " << (ownerPlayer && !ownerPlayer->empty() ? *ownerPlayer : "None")
-            << ", Armies: " << (armies ? *armies : -0 ) << std::endl;
+            << ", Armies: " << (armies ? *armies : 0) << std::endl;
 
   std::cout << "  Continent: " << (continent ? continent->getName() : "None") << std::endl;
 
@@ -93,6 +95,7 @@ bool Territory::operator==(const Territory& other) const {
 	return territoryId == other.territoryId && territoryName == other.territoryName;
 }
 
+// --- STREAM INSERTION ---
 std::ostream& operator<<(std::ostream& os, const Territory& territory) {
   os << "Territory["
      << (territory.territoryName ? *territory.territoryName : "<Unnamed>")
@@ -104,7 +107,7 @@ std::ostream& operator<<(std::ostream& os, const Territory& territory) {
         : "None")
      << ", ";
 
-  os << "Armies:" << territory.armies << ", ";
+  os << "Armies:" << (territory.armies ? *territory.armies : 0) << ", ";
   os << "Continent:" << (territory.continent ? territory.continent->getName() : "None") << ", ";
   os << "Adjacent:" << territory.adjTerritories.size() << "]";
   return os;
@@ -139,10 +142,6 @@ Continent& Continent::operator=(const Continent& other) {
 Continent::~Continent() {
   delete continentName;
   delete continentId;
-
-  for (Territory* territory : territories) {
-    delete territory;
-  }
   territories.clear();
 }
 
@@ -219,6 +218,7 @@ bool Continent::operator==(const Continent& other) const {
 	return continentId == other.continentId && continentName == other.continentName;
 }
 
+// --- STREAM INSERTION ---
 std::ostream& operator<<(std::ostream& os, const Continent& continent) {
   os << "Continent["
      << (continent.continentName ? *continent.continentName : "<Unnamed>")
@@ -234,7 +234,7 @@ Map::Map() : mapName(new std::string("Hatsune Miku")) {}
 
 Map::Map(const std::string& name) : mapName(new std::string(name)) {}
 
-Map::Map(const Map& other) : mapName(other.mapName) {
+Map::Map(const Map& other) : mapName(new std::string(*other.mapName)) {
   // deep copy territories and continents
   for (const auto& territory : other.territories) {
     auto newTerritory = std::make_unique<Territory>(*territory);
@@ -434,7 +434,7 @@ bool Map::eachTerritoryBelongsToOneContinent() const {
 
 // --- UTILITY ---
 void Map::displayMap() const {
-	std::cout << "\n========== Map: " << mapName << " ==========" << std::endl;
+  std::cout << "\n========== Map: " << *mapName << " ==========" << std::endl;
 	std::cout << "Total Continents: " << continents.size() << std::endl;
 	std::cout << "Total Territories: " << territories.size() << std::endl;
 
@@ -489,6 +489,7 @@ void Map::rebuildMaps() {
   }
 }
 
+// --- STREAM INSERTION ---
 std::ostream& operator<<(std::ostream& os, const Map& map) {
   os << "Map["
      << (map.mapName ? *map.mapName : "<Unnamed>") << ", "
@@ -506,7 +507,7 @@ MapLoader::MapLoader() : currentState(ParseState::NONE) {}
 MapLoader::MapLoader(const MapLoader& other) : currentState(other.currentState) {}
 
 MapLoader& MapLoader::operator=(const MapLoader& other) {
-  if (this != other) {
+  if (this != &other) {
     currentState = other.currentState;
   }
   return *this;
@@ -722,6 +723,14 @@ void MapLoader::linkTerritoryAdjacencies(const Map* map, Territory* territory, c
   }
 }
 
+// --- UTILITY ---
+bool MapLoader::operator==(MapLoader* other) const {
+  if (this == other) return true;
+  if (!other) return false;
+  return currentState == other->currentState;
+}
+
+// --- STREAM INSERTION ---
 std::ostream& operator<<(std::ostream& os, const MapLoader& mapLoader) {
   os << "MapLoader[Current State: ";
   switch(mapLoader.currentState) {
