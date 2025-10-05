@@ -23,13 +23,13 @@ Territory::Territory(const std::string& name, int id) :
   armies(new int(0)),
   continent(nullptr) {}
 
+// don't copy `adjTerritories` (map will rebuild), don't copy continent pointer
 Territory::Territory(const Territory& other) :
   territoryName(new std::string(*other.territoryName)),
   territoryId(new int(*other.territoryId)),
   ownerPlayer(new std::string(*other.ownerPlayer)),
   armies(new int(*other.armies)),
-  adjTerritories(other.adjTerritories),
-  continent(other.continent) {}
+  continent(nullptr) {}
 
 Territory& Territory::operator=(const Territory& other) {
   if (this != &other) {
@@ -124,10 +124,10 @@ Continent::Continent(const std::string& name, int id) :
   continentName(new std::string(name)),
   continentId(new int(id)) {}
 
+// don't copy `territories` (map will rebuild)
 Continent::Continent(const Continent& other) :
   continentName(new std::string(*other.continentName)),
-  continentId(new int(*other.continentId)),
-  territories(other.territories) {}
+  continentId(new int(*other.continentId)) {}
 
 Continent& Continent::operator=(const Continent& other) {
   if (this != &other) {
@@ -245,24 +245,25 @@ Map::Map(const Map& other) : mapName(new std::string(*other.mapName)) {
     continents.push_back(std::move(newContinent));
   }
 
+  // rebuild lookup maps
   rebuildMaps();
 
-  // rebuild adjacencies and continent assignments
+  // now rebuild all relationships using the new pointers
   for (size_t i = 0; i < territories.size(); i++) {
-    const auto& originalTerritory = other.territories[i];
-    auto& newTerritory = territories[i];
+    Territory* newTerritory = territories[i].get();
+    const Territory* oldTerritory = other.territories[i].get();
 
-    // set continent reference
-    if (originalTerritory->getContinent()) {
-      std::string continentName = originalTerritory->getContinent()->getName();
-      newTerritory->setContinent(continentNameMap[continentName]);
-      continentNameMap[continentName]->addTerritory(newTerritory.get());
+    // rebuild continent assignment
+    if (oldTerritory->getContinent()) {
+      Continent* newContinent = continentNameMap[oldTerritory->getContinent()->getName()];
+      newContinent->addTerritory(newTerritory);
     }
 
     // rebuild adjacencies
-    for (const auto& adj : originalTerritory->getAdjTerritories()) {
-      if (Territory* adjacent = territoryNameMap[adj->getName()]) {
-        newTerritory->addAdjacentTerritory(adjacent);
+    for (const Territory* oldAdj : oldTerritory->getAdjTerritories()) {
+      Territory* newAdj = territoryNameMap[oldAdj->getName()];
+      if (newAdj && !newTerritory->isAdjacentTo(newAdj)) {
+        newTerritory->addAdjacentTerritory(newAdj);
       }
     }
   }
