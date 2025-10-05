@@ -137,8 +137,8 @@ public:
 	bool removeContinent(const std::string& name);
 
 	// graph operations
-	void addAdjacency(const std::string& territory1, const std::string& territory2);
-	void addAdjacency(Territory* territory1, Territory* territory2);
+	void addAdjacency(const std::string& territory1, const std::string& territory2) const;
+	static void addAdjacency(Territory* territory1, Territory* territory2);
 
 	// validation
 	bool validate() const;

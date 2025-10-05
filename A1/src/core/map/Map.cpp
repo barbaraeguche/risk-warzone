@@ -207,7 +207,7 @@ Map::Map() : mapName(new std::string("Hatsune Miku")) {}
 
 Map::Map(const std::string& name) : mapName(new std::string(name)) {}
 
-Map::Map(const Map& other) {
+Map::Map(const Map& other) : mapName(other.mapName) {
   // deep copy territories and continents
   for (const auto& territory : other.territories) {
     auto newTerritory = std::make_unique<Territory>(*territory);
@@ -353,7 +353,7 @@ bool Map::removeContinent(const std::string& name) {
 }
 
 // --- GRAPH OPERATIONS ---
-void Map::addAdjacency(const std::string& territory1, const std::string& territory2) {
+void Map::addAdjacency(const std::string& territory1, const std::string& territory2) const {
   Territory* t1 = getTerritory(territory1);
   Territory* t2 = getTerritory(territory2);
 
