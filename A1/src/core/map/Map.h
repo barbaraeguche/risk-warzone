@@ -159,28 +159,41 @@ private:
 };
 
 
-// /**
-//  * MapLoader class for loading maps from .map files
-//  */
-// class MapLoader {
-// private:
-// 	enum class ParseState {
-// 		NONE,
-// 		MAP_INFO,
-// 		CONTINENTS,
-// 		TERRITORIES
-// 	};
-//
-// public:
-// 	// constructors
-// 	MapLoader();
-// 	MapLoader(const MapLoader& other); // copy constructor
-// 	MapLoader& operator=(const MapLoader& other); // copy assignment
-// 	~MapLoader(); // destructor
-//
-// 	// map loading
-// 	std::unique_ptr<Map> loadMap(const std::string& filename);
-// 	bool canReadFile(const std::string& filename);
-//
-//
-// };
+/**
+ * MapLoader class for loading maps from .map files
+ */
+class MapLoader {
+private:
+	enum class ParseState {
+		NONE,
+		TERRITORIES,
+		CONTINENTS,
+		MAP_INFO
+	};
+
+public:
+	// constructors
+	MapLoader();
+	MapLoader(const MapLoader& other); // copy constructor
+	bool operator==(MapLoader* mapLoader) const;
+
+	MapLoader& operator=(const MapLoader& other); // copy assignment
+	~MapLoader(); // destructor
+
+	// map loading
+	std::unique_ptr<Map> loadMap(const std::string& filename);
+	static bool canReadFile(const std::string& filename);
+
+private:
+	// helpers
+	static std::string trim(const std::string& str);
+	static std::vector<std::string> split(const std::string& str, char delimiter);
+	static bool parseMapSection(const Map* map, const std::string& line);
+	static bool parseContinentSection(Map* map, const std::string& line);
+	bool parseTerritorySection(Map* map, const std::string& line);
+	static void linkTerritoryAdjacencies(const Map* map, Territory* territory, const std::vector<std::string>& adjacentNames);
+
+	// state variables
+	ParseState currentState;
+	std::unordered_map<std::string, std::vector<std::string>> territoryAdjacencies;
+};
