@@ -32,19 +32,19 @@ public:
 	~Territory(); // destructor
 
 	// getters
-	std::string getName() const { return *territoryName; }
-	int getId() const { return *territoryId; }
-	std::string getOwner() const { return *ownerPlayer; }
-	int getArmies() const { return *armies; }
-	const std::vector<Territory*>& getAdjTerritories() const { return adjTerritories; }
-	Continent* getContinent() const { return continent; }
+	std::string getName() const;
+	int getId() const;
+	std::string getOwner() const;
+	int getArmies() const;
+	const std::vector<Territory*>& getAdjTerritories() const;
+	Continent* getContinent() const;
 
 	// setters
-	void setName(const std::string& name) const { *territoryName = name; }
-	void setId(int id) const { *territoryId = id; }
-	void setOwner(const std::string& owner) const { *ownerPlayer = owner; }
-	void setArmies(int armyCount) const { *armies = armyCount; }
-	void setContinent(Continent* mainContinent) { continent = mainContinent; }
+	void setName(const std::string& name) const;
+	void setId(int id) const;
+	void setOwner(const std::string& owner) const;
+	void setArmies(int armyCount) const;
+	void setContinent(Continent* mainContinent);
 
 	// management
 	bool isAdjacentTo(Territory* territory) const;
@@ -78,13 +78,13 @@ public:
 	~Continent(); // destructor
 
 	// getters
-	std::string getName() const { return *continentName; }
-	int getId() const { return *continentId; }
-	const std::vector<Territory*>& getTerritories() const { return territories; }
+	std::string getName() const;
+	int getId() const;
+	const std::vector<Territory*>& getTerritories() const;
 
 	// setters
-	void setName(const std::string& name) const { *continentName = name; }
-	void setId(int id) const { *continentId = id; }
+	void setName(const std::string& name) const;
+	void setId(int id) const;
 
 	// territory management
 	bool containsTerritory(Territory* territory) const;
@@ -124,12 +124,12 @@ public:
 	~Map(); // destructor
 
 	// getters
-	std::string getMapName() const { return *mapName; }
-	const std::vector<std::unique_ptr<Territory>>& getTerritories() const { return territories; }
-	const std::vector<std::unique_ptr<Continent>>& getContinents() const { return continents; }
+	std::string getMapName() const;
+	const std::vector<std::unique_ptr<Territory>>& getTerritories() const;
+	const std::vector<std::unique_ptr<Continent>>& getContinents() const;
 
 	// setters
-	void setMapName(const std::string& name) const { *mapName = name; }
+	void setMapName(const std::string& name) const;
 
 	// territory management
 	Territory* addTerritory(const std::string& name, int id);
@@ -155,8 +155,8 @@ public:
 	// utility
 	void displayMap() const;
 	void clear();
-	int getNumberOfTerritories() const { return territories.size(); }
-	int getNumberOfContinents() const { return continents.size(); }
+	int getNumberOfTerritories() const;
+	int getNumberOfContinents() const;
 
 	// stream insertion operator
 	friend std::ostream& operator<<(std::ostream& os, const Map& map);

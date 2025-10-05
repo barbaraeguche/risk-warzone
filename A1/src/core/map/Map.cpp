@@ -51,6 +51,52 @@ Territory::~Territory() {
   delete armies;
 }
 
+// --- GETTERS ---
+std::string Territory::getName() const {
+  return *territoryName;
+}
+
+int Territory::getId() const {
+  return *territoryId;
+}
+
+std::string Territory::getOwner() const {
+  return *ownerPlayer;
+}
+
+int Territory::getArmies() const {
+  return *armies;
+}
+
+const std::vector<Territory*>& Territory::getAdjTerritories() const {
+  return adjTerritories;
+}
+
+Continent* Territory::getContinent() const {
+  return continent;
+}
+
+// --- SETTERS ---
+void Territory::setName(const std::string& name) const {
+  *territoryName = name;
+}
+
+void Territory::setId(int id) const {
+  *territoryId = id;
+}
+
+void Territory::setOwner(const std::string& owner) const {
+  *ownerPlayer = owner;
+}
+
+void Territory::setArmies(int armyCount) const {
+  *armies = armyCount;
+}
+
+void Territory::setContinent(Continent* mainContinent) {
+  continent = mainContinent;
+}
+
 // --- MANAGEMENT ---
 bool Territory::isAdjacentTo(Territory* territory) const {
   return std::ranges::find(adjTerritories, territory) != adjTerritories.end();
@@ -143,6 +189,28 @@ Continent::~Continent() {
   delete continentName;
   delete continentId;
   territories.clear();
+}
+
+// --- GETTERS ---
+std::string Continent::getName() const {
+  return *continentName;
+}
+
+int Continent::getId() const {
+  return *continentId;
+}
+
+const std::vector<Territory*>& Continent::getTerritories() const {
+  return territories;
+}
+
+// --- SETTERS ---
+void Continent::setName(const std::string& name) const {
+  *continentName = name;
+}
+
+void Continent::setId(int id) const {
+  *continentId = id;
 }
 
 // --- MANAGEMENT ---
@@ -286,6 +354,24 @@ Map& Map::operator=(const Map& other) {
 
 Map::~Map() {
   clear();
+}
+
+// --- GETTERS ---
+std::string Map::getMapName() const {
+  return *mapName;
+}
+
+const std::vector<std::unique_ptr<Territory> >& Map::getTerritories() const {
+  return territories;
+}
+
+const std::vector<std::unique_ptr<Continent> >& Map::getContinents() const {
+  return continents;
+}
+
+// --- SETTERS ---
+void Map::setMapName(const std::string& name) const {
+  *mapName = name;
 }
 
 // --- TERRITORY MANAGEMENT ---
@@ -463,6 +549,14 @@ void Map::clear() {
 	territoryNameMap.clear();
 	territoryIdMap.clear();
 	continentNameMap.clear();
+}
+
+int Map::getNumberOfTerritories() const {
+  return territories.size();
+}
+
+int Map::getNumberOfContinents() const {
+  return continents.size();
 }
 
 // --- HELPERS ---
