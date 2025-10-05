@@ -1,6 +1,8 @@
 #include "Map.h"
 
+#include <fstream>
 #include <iostream>
+#include <sstream>
 #include <unordered_set>
 
 // ==================== Territory Class Implementation ====================
@@ -459,5 +461,229 @@ void Map::rebuildMaps() {
   }
   for (const auto& continent : continents) {
     continentNameMap[continent->getName()] =  continent.get();
+  }
+}
+
+
+// ==================== MapLoader Class Implementation ====================
+
+MapLoader::MapLoader() : currentState(ParseState::NONE) {}
+
+MapLoader::MapLoader(const MapLoader& other) : currentState(other.currentState) {}
+
+MapLoader& MapLoader::operator=(const MapLoader& other) {
+  if (this != other) {
+    currentState = other.currentState;
+  }
+  return *this;
+}
+
+MapLoader::~MapLoader() = default;
+
+// --- MAP LOADING ---
+std::unique_ptr<Map> MapLoader::loadMap(const std::string& filename) {
+  std::ifstream file(filename);
+
+  if (!file.is_open()) {
+    std::cout << "Error: Cannot open file " << filename << std::endl;
+    return nullptr;
+  }
+
+  auto map = std::make_unique<Map>(filename);
+  currentState = ParseState::NONE;
+  territoryAdjacencies.clear();
+
+  std::string line;
+  bool hasValidContent = false;
+  bool hasContinents = false;
+  bool hasTerritories = false;
+
+  while (std::getline(file, line)) {
+    line = trim(line);
+    if (line.empty() || line[0] == ';') {
+      continue; // skip empty lines and comments
+    }
+
+    // check for section headers
+    if (line == "[Map]" || line == "[map]") {
+      currentState = ParseState::MAP_INFO;
+      hasValidContent = true;
+      continue;
+    } else if (line == "[Continents]" || line == "[continents]") {
+      currentState = ParseState::CONTINENTS;
+      hasValidContent = true;
+      hasContinents = true;
+      continue;
+    } else if (line == "[Territories]" || line == "[territories]") {
+      currentState = ParseState::TERRITORIES;
+      hasValidContent = true;
+      hasTerritories = true;
+      continue;
+    }
+
+    // parse content based on current state
+    bool parseSuccess = false;
+    switch (currentState) {
+      case ParseState::MAP_INFO:
+        parseSuccess = parseMapSection(map.get(), line);
+        break;
+      case ParseState::CONTINENTS:
+        parseSuccess = parseContinentSection(map.get(), line);
+        break;
+      case ParseState::TERRITORIES:
+        parseSuccess = parseTerritorySection(map.get(), line);
+        break;
+      default:
+        continue;
+    }
+
+    if (!parseSuccess && currentState != ParseState::NONE) {
+      std::cout << "Warning: Could not parse line: " << line << std::endl;
+    }
+  }
+
+  // close the file
+  file.close();
+
+  if (!hasValidContent || !hasContinents || !hasTerritories) {
+    std::cout << "Error: File does not contain valid map format (missing required sections)" << std::endl;
+    return nullptr;
+  }
+
+  if (map->getNumberOfTerritories() == 0) {
+    std::cout << "Error: Map has no territories" << std::endl;
+    return nullptr;
+  }
+
+  if (map->getNumberOfContinents() == 0) {
+    std::cout << "Error: Map has no continents" << std::endl;
+    return nullptr;
+  }
+
+  // link territory adjacencies
+  for (const auto& territory : map->getTerritories()) {
+    const auto it = territoryAdjacencies.find(territory->getName());
+
+    if (it != territoryAdjacencies.end()) {
+      linkTerritoryAdjacencies(map.get(), territory.get(), it->second);
+    }
+  }
+
+  return map;
+}
+
+bool MapLoader::canReadFile(const std::string& filename) {
+  const std::ifstream file(filename);
+  return file.is_open();
+}
+
+// --- HELPERS ---
+std::string MapLoader::trim(const std::string& str) {
+  const size_t first = str.find_first_not_of(" \t\r\n");
+  if (first == std::string::npos) {
+    return "";
+  }
+
+  const size_t last = str.find_last_not_of(" \t\r\n");
+  return str.substr(first, (last - first + 1));
+}
+
+std::vector<std::string> MapLoader::split(const std::string& str, char delimiter) {
+  std::vector<std::string> tokens;
+  std::istringstream iss(str);
+  std::string token;
+
+  while (std::getline(iss, token, delimiter)) {
+    std::string trimmed = trim(token);
+    if (!trimmed.empty()) {
+      tokens.push_back(trimmed);
+    }
+  }
+
+  return tokens;
+}
+
+bool MapLoader::parseMapSection(const Map* map, const std::string& line) {
+  const auto parts = split(line, '=');
+  if (parts.size() != 2) {
+    return false;
+  }
+
+  if (parts[0] == "name" || parts[0] == "Name") {
+    map->setMapName(parts[1]);
+  }
+  return true;
+}
+
+bool MapLoader::parseContinentSection(Map* map, const std::string& line) {
+  const auto parts = split(line, '=');
+  if (parts.size() != 2) {
+    return false;
+  }
+
+  const std::string& continentName = parts[0];
+  static int continentId = 1;
+
+  map->addContinent(continentName, continentId++);
+  return true;
+}
+
+bool MapLoader::parseTerritorySection(Map* map, const std::string& line) {
+  const auto parts = split(line, ',');
+  if (parts.size() < 4) {
+    return false; // need at least: name, x, y, continent
+  }
+
+  const std::string& territoryName = parts[0];
+  if (territoryName.empty()) {
+    return false;
+  }
+
+  // parts[1] and parts[2] are (x,y) coordinates (not used in this implementation)
+  const std::string& continentName = parts[3];
+  if (continentName.empty()) {
+    std::cout << "Warning: Territory '" << territoryName << "' has no continent assignment" << std::endl;
+    return false;
+  }
+
+  // get or create territory
+  Territory* territory = map->getTerritory(territoryName);
+  if (!territory) {
+    static int territoryId = 1;
+    territory = map->addTerritory(territoryName, territoryId++);
+  }
+
+  // assign to continent
+  if (Continent* continent = map->getContinent(continentName)) {
+    continent->addTerritory(territory);
+  } else {
+    std::cout << "Warning: Continent '" << continentName
+              << "' not found for territory '" << territoryName << "'" << std::endl;
+    return false;
+  }
+
+  // store adjacent territories for later linking
+  std::vector<std::string> adjacentNames;
+  for (size_t i = 4; i < parts.size(); i++) {
+    if (!parts[i].empty()) {
+      adjacentNames.push_back(parts[i]);
+    }
+  }
+
+  if (!adjacentNames.empty()) {
+    territoryAdjacencies[territoryName] = adjacentNames;
+  }
+
+  return true;
+}
+
+void MapLoader::linkTerritoryAdjacencies(const Map* map, Territory* territory, const std::vector<std::string>& adjacentNames) {
+  for (const std::string& adjacentName : adjacentNames) {
+    if (Territory* adj = map->getTerritory(adjacentName)) {
+      territory->addAdjacentTerritory(adj);
+    } else {
+      std::cout << "Warning: Adjacent territory '" << adjacentName
+                << "' not found for territory '" << territory->getName() << "'" << std::endl;
+    }
   }
 }
