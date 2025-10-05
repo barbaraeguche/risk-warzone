@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 
@@ -96,43 +97,66 @@ public:
 };
 
 
-// /**
-//  * Map class representing the entire game map as a connected graph
-//  */
-// class Map {
-// private:
-// 	std::string mapName;
-// 	std::vector<std::unique_ptr<Territory>> territories;
-// 	std::vector<std::unique_ptr<Continent>> continents;
-// 	std::unordered_map<std::string, Territory*> territoryNameMap;
-// 	std::unordered_map<int, Territory*> territoryIdMap;
-// 	std::unordered_map<std::string, Continent*> continentNameMap;
-//
-// public:
-// 	// constructors
-// 	Map();
-// 	Map(const std::string& name);
-// 	Map(const Map& other); // copy constructor
-// 	Map& operator=(const Map& other); // copy assignment
-// 	~Map(); // destructor
-//
-// 	// getters
-// 	std::string getMapName() const { return mapName; }
-// 	const std::vector<std::unique_ptr<Territory>>& getTerritories() const { return territories; }
-// 	const std::vector<std::unique_ptr<Continent>>& getContinents() const { return continents; }
-//
-// 	// setters
-// 	void setMapName(const std::string& name) { this->mapName = name; }
-//
-// 	// validation methods
-// 	bool validate() const;
-//
-// 	// utility
-// 	void displayMap() const;
-// 	void clear();
-// 	int getNumberOfTerritories() const { return territories.size(); }
-// 	int getNumberOfContinents() const { return continents.size(); }
-// };
+/**
+ * Map class representing the entire game map as a connected graph
+ */
+class Map {
+private:
+	std::string* mapName;
+	std::vector<std::unique_ptr<Territory>> territories;
+	std::vector<std::unique_ptr<Continent>> continents;
+	std::unordered_map<std::string, Territory*> territoryNameMap;
+	std::unordered_map<int, Territory*> territoryIdMap;
+	std::unordered_map<std::string, Continent*> continentNameMap;
+
+public:
+	// constructors
+	Map();
+	Map(const std::string& name);
+	Map(const Map& other); // copy constructor
+	Map& operator=(const Map& other); // copy assignment
+	~Map(); // destructor
+
+	// getters
+	std::string getMapName() const { return *mapName; }
+	const std::vector<std::unique_ptr<Territory>>& getTerritories() const { return territories; }
+	const std::vector<std::unique_ptr<Continent>>& getContinents() const { return continents; }
+
+	// setters
+	void setMapName(const std::string& name) const { *mapName = name; }
+
+	// territory management
+	Territory* addTerritory(const std::string& name, int id);
+	Territory* getTerritory(const std::string& name) const;
+	Territory* getTerritory(int id) const;
+	bool removeTerritory(const std::string& name);
+
+	// continent management
+	Continent* addContinent(const std::string& name, int id);
+	Continent* getContinent(const std::string& name) const;
+	bool removeContinent(const std::string& name);
+
+	// graph operations
+	void addAdjacency(const std::string& territory1, const std::string& territory2);
+	void addAdjacency(Territory* territory1, Territory* territory2);
+
+	// validation
+	bool validate() const;
+	bool isConnectedGraph() const;
+	bool areContinentsConnected() const;
+	bool eachTerritoryBelongsToOneContinent() const;
+
+	// utility
+	void displayMap() const;
+	void clear();
+	int getNumberOfTerritories() const { return territories.size(); }
+	int getNumberOfContinents() const { return continents.size(); }
+
+private:
+	// helpers
+	static void dfsVisit(Territory* territory, std::unordered_set<Territory*>& visited);
+	void rebuildMaps();
+};
 
 
 // /**
