@@ -1,4 +1,5 @@
 #include "Map.h"
+#include "../player/Player.h"
 
 #include <fstream>
 #include <iostream>
@@ -294,16 +295,20 @@ void testLoadMaps() {
      programmaticMap.addAdjacency(usa, uk);  // Trans-Atlantic connection
      programmaticMap.addAdjacency(uk, france);
 
+    Player* p1 = new Player("P1");
+    Player* p2 = new Player("P2");
+    Player* p3 = new Player("P3");
+
      // Set some game state
-     alaska->setOwner("Player1");
+     alaska->setOwner(p1);
      alaska->setArmies(3);
-     canada->setOwner("Player1");
+     canada->setOwner(p1);
      canada->setArmies(2);
-     usa->setOwner("Player2");
+     usa->setOwner(p2);
      usa->setArmies(4);
-     uk->setOwner("Player2");
+     uk->setOwner(p2);
      uk->setArmies(1);
-     france->setOwner("Player3");
+     france->setOwner(p3);
      france->setArmies(2);
 
      std::cout << "Programmatic map created with:" << std::endl;
@@ -338,6 +343,10 @@ void testLoadMaps() {
      std::cout << "\n========================================" << std::endl;
      std::cout << "   ALL TESTS COMPLETED SUCCESSFULLY" << std::endl;
      std::cout << "========================================\n" << std::endl;
+
+    delete p1;
+    delete p2;
+    delete p3;
 }
 
 /**

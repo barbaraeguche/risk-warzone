@@ -1,4 +1,5 @@
 #include "Map.h"
+#include "../player/Player.h"
 
 #include <algorithm>
 #include <fstream>
@@ -7,7 +8,6 @@
 #include <sstream>
 #include <unordered_set>
 
-#include "Player.h"
 
 // ==================== Territory Class Implementation ====================
 
@@ -90,7 +90,15 @@ void Territory::setId(int id) const {
 }
 
 void Territory::setOwner(Player* owner) {
+  if (!owner || ownerPlayer == owner) return;
+
+  Player* oldOwner = ownerPlayer;
   ownerPlayer = owner;
+
+  owner->addTerritory(this);
+  if (oldOwner) {
+    oldOwner->removeTerritory(this);
+  }
 }
 
 void Territory::setArmies(int armyCount) const {
