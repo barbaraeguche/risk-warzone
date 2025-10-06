@@ -33,7 +33,7 @@ Territory::Territory(const Territory& other) :
   territoryId(new int(*other.territoryId)),
   ownerPlayer(nullptr),
   armies(new int(*other.armies)),
-  adjTerritories(nullptr),
+  adjTerritories(new std::vector<Territory*>()),
   continent(nullptr) {}
 
 Territory& Territory::operator=(const Territory& other) {
@@ -185,7 +185,7 @@ Continent::Continent(const std::string& name, int id) :
 Continent::Continent(const Continent& other) :
   continentName(new std::string(*other.continentName)),
   continentId(new int(*other.continentId)),
-  territories(nullptr) {}
+  territories(new std::vector<Territory*>()) {}
 
 Continent& Continent::operator=(const Continent& other) {
   if (this != &other) {
