@@ -20,7 +20,7 @@ private:
 	int* territoryId;
 	std::string* ownerPlayer;
 	int* armies;
-	std::vector<Territory*> adjTerritories;
+	std::vector<Territory*>* adjTerritories;
 	Continent* continent;
 
 public:
@@ -48,8 +48,8 @@ public:
 
 	// management
 	bool isAdjacentTo(Territory* territory) const;
-	void addAdjacentTerritory(Territory* territory);
-	void removeAdjacentTerritory(Territory* territory);
+	void addAdjacentTerritory(Territory* territory) const;
+	void removeAdjacentTerritory(Territory* territory) const;
 
 	// utility
 	void displayInfo() const;
@@ -67,7 +67,7 @@ class Continent {
 private:
 	std::string* continentName;
 	int* continentId;
-	std::vector<Territory*> territories;
+	std::vector<Territory*>* territories;
 
 public:
 	// constructors
@@ -89,7 +89,7 @@ public:
 	// territory management
 	bool containsTerritory(Territory* territory) const;
 	void addTerritory(Territory* territory);
-	void removeTerritory(Territory* territory);
+	void removeTerritory(Territory* territory) const;
 
 	// validation
 	bool isConnected() const;
@@ -109,11 +109,11 @@ public:
 class Map {
 private:
 	std::string* mapName;
-	std::vector<std::unique_ptr<Territory>> territories;
-	std::vector<std::unique_ptr<Continent>> continents;
-	std::unordered_map<std::string, Territory*> territoryNameMap;
-	std::unordered_map<int, Territory*> territoryIdMap;
-	std::unordered_map<std::string, Continent*> continentNameMap;
+	std::vector<std::unique_ptr<Territory>>* territories;
+	std::vector<std::unique_ptr<Continent>>* continents;
+	std::unordered_map<std::string, Territory*>* territoryNameMap;
+	std::unordered_map<int, Territory*>* territoryIdMap;
+	std::unordered_map<std::string, Continent*>* continentNameMap;
 
 public:
 	// constructors
@@ -132,7 +132,7 @@ public:
 	void setMapName(const std::string& name) const;
 
 	// territory management
-	Territory* addTerritory(const std::string& name, int id);
+	Territory* addTerritory(const std::string& name, int id) const;
 	Territory* getTerritory(const std::string& name) const;
 	Territory* getTerritory(int id) const;
 	bool removeTerritory(const std::string& name);
@@ -140,11 +140,12 @@ public:
 	// continent management
 	Continent* addContinent(const std::string& name, int id);
 	Continent* getContinent(const std::string& name) const;
-	bool removeContinent(const std::string& name);
+	bool removeContinent(const std::string& name) const;
 
 	// graph operations
 	void addAdjacency(const std::string& territory1, const std::string& territory2) const;
-	void addAdjacency(Territory* territory1, Territory* territory2);
+
+	static void addAdjacency(Territory* territory1, Territory* territory2);
 
 	// validation
 	bool validate() const;
@@ -154,7 +155,7 @@ public:
 
 	// utility
 	void displayMap() const;
-	void clear();
+	void clear() const;
 	int getNumberOfTerritories() const;
 	int getNumberOfContinents() const;
 
@@ -164,7 +165,7 @@ public:
 private:
 	// helpers
 	static void dfsVisit(Territory* territory, std::unordered_set<Territory*>& visited);
-	void rebuildMaps();
+	void rebuildMaps() const;
 };
 
 
@@ -208,5 +209,5 @@ private:
 
 	// state variables
 	ParseState currentState;
-	std::unordered_map<std::string, std::vector<std::string>> territoryAdjacencies;
+	std::unordered_map<std::string, std::vector<std::string>>* territoryAdjacencies;
 };
