@@ -135,23 +135,23 @@ void Territory::displayInfo() const {
 
   std::cout << "  Continent: " << (continent ? continent->getName() : "None") << std::endl;
 
-	std::cout << "  Adjacent to: ";
-	if (adjTerritories->empty()) {
-		std::cout << "None";
-	} else {
-		for (size_t i = 0; i < adjTerritories->size(); i++) {
-			std::cout << ((*adjTerritories)[i] ? (*adjTerritories)[i]->getName() : "None");
-			if (i < adjTerritories->size() - 1) {
-				std::cout << ", ";
-			}
-		}
-	}
+  std::cout << "  Adjacent to: ";
+  if (adjTerritories->empty()) {
+  	std::cout << "None";
+  } else {
+  	for (size_t i = 0; i < adjTerritories->size(); i++) {
+  		std::cout << ((*adjTerritories)[i] ? (*adjTerritories)[i]->getName() : "None");
+  		if (i < adjTerritories->size() - 1) {
+  			std::cout << ", ";
+  		}
+  	}
+  }
 
-	std::cout << std::endl;
+  std::cout << std::endl;
 }
 
 bool Territory::operator==(const Territory& other) const {
-	return territoryId == other.territoryId && territoryName == other.territoryName;
+  return territoryId == other.territoryId && territoryName == other.territoryName;
 }
 
 // --- STREAM INSERTION ---
@@ -275,27 +275,27 @@ bool Continent::isConnected() const {
 
 // --- UTILITY ---
 void Continent::displayInfo() const {
-	std::cout << "Continent: "
+  std::cout << "Continent: "
             << (continentName ? *continentName : "None")
             << " (ID: " << (continentId ? *continentId : -1) << ")" << std::endl;
 
   std::cout << "  Territories (" << territories->size() << "): ";
-	if (territories->empty()) {
-		std::cout << "None";
-	} else {
-		for (size_t i = 0; i < territories->size(); i++) {
-		  std::cout << ((*territories)[i] ? (*territories)[i]->getName() : "None");
-			if (i < territories->size() - 1) {
-				std::cout << ", ";
-			}
-		}
-	}
+  if (territories->empty()) {
+  	std::cout << "None";
+  } else {
+  	for (size_t i = 0; i < territories->size(); i++) {
+  	  std::cout << ((*territories)[i] ? (*territories)[i]->getName() : "None");
+  		if (i < territories->size() - 1) {
+  			std::cout << ", ";
+  		}
+  	}
+  }
 
-	std::cout << std::endl;
+  std::cout << std::endl;
 }
 
 bool Continent::operator==(const Continent& other) const {
-	return continentId == other.continentId && continentName == other.continentName;
+  return continentId == other.continentId && continentName == other.continentName;
 }
 
 // --- STREAM INSERTION ---
@@ -559,33 +559,33 @@ bool Map::eachTerritoryBelongsToOneContinent() const {
 // --- UTILITY ---
 void Map::displayMap() const {
   std::cout << "\n========== Map: " << *mapName << " ==========" << std::endl;
-	std::cout << "Total Continents: " << continents->size() << std::endl;
-	std::cout << "Total Territories: " << territories->size() << std::endl;
+  std::cout << "Total Continents: " << continents->size() << std::endl;
+  std::cout << "Total Territories: " << territories->size() << std::endl;
 
-	std::cout << "\n--- Continents ---" << std::endl;
-	for (const auto& continent : *continents) {
-		continent->displayInfo();
-	}
+  std::cout << "\n--- Continents ---" << std::endl;
+  for (const auto& continent : *continents) {
+  	continent->displayInfo();
+  }
 
-	std::cout << "\n--- Territories ---" << std::endl;
-	for (const auto& territory : *territories) {
-		territory->displayInfo();
-	}
+  std::cout << "\n--- Territories ---" << std::endl;
+  for (const auto& territory : *territories) {
+  	territory->displayInfo();
+  }
 
   std::cout << "\n--- Validation Results ---" << std::endl;
   std::cout << "  Connected Graph: " << (isConnectedGraph() ? "YES" : "NO") << std::endl;
   std::cout << "  Continents Connected: " << (areContinentsConnected() ? "YES" : "NO") << std::endl;
   std::cout << "  Each Territory in One Continent: " << (eachTerritoryBelongsToOneContinent() ? "YES" : "NO") << std::endl;
   std::cout << "  Overall Valid: " << (validate() ? "YES" : "NO") << std::endl;
-	std::cout << "========================================\n" << std::endl;
+  std::cout << "========================================\n" << std::endl;
 }
 
 void Map::clear() const {
-	territories->clear();
-	continents->clear();
-	territoryNameMap->clear();
-	territoryIdMap->clear();
-	continentNameMap->clear();
+  territories->clear();
+  continents->clear();
+  territoryNameMap->clear();
+  territoryIdMap->clear();
+  continentNameMap->clear();
 }
 
 int Map::getNumberOfTerritories() const {
