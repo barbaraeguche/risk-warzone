@@ -6,6 +6,7 @@
 #include <vector>
 
 
+class Player;
 class Territory;
 class Continent;
 class Map;
@@ -18,7 +19,7 @@ class Territory {
 private:
 	std::string* territoryName;
 	int* territoryId;
-	std::string* ownerPlayer;
+	Player* ownerPlayer;
 	int* armies;
 	std::vector<Territory*>* adjTerritories;
 	Continent* continent;
@@ -34,7 +35,7 @@ public:
 	// getters
 	std::string getName() const;
 	int getId() const;
-	std::string getOwner() const;
+	Player* getOwner() const;
 	int getArmies() const;
 	const std::vector<Territory*>& getAdjTerritories() const;
 	Continent* getContinent() const;
@@ -42,7 +43,7 @@ public:
 	// setters
 	void setName(const std::string& name) const;
 	void setId(int id) const;
-	void setOwner(const std::string& owner) const;
+	void setOwner(Player* owner);
 	void setArmies(int armyCount) const;
 	void setContinent(Continent* mainContinent);
 

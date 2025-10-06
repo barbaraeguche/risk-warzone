@@ -7,12 +7,14 @@
 #include <sstream>
 #include <unordered_set>
 
+#include "Player.h"
+
 // ==================== Territory Class Implementation ====================
 
 Territory::Territory() :
   territoryName(new std::string("")),
   territoryId(new int(0)),
-  ownerPlayer(new std::string("")),
+  ownerPlayer(nullptr),
   armies(new int(0)),
   adjTerritories(nullptr),
   continent(nullptr) {}
@@ -20,7 +22,7 @@ Territory::Territory() :
 Territory::Territory(const std::string& name, int id) :
   territoryName(new std::string(name)),
   territoryId(new int(id)),
-  ownerPlayer(new std::string("")),
+  ownerPlayer(nullptr),
   armies(new int(0)),
   adjTerritories(nullptr),
   continent(nullptr) {}
@@ -29,7 +31,7 @@ Territory::Territory(const std::string& name, int id) :
 Territory::Territory(const Territory& other) :
   territoryName(new std::string(*other.territoryName)),
   territoryId(new int(*other.territoryId)),
-  ownerPlayer(new std::string(*other.ownerPlayer)),
+  ownerPlayer(nullptr),
   armies(new int(*other.armies)),
   adjTerritories(nullptr),
   continent(nullptr) {}
@@ -38,7 +40,7 @@ Territory& Territory::operator=(const Territory& other) {
   if (this != &other) {
     setName(*other.territoryName);
     setId(*other.territoryId);
-    setOwner(*other.ownerPlayer);
+    setOwner(other.ownerPlayer);
     setArmies(*other.armies);
 
     adjTerritories = other.adjTerritories;
@@ -50,7 +52,6 @@ Territory& Territory::operator=(const Territory& other) {
 Territory::~Territory() {
   delete territoryName;
   delete territoryId;
-  delete ownerPlayer;
   delete armies;
 }
 
@@ -63,8 +64,8 @@ int Territory::getId() const {
   return *territoryId;
 }
 
-std::string Territory::getOwner() const {
-  return *ownerPlayer;
+Player* Territory::getOwner() const {
+  return ownerPlayer;
 }
 
 int Territory::getArmies() const {
@@ -88,8 +89,8 @@ void Territory::setId(int id) const {
   *territoryId = id;
 }
 
-void Territory::setOwner(const std::string& owner) const {
-  *ownerPlayer = owner;
+void Territory::setOwner(Player* owner) {
+  ownerPlayer = owner;
 }
 
 void Territory::setArmies(int armyCount) const {
@@ -120,7 +121,7 @@ void Territory::displayInfo() const {
   std::cout << "Territory: " << (territoryName ? *territoryName : "None")
             << " (ID: " << (territoryId ? *territoryId : -1) << ")" << std::endl;
 
-  std::cout << "  Owner: " << (ownerPlayer && !ownerPlayer->empty() ? *ownerPlayer : "None")
+  std::cout << "  Owner: " << (ownerPlayer ? ownerPlayer->getName() : "None")
             << ", Armies: " << (armies ? *armies : 0) << std::endl;
 
   std::cout << "  Continent: " << (continent ? continent->getName() : "None") << std::endl;
@@ -150,13 +151,9 @@ std::ostream& operator<<(std::ostream& os, const Territory& territory) {
      << (territory.territoryName ? *territory.territoryName : "<Unnamed>")
      << " (ID:" << (territory.territoryId ? *territory.territoryId : -1) << "), ";
 
-  os << "Owner:"
-     << ((territory.ownerPlayer && !territory.ownerPlayer->empty())
-     ? *territory.ownerPlayer
-        : "None")
-     << ", ";
-
+  os << "Owner:" << (territory.ownerPlayer ? territory.ownerPlayer->getName() : "None") << ", ";
   os << "Armies:" << (territory.armies ? *territory.armies : 0) << ", ";
+
   os << "Continent:" << (territory.continent ? territory.continent->getName() : "None") << ", ";
   os << "Adjacent:" << territory.adjTerritories->size() << "]";
   return os;
