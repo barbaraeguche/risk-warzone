@@ -143,7 +143,7 @@ void Player::setReinforcementPool(int armies) {
 void Player::addTerritory(Territory* territory) {
   if (territory && !ownsTerritory(territory)) {
       territories->push_back(territory);
-      territory->setOwner(*playerName);
+      territory->setOwner(this);
   }
 }
 
@@ -156,7 +156,7 @@ void Player::removeTerritory(Territory* territory) {
       auto it = std::find(territories->begin(), territories->end(), territory);
       if (it != territories->end()) {
           territories->erase(it);
-          territory->setOwner("");
+          territory->setOwner(nullptr);
       }
   }
 }

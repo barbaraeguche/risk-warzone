@@ -2,9 +2,11 @@
 
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 
+class Player;
 class Territory;
 class Continent;
 class Map;
@@ -17,9 +19,9 @@ class Territory {
 private:
 	std::string* territoryName;
 	int* territoryId;
-	std::string* ownerPlayer;
+	Player* ownerPlayer;
 	int* armies;
-	std::vector<Territory*> adjTerritories;
+	std::vector<Territory*>* adjTerritories;
 	Continent* continent;
 
 public:
@@ -31,19 +33,19 @@ public:
 	~Territory(); // destructor
 
 	// getters
-	std::string getName() const { return *territoryName; }
-	int getId() const { return *territoryId; }
-	std::string getOwner() const { return *ownerPlayer; }
-	int getArmies() const { return *armies; }
-	const std::vector<Territory*>& getAdjTerritories() const { return adjTerritories; }
-	Continent* getContinent() const { return continent; }
+	std::string getName() const;
+	int getId() const;
+	Player* getOwner() const;
+	int getArmies() const;
+	const std::vector<Territory*>& getAdjTerritories() const;
+	Continent* getContinent() const;
 
 	// setters
-	void setName(const std::string& name) const { *territoryName = name; }
-	void setId(int id) const { *territoryId = id; }
-	void setOwner(const std::string& owner) const { *ownerPlayer = owner; }
-	void setArmies(int armyCount) const { *armies = armyCount; }
-	void setContinent(Continent* mainContinent) { continent = mainContinent; }
+	void setName(const std::string& name) const;
+	void setId(int id) const;
+	void setOwner(Player* owner);
+	void setArmies(int armyCount) const;
+	void setContinent(Continent* mainContinent);
 
 	// management
 	bool isAdjacentTo(Territory* territory) const;
@@ -53,6 +55,9 @@ public:
 	// utility
 	void displayInfo() const;
 	bool operator==(const Territory& other) const; // equality operator
+
+	// stream insertion operator
+	friend std::ostream& operator<<(std::ostream& os, const Territory& territory);
 };
 
 
@@ -63,7 +68,7 @@ class Continent {
 private:
 	std::string* continentName;
 	int* continentId;
-	std::vector<Territory*> territories;
+	std::vector<Territory*>* territories;
 
 public:
 	// constructors
@@ -74,13 +79,13 @@ public:
 	~Continent(); // destructor
 
 	// getters
-	std::string getName() const { return *continentName; }
-	int getId() const { return *continentId; }
-	const std::vector<Territory*>& getTerritories() const { return territories; }
+	std::string getName() const;
+	int getId() const;
+	const std::vector<Territory*>& getTerritories() const;
 
 	// setters
-	void setName(const std::string& name) const { *continentName = name; }
-	void setId(int id) const { *continentId = id; }
+	void setName(const std::string& name) const;
+	void setId(int id) const;
 
 	// territory management
 	bool containsTerritory(Territory* territory) const;
@@ -93,70 +98,117 @@ public:
 	// utility
 	void displayInfo() const;
 	bool operator==(const Continent& other) const;
+
+	// stream insertion operator
+	friend std::ostream& operator<<(std::ostream& os, const Continent& continent);
 };
 
 
-// /**
-//  * Map class representing the entire game map as a connected graph
-//  */
-// class Map {
-// private:
-// 	std::string mapName;
-// 	std::vector<std::unique_ptr<Territory>> territories;
-// 	std::vector<std::unique_ptr<Continent>> continents;
-// 	std::unordered_map<std::string, Territory*> territoryNameMap;
-// 	std::unordered_map<int, Territory*> territoryIdMap;
-// 	std::unordered_map<std::string, Continent*> continentNameMap;
-//
-// public:
-// 	// constructors
-// 	Map();
-// 	Map(const std::string& name);
-// 	Map(const Map& other); // copy constructor
-// 	Map& operator=(const Map& other); // copy assignment
-// 	~Map(); // destructor
-//
-// 	// getters
-// 	std::string getMapName() const { return mapName; }
-// 	const std::vector<std::unique_ptr<Territory>>& getTerritories() const { return territories; }
-// 	const std::vector<std::unique_ptr<Continent>>& getContinents() const { return continents; }
-//
-// 	// setters
-// 	void setMapName(const std::string& name) { this->mapName = name; }
-//
-// 	// validation methods
-// 	bool validate() const;
-//
-// 	// utility
-// 	void displayMap() const;
-// 	void clear();
-// 	int getNumberOfTerritories() const { return territories.size(); }
-// 	int getNumberOfContinents() const { return continents.size(); }
-// };
+/**
+ * Map class representing the entire game map as a connected graph
+ */
+class Map {
+private:
+	std::string* mapName;
+	std::vector<std::unique_ptr<Territory>>* territories;
+	std::vector<std::unique_ptr<Continent>>* continents;
+	std::unordered_map<std::string, Territory*>* territoryNameMap;
+	std::unordered_map<int, Territory*>* territoryIdMap;
+	std::unordered_map<std::string, Continent*>* continentNameMap;
+
+public:
+	// constructors
+	Map();
+	Map(const std::string& name);
+	Map(const Map& other); // copy constructor
+	Map& operator=(const Map& other); // copy assignment
+	~Map(); // destructor
+
+	// getters
+	std::string getMapName() const;
+	const std::vector<std::unique_ptr<Territory>>& getTerritories() const;
+	const std::vector<std::unique_ptr<Continent>>& getContinents() const;
+
+	// setters
+	void setMapName(const std::string& name) const;
+
+	// territory management
+	Territory* addTerritory(const std::string& name, int id);
+	Territory* getTerritory(const std::string& name) const;
+	Territory* getTerritory(int id) const;
+	bool removeTerritory(const std::string& name);
+
+	// continent management
+	Continent* addContinent(const std::string& name, int id);
+	Continent* getContinent(const std::string& name) const;
+	bool removeContinent(const std::string& name);
+
+	// graph operations
+	void addAdjacency(const std::string& territory1, const std::string& territory2);
+
+	static void addAdjacency(Territory* territory1, Territory* territory2);
+
+	// validation
+	bool validate() const;
+	bool isConnectedGraph() const;
+	bool areContinentsConnected() const;
+	bool eachTerritoryBelongsToOneContinent() const;
+
+	// utility
+	void displayMap() const;
+	void clear() const;
+	int getNumberOfTerritories() const;
+	int getNumberOfContinents() const;
+
+	// stream insertion operator
+	friend std::ostream& operator<<(std::ostream& os, const Map& map);
+
+private:
+	// helpers
+	static void dfsVisit(Territory* territory, std::unordered_set<Territory*>& visited);
+	void rebuildMaps();
+};
 
 
-// /**
-//  * MapLoader class for loading maps from .map files
-//  */
-// class MapLoader {
-// private:
-// 	enum class ParseState {
-// 		NONE,
-// 		MAP_INFO,
-// 		CONTINENTS,
-// 		TERRITORIES
-// 	};
-//
-// public:
-// 	// constructors
-// 	MapLoader();
-// 	MapLoader(const MapLoader& other); // copy constructor
-// 	MapLoader& operator=(const MapLoader& other); // copy assignment
-// 	~MapLoader(); // destructor
-//
-// 	// map loading
-// 	std::unique_ptr<Map> loadMap(const std::string& filename);
-// 	bool canReadFile(const std::string& filename);
-//
-//
-// };
+/**
+ * MapLoader class for loading maps from .map files
+ */
+class MapLoader {
+private:
+	enum class ParseState {
+		NONE,
+		TERRITORIES,
+		CONTINENTS,
+		MAP_INFO
+	};
+
+public:
+	// constructors
+	MapLoader();
+	MapLoader(const MapLoader& other); // copy constructor
+	MapLoader& operator=(const MapLoader& other); // copy assignment
+	~MapLoader(); // destructor
+
+	// map loading
+	std::unique_ptr<Map> loadMap(const std::string& filename);
+	static bool canReadFile(const std::string& filename);
+
+  // utility
+	bool operator==(MapLoader* other) const;
+
+	// stream insertion operator
+	friend std::ostream& operator<<(std::ostream& os, const MapLoader& mapLoader);
+
+private:
+	// helpers
+	static std::string trim(const std::string& str);
+	static std::vector<std::string> split(const std::string& str, char delimiter);
+	static bool parseMapSection(const Map* map, const std::string& line);
+	static bool parseContinentSection(Map* map, const std::string& line);
+	bool parseTerritorySection(Map* map, const std::string& line);
+	static void linkTerritoryAdjacencies(const Map* map, Territory* territory, const std::vector<std::string>& adjacentNames);
+
+	// state variables
+	ParseState currentState;
+	std::unordered_map<std::string, std::vector<std::string>>* territoryAdjacencies;
+};
