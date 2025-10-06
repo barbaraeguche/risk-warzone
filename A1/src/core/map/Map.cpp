@@ -106,13 +106,13 @@ bool Territory::isAdjacentTo(Territory* territory) const {
   return std::ranges::find(*adjTerritories, territory) != adjTerritories->end();
 }
 
-void Territory::addAdjacentTerritory(Territory* territory) const {
+void Territory::addAdjacentTerritory(Territory* territory) {
   if (territory && territory != this && !isAdjacentTo(territory)) {
     adjTerritories->push_back(territory);
   }
 }
 
-void Territory::removeAdjacentTerritory(Territory* territory) const {
+void Territory::removeAdjacentTerritory(Territory* territory) {
   std::erase(*adjTerritories, territory);
 }
 
@@ -228,7 +228,7 @@ void Continent::addTerritory(Territory* territory) {
   }
 }
 
-void Continent::removeTerritory(Territory* territory) const {
+void Continent::removeTerritory(Territory* territory) {
   std::erase(*territories, territory);
   if (territory) {
     territory->setContinent(nullptr);
@@ -398,7 +398,7 @@ void Map::setMapName(const std::string& name) const {
 }
 
 // --- TERRITORY MANAGEMENT ---
-Territory* Map::addTerritory(const std::string& name, int id) const {
+Territory* Map::addTerritory(const std::string& name, int id) {
   auto territory = std::make_unique<Territory>(name, id);
   Territory* territoryPtr = territory.get();
 
@@ -465,7 +465,7 @@ Continent* Map::getContinent(const std::string& name) const {
   return (it != continentNameMap->end()) ? it->second : nullptr;
 }
 
-bool Map::removeContinent(const std::string& name) const {
+bool Map::removeContinent(const std::string& name) {
   Continent* continent = getContinent(name);
   if (!continent) {
     return false;
@@ -490,7 +490,7 @@ bool Map::removeContinent(const std::string& name) const {
 }
 
 // --- GRAPH OPERATIONS ---
-void Map::addAdjacency(const std::string& territory1, const std::string& territory2) const {
+void Map::addAdjacency(const std::string& territory1, const std::string& territory2) {
   Territory* t1 = getTerritory(territory1);
   Territory* t2 = getTerritory(territory2);
 
@@ -594,7 +594,7 @@ void Map::dfsVisit(Territory* territory, std::unordered_set<Territory *>& visite
   }
 }
 
-void Map::rebuildMaps() const {
+void Map::rebuildMaps() {
   territoryNameMap->clear();
   territoryIdMap->clear();
   continentNameMap->clear();
