@@ -1,0 +1,46 @@
+[Map]
+author=Mike Crush
+warn=yes
+image=_08_Dragon Lore.bmp
+wrap=no
+scroll=none
+
+
+
+[Continents]
+
+Dragon Breath=7
+Dragon Wisp=5
+Dragon Star=3
+
+
+[Territories]
+star1,13,575,Dragon Star,wisp1,wisp2
+star2,71,119,Dragon Star,wisp4,wisp5
+star3,482,188,Dragon Star,wisp7
+star4,787,13,Dragon Star,wisp7,wisp8
+
+wisp1,39,445,Dragon Wisp,wisp3,wisp4,star1 
+wisp2,277,540,Dragon Wisp,star1,breath5
+wisp3,139,359,Dragon Wisp,wisp1,wisp4
+wisp4,53,234,Dragon Wisp,wisp1,wisp3,star2
+wisp5,212,26,Dragon Wisp,wisp6,star2
+wisp6,427,35,Dragon Wisp,wisp5,wisp7
+wisp7,544,91,Dragon Wisp,wisp6,wisp8,star3,star4
+wisp8,666,172,Dragon Wisp,wisp7,wisp9,star4
+wisp9,705,318,Dragon Wisp,wisp8,breath4,breath10
+
+breath1,307,300,Dragon Breath,breath2
+breath2,375,320,Dragon Breath,breath1,breath3,breath4
+breath3,388,383,Dragon Breath,breath2,breath5
+breath4,488,359,Dragon Breath,breath2,breath6,breath7,wisp9
+breath5,413,466,Dragon Breath,breath3,breath8,wisp2
+breath6,500,463,Dragon Breath,breath4,breath7
+breath7,590,426,Dragon Breath,breath4,breath6
+breath8,475,554,Dragon Breath,breath5,breath9
+breath9,599,527,Dragon Breath,breath8,breath10,breath11
+breath10,666,448,Dragon Breath,breath9,breath11,wisp9
+breath11,753,528,Dragon Breath,breath9,breath10
+
+
+
