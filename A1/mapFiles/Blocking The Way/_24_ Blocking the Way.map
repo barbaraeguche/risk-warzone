@@ -1,0 +1,60 @@
+[Map]
+author=_MIKE CRUSH_
+image=_24_ Blocking the Way.bmp
+wrap=no
+scroll=none
+warn=no
+
+[Continents]
+TOP LEFT=2
+TOP RIGHT=3
+BOTTOM LEFT=1
+BOTTOM RIGHT=2
+
+[Territories]
+Territory00,127,78,TOP LEFT,Territory01,Territory03
+Territory01,154,77,TOP LEFT,Territory00,Territory02
+Territory02,156,104,TOP LEFT,Territory01,Territory03,Territory05
+Territory03,126,104,TOP LEFT,Territory02,Territory00,Territory04
+Territory04,127,132,TOP LEFT,Territory03,Territory06,Territory05
+Territory05,157,132,TOP LEFT,Territory07,Territory02,Territory04,Territory12
+Territory06,127,158,TOP LEFT,Territory04,Territory11,Territory07
+Territory07,154,159,TOP LEFT,Territory08,Territory05,Territory06,Territory17
+Territory08,154,182,TOP LEFT,Territory09,Territory07,Territory11,Territory22
+Territory09,156,210,TOP LEFT,Territory30,Territory08,Territory10,Territory27
+Territory10,127,210,TOP LEFT,Territory11,Territory29,Territory09
+Territory11,126,183,TOP LEFT,Territory06,Territory10,Territory08,Territory14,Territory42
+Territory12,184,131,TOP RIGHT,Territory13,Territory05,Territory17
+Territory13,211,131,TOP RIGHT,Territory14,Territory12,Territory18
+Territory14,240,131,TOP RIGHT,Territory15,Territory13,Territory19,Territory11,Territory42
+Territory15,267,131,TOP RIGHT,Territory16,Territory14,Territory20
+Territory16,295,131,TOP RIGHT,Territory21,Territory15
+Territory17,181,156,TOP RIGHT,Territory07,Territory18,Territory22,Territory12
+Territory18,211,156,TOP RIGHT,Territory17,Territory19,Territory13,Territory23
+Territory19,240,158,TOP RIGHT,Territory18,Territory20,Territory24,Territory14
+Territory20,268,158,TOP RIGHT,Territory19,Territory21,Territory15,Territory25
+Territory21,295,156,TOP RIGHT,Territory26,Territory16,Territory20
+Territory22,183,183,TOP RIGHT,Territory23,Territory08,Territory27,Territory17
+Territory23,211,183,TOP RIGHT,Territory24,Territory22,Territory18,Territory28
+Territory24,241,185,TOP RIGHT,Territory25,Territory23,Territory37,Territory19
+Territory25,270,183,TOP RIGHT,Territory26,Territory24,Territory20,Territory38
+Territory26,298,183,TOP RIGHT,Territory39,Territory21,Territory25
+Territory27,181,210,BOTTOM LEFT,Territory09,Territory28,Territory31,Territory22
+Territory28,210,210,BOTTOM LEFT,Territory27,Territory37,Territory23,Territory32
+Territory29,129,237,BOTTOM LEFT,Territory10,Territory33,Territory30
+Territory30,157,237,BOTTOM LEFT,Territory34,Territory09,Territory29,Territory31
+Territory31,183,237,BOTTOM LEFT,Territory32,Territory30,Territory35,Territory27
+Territory32,213,237,BOTTOM LEFT,Territory40,Territory31,Territory28,Territory36
+Territory33,129,261,BOTTOM LEFT,Territory29,Territory34
+Territory34,157,263,BOTTOM LEFT,Territory33,Territory30,Territory35
+Territory35,183,261,BOTTOM LEFT,Territory34,Territory36,Territory31
+Territory36,211,264,BOTTOM LEFT,Territory35,Territory43,Territory32
+Territory37,238,210,BOTTOM RIGHT,Territory28,Territory38,Territory40,Territory24
+Territory38,267,210,BOTTOM RIGHT,Territory37,Territory39,Territory25,Territory41
+Territory39,295,210,BOTTOM RIGHT,Territory42,Territory26,Territory38
+Territory40,241,237,BOTTOM RIGHT,Territory41,Territory32,Territory43,Territory37
+Territory41,270,237,BOTTOM RIGHT,Territory42,Territory40,Territory38,Territory44
+Territory42,294,236,BOTTOM RIGHT,Territory45,Territory39,Territory41,Territory14,Territory11
+Territory43,238,263,BOTTOM RIGHT,Territory36,Territory44,Territory40
+Territory44,268,263,BOTTOM RIGHT,Territory43,Territory45,Territory41
+Territory45,297,261,BOTTOM RIGHT,Territory44,Territory42
