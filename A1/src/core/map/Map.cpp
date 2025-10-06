@@ -16,7 +16,7 @@ Territory::Territory() :
   territoryId(new int(0)),
   ownerPlayer(nullptr),
   armies(new int(0)),
-  adjTerritories(nullptr),
+  adjTerritories(new std::vector<Territory*>()),
   continent(nullptr) {}
 
 Territory::Territory(const std::string& name, int id) :
@@ -24,7 +24,7 @@ Territory::Territory(const std::string& name, int id) :
   territoryId(new int(id)),
   ownerPlayer(nullptr),
   armies(new int(0)),
-  adjTerritories(nullptr),
+  adjTerritories(new std::vector<Territory*>()),
   continent(nullptr) {}
 
 // don't copy `adjTerritories` (map will rebuild), don't copy continent pointer
@@ -53,6 +53,7 @@ Territory::~Territory() {
   delete territoryName;
   delete territoryId;
   delete armies;
+  delete adjTerritories;
 }
 
 // --- GETTERS ---
@@ -173,12 +174,12 @@ std::ostream& operator<<(std::ostream& os, const Territory& territory) {
 Continent::Continent() :
   continentName(new std::string("")),
   continentId(new int(0)),
-  territories(nullptr) {}
+  territories(new std::vector<Territory*>()) {}
 
 Continent::Continent(const std::string& name, int id) :
   continentName(new std::string(name)),
   continentId(new int(id)),
-  territories(nullptr) {}
+  territories(new std::vector<Territory*>()) {}
 
 // don't copy `territories` (map will rebuild)
 Continent::Continent(const Continent& other) :
@@ -199,7 +200,7 @@ Continent& Continent::operator=(const Continent& other) {
 Continent::~Continent() {
   delete continentName;
   delete continentId;
-  territories->clear();
+  delete territories;
 }
 
 // --- GETTERS ---
@@ -311,19 +312,19 @@ std::ostream& operator<<(std::ostream& os, const Continent& continent) {
 
 Map::Map() :
   mapName(new std::string("Hatsune Miku")),
-  territories(nullptr),
-  continents(nullptr),
-  territoryNameMap(nullptr),
-  territoryIdMap(nullptr),
-  continentNameMap(nullptr) {}
+  territories(new std::vector<std::unique_ptr<Territory>>()),
+  continents(new std::vector<std::unique_ptr<Continent>>()),
+  territoryNameMap(new std::unordered_map<std::string, Territory*>()),
+  territoryIdMap(new std::unordered_map<int, Territory*>()),
+  continentNameMap(new std::unordered_map<std::string, Continent*>()) {}
 
 Map::Map(const std::string& name) :
   mapName(new std::string(name)),
-  territories(nullptr),
-  continents(nullptr),
-  territoryNameMap(nullptr),
-  territoryIdMap(nullptr),
-  continentNameMap(nullptr) {}
+  territories(new std::vector<std::unique_ptr<Territory>>()),
+  continents(new std::vector<std::unique_ptr<Continent>>()),
+  territoryNameMap(new std::unordered_map<std::string, Territory*>()),
+  territoryIdMap(new std::unordered_map<int, Territory*>()),
+  continentNameMap(new std::unordered_map<std::string, Continent*>()) {}
 
 Map::Map(const Map& other) :
   mapName(new std::string(*other.mapName)),
@@ -384,7 +385,12 @@ Map& Map::operator=(const Map& other) {
 }
 
 Map::~Map() {
-  clear();
+  delete mapName;
+  delete territories;
+  delete continents;
+  delete territoryNameMap;
+  delete territoryIdMap;
+  delete continentNameMap;
 }
 
 // --- GETTERS ---
@@ -575,7 +581,6 @@ void Map::displayMap() const {
 }
 
 void Map::clear() const {
-  delete mapName;
 	territories->clear();
 	continents->clear();
 	territoryNameMap->clear();
@@ -631,7 +636,7 @@ std::ostream& operator<<(std::ostream& os, const Map& map) {
 
 MapLoader::MapLoader() :
   currentState(ParseState::NONE),
-  territoryAdjacencies(nullptr) {}
+  territoryAdjacencies(new std::unordered_map<std::string, std::vector<std::string>>()) {}
 
 MapLoader::MapLoader(const MapLoader& other) :
   currentState(other.currentState),
@@ -644,7 +649,9 @@ MapLoader& MapLoader::operator=(const MapLoader& other) {
   return *this;
 }
 
-MapLoader::~MapLoader() = default;
+MapLoader::~MapLoader() {
+  delete territoryAdjacencies;
+};
 
 // --- MAP LOADING ---
 std::unique_ptr<Map> MapLoader::loadMap(const std::string& filename) {
