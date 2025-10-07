@@ -2,6 +2,18 @@
 #include "Order.h"
 
 void testOrdersLists() {
+
+  // Testing order functions
+  Order* testOrder = new OrderDeploy();
+
+  // Testing validate() and execute()
+  std::cout << "Testing validate() and execute() on a Deploy Order:" << '\n';
+  std::cout << "Is the order valid? " << (testOrder->validate() ? "Yes" : "No") << '\n';
+  testOrder->execute(); // Should do nothing as validate() returns false
+
+  delete testOrder;
+
+  // Testing OrdersList functions
   OrdersList ordersList;
   ordersList.add(new OrderDeploy());
   ordersList.add(new OrderAdvance());
