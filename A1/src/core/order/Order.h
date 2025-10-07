@@ -3,11 +3,26 @@
 #include <vector>
 #include <iostream>
 
+/*
+store description of behavior as string
+assignement operator?
+validate method?
+*/
+
+/*
+Abstract base class for all order types.
+*/
 class Order {
 public:
+
+  // validates an order is valid based on the current gamestate
   virtual bool validate() = 0;
+
+  // executes the order, assuming it has been validated
   virtual void execute() = 0;
   virtual Order* clone() const = 0;
+
+  //Make destructor virtual to avoid memory leaks
   virtual ~Order() = default;
 };
 
@@ -85,11 +100,20 @@ public:
   OrdersList(const OrdersList& other);
   OrdersList& operator=(const OrdersList& other);
   friend std::ostream& operator<<(std::ostream& os, const OrdersList& orderlist);
+
+  //add an order to the list
   void add(Order* order);
+
+  //remove an order from the list at a given index
   void remove(int index);
+
+  //move an order from one index to another
   void move(int fromIndex, int toIndex);
+
   ~OrdersList();
 
 private:
+
+  //helper functions for validating indices
   bool validateIndex(int index);
 };
