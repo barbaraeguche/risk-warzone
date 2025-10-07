@@ -133,6 +133,8 @@ void OrdersList::remove(int index) {
 }
 
 void OrdersList::move(int fromIndex, int toIndex) {
+  
+  //Validate indices
   if (!validateIndex(fromIndex) || !validateIndex(toIndex)) {
     return;
   }

@@ -10,17 +10,20 @@ void testOrdersLists() {
   ordersList.add(new OrderAirlift());
   ordersList.add(new OrderNegotiate());
 
+  // Testing add()
   std::cout << "OrderList contents:" << '\n';
   for (const auto& order : *ordersList.orders) {
     std::cout << order << '\n';
   }
 
+  // Testing remove()
   std::cout << "Remove 2nd Order:" << '\n';
   ordersList.remove(1);
   for (const auto& order : *ordersList.orders) {
     std::cout << order << '\n';
   }
 
+  // Testing move()
   std::cout << "Move 1st Order to 4th Index:" << '\n';
   ordersList.move(0, 3);
   for (const auto& order : *ordersList.orders) {
