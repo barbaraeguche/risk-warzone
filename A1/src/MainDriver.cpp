@@ -31,10 +31,10 @@ int main() {
         testPlayers();
         //
         // // Part 3: Orders Testing
-        // std::cout << "\n" << std::string(50, '=') << std::endl;
-        // std::cout << "PART 3: ORDERS TESTING" << std::endl;
-        // std::cout << std::string(50, '=') << std::endl;
-        // testOrdersLists();
+        std::cout << "\n" << std::string(50, '=') << std::endl;
+        std::cout << "PART 3: ORDERS TESTING" << std::endl;
+        std::cout << std::string(50, '=') << std::endl;
+        testOrdersLists();
         //
         // // Part 4: Cards Testing
         // std::cout << "\n" << std::string(50, '=') << std::endl;
