@@ -1,19 +1,25 @@
 # comp-345
 
-- entire a1 directory
+- navigate to project root
+
 ```bash
-cd A1
+cd ./comp-345
 ```
 
-- compile from a1
+- generate build files
+
 ```bash
-g++ -std=c++20 $(find src -name "*.cpp") \
-    -I src/core/map -I src/core/player -I src/core/orders \
-    -I src/core/card-deck-hand -I src/core/game-engine \
-    -o comp_345_a1
+cmake . -B ./build
+```
+
+- build
+
+```bash
+cmake --build build
 ```
 
 - run a1
+
 ```bash
-./comp_345_a1
+./build/A1/Debug/comp_345_a1
 ```
