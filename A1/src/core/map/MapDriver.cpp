@@ -130,20 +130,3 @@ void testLoadMapsFromDirectory() {
     std::cout << "   ALL TESTS COMPLETED" << std::endl;
     std::cout << "========================================\n" << std::endl;
 }
-
-/**
- * Main function
- */
-int main() {
-    try {
-        testLoadMapsFromDirectory();
-    } catch (const std::exception& e) {
-        std::cerr << "❌ Exception occurred: " << e.what() << std::endl;
-        return 1;
-    } catch (...) {
-        std::cerr << "❌ Unknown exception occurred" << std::endl;
-        return 1;
-    }
-
-    return 0;
-}

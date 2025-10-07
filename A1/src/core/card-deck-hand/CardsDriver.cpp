@@ -47,6 +47,7 @@ void testCards() {
     Deck tempDeck;
     while (tempDeck.draw() != nullptr) initialDeckSize++;
 
+    (void) initialDeckSize;
     hand.playAll(dummyPlayer, dummyOrders, &deck);
 
     //show that cards are back in the deck after playing
