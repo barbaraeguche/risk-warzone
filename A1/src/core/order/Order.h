@@ -103,7 +103,7 @@ public:
 
 class OrdersList {
 public:
-  std::vector<Order*>* orders;
+  
 
   OrdersList();
   OrdersList(const OrdersList& other);
@@ -122,7 +122,8 @@ public:
   ~OrdersList();
 
 private:
-
+  std::vector<Order*>* orders;
+  
   //helper functions for validating indices
   bool validateIndex(int index);
 };
