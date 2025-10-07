@@ -4,11 +4,6 @@
 #include <iostream>
 
 /*
-assignement operator?
-validate method?
-*/
-
-/*
 Abstract base class for all order types.
 */
 class Order {
