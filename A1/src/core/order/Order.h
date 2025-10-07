@@ -39,7 +39,7 @@ class OrderDeploy : public Order {
 public:
   OrderDeploy();
   OrderDeploy(const OrderDeploy& other);
-  ~OrderDeploy();
+  ~OrderDeploy() override;
   bool validate() override;
   void execute() override;
   OrderDeploy& operator=(const OrderDeploy& other);
@@ -50,7 +50,7 @@ class OrderAdvance : public Order {
 public:
   OrderAdvance();
   OrderAdvance(const OrderAdvance& other);
-  ~OrderAdvance();
+  ~OrderAdvance() override;
   bool validate() override;
   void execute() override;
   OrderAdvance& operator=(const OrderAdvance& other);
@@ -61,7 +61,7 @@ class OrderBomb : public Order {
 public:
   OrderBomb();
   OrderBomb(const OrderBomb& other);
-  ~OrderBomb();
+  ~OrderBomb() override;
   bool validate() override;
   void execute() override;
   OrderBomb& operator=(const OrderBomb& other);
@@ -72,7 +72,7 @@ class OrderBlockade : public Order {
 public:
   OrderBlockade();
   OrderBlockade(const OrderBlockade& other);
-  ~OrderBlockade();
+  ~OrderBlockade() override;
   bool validate() override;
   void execute() override;
   OrderBlockade& operator=(const OrderBlockade& other);
@@ -83,7 +83,7 @@ class OrderAirlift : public Order {
 public:
   OrderAirlift();
   OrderAirlift(const OrderAirlift& other);
-  ~OrderAirlift();
+  ~OrderAirlift() override;
   bool validate() override;
   void execute() override;
   OrderAirlift& operator=(const OrderAirlift& other);
@@ -94,7 +94,7 @@ class OrderNegotiate : public Order {
 public:
   OrderNegotiate();
   OrderNegotiate(const OrderNegotiate& other);
-  ~OrderNegotiate();
+  ~OrderNegotiate() override;
   bool validate() override;
   void execute() override;
   OrderNegotiate& operator=(const OrderNegotiate& other);
