@@ -28,7 +28,7 @@ public:
   //stream insertion operator for printing orders
   friend std::ostream& operator<<(std::ostream& os, const Order& order);
 
-private:
+protected:
   //order type and description
   std::string* type;
   std::string* description;
@@ -39,6 +39,7 @@ class OrderDeploy : public Order {
 public:
   OrderDeploy();
   OrderDeploy(const OrderDeploy& other);
+  ~OrderDeploy();
   bool validate() override;
   void execute() override;
   OrderDeploy& operator=(const OrderDeploy& other);
@@ -49,6 +50,7 @@ class OrderAdvance : public Order {
 public:
   OrderAdvance();
   OrderAdvance(const OrderAdvance& other);
+  ~OrderAdvance();
   bool validate() override;
   void execute() override;
   OrderAdvance& operator=(const OrderAdvance& other);
@@ -59,6 +61,7 @@ class OrderBomb : public Order {
 public:
   OrderBomb();
   OrderBomb(const OrderBomb& other);
+  ~OrderBomb();
   bool validate() override;
   void execute() override;
   OrderBomb& operator=(const OrderBomb& other);
@@ -69,6 +72,7 @@ class OrderBlockade : public Order {
 public:
   OrderBlockade();
   OrderBlockade(const OrderBlockade& other);
+  ~OrderBlockade();
   bool validate() override;
   void execute() override;
   OrderBlockade& operator=(const OrderBlockade& other);
@@ -79,6 +83,7 @@ class OrderAirlift : public Order {
 public:
   OrderAirlift();
   OrderAirlift(const OrderAirlift& other);
+  ~OrderAirlift();
   bool validate() override;
   void execute() override;
   OrderAirlift& operator=(const OrderAirlift& other);
@@ -89,6 +94,7 @@ class OrderNegotiate : public Order {
 public:
   OrderNegotiate();
   OrderNegotiate(const OrderNegotiate& other);
+  ~OrderNegotiate();
   bool validate() override;
   void execute() override;
   OrderNegotiate& operator=(const OrderNegotiate& other);
