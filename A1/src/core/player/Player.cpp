@@ -1,7 +1,7 @@
 #include "Player.h"
 #include "../map/Map.h"
 #include "../card-deck-hand/Cards.h"
-#include "../order/Order.h"
+#include "../orders/Orders.h"
 #include <algorithm>
 #include <random>
 
@@ -200,7 +200,7 @@ void Player::playCard(int index, Deck* deck) {
  * Issue a generic order
  * @param order Pointer to the order to add
  */
-void Player::issueOrder(Order* order) {
+void Player::issueOrder(Orders* order) {
   if (order) {
       orders->add(order);
   }
@@ -213,7 +213,7 @@ void Player::issueOrder(Order* order) {
  */
 void Player::issueDeployOrder(Territory* target, int armies) {
   if (target && ownsTerritory(target) && armies > 0 && armies <= *reinforcementPool) {
-      Order* deployOrder = new OrderDeploy();
+      Orders* deployOrder = new OrderDeploy();
       orders->add(deployOrder);
       *reinforcementPool -= armies;
   }
@@ -227,7 +227,7 @@ void Player::issueDeployOrder(Territory* target, int armies) {
  */
 void Player::issueAdvanceOrder(Territory* source, Territory* target, int armies) {
   if (source && target && ownsTerritory(source) && armies > 0) {
-      Order* advanceOrder = new OrderAdvance();
+      Orders* advanceOrder = new OrderAdvance();
       orders->add(advanceOrder);
   }
 }
@@ -238,7 +238,7 @@ void Player::issueAdvanceOrder(Territory* source, Territory* target, int armies)
  */
 void Player::issueBombOrder(Territory* target) {
   if (target) {
-      Order* bombOrder = new OrderBomb();
+      Orders* bombOrder = new OrderBomb();
       orders->add(bombOrder);
   }
 }
@@ -249,7 +249,7 @@ void Player::issueBombOrder(Territory* target) {
  */
 void Player::issueBlockadeOrder(Territory* target) {
   if (target && ownsTerritory(target)) {
-      Order* blockadeOrder = new OrderBlockade();
+      Orders* blockadeOrder = new OrderBlockade();
       orders->add(blockadeOrder);
   }
 }
@@ -262,7 +262,7 @@ void Player::issueBlockadeOrder(Territory* target) {
  */
 void Player::issueAirliftOrder(Territory* source, Territory* target, int armies) {
   if (source && target && ownsTerritory(source) && armies > 0) {
-      Order* airliftOrder = new OrderAirlift();
+      Orders* airliftOrder = new OrderAirlift();
       orders->add(airliftOrder);
   }
 }
@@ -273,7 +273,7 @@ void Player::issueAirliftOrder(Territory* source, Territory* target, int armies)
  */
 void Player::issueNegotiateOrder(Player* targetPlayer) {
   if (targetPlayer && targetPlayer != this) {
-      Order* negotiateOrder = new OrderNegotiate();
+      Orders* negotiateOrder = new OrderNegotiate();
       orders->add(negotiateOrder);
   }
 }

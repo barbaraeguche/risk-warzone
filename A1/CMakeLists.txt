@@ -5,8 +5,8 @@ add_executable(comp_345_a1
 	src/core/map/MapDriver.cpp
 	src/core/player/Player.cpp
 	src/core/player/PlayerDriver.cpp
-	src/core/order/Order.cpp
-	src/core/order/OrderDriver.cpp
+	src/core/orders/Orders.cpp
+	src/core/orders/OrdersDriver.cpp
 	src/core/card-deck-hand/Cards.cpp
 	src/core/card-deck-hand/CardsDriver.cpp
 	src/core/game-engine/GameEngine.cpp
@@ -19,7 +19,7 @@ target_include_directories(comp_345_a1 PRIVATE
 	src/core
 	src/core/map
 	src/core/player
-	src/core/order
+	src/core/orders
 	src/core/card-deck-hand
 	src/core/game-engine
 )
