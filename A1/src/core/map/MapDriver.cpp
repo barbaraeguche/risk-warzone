@@ -44,8 +44,9 @@ void testLoadMaps() {
   MapLoader mapLoader;
 
   // Find all .map files in mapFiles directory
-  const std::string cwd = std::filesystem::current_path();
-  const std::string mapDirectory = std::format("{}/mapFiles", cwd);
+ const std::filesystem::path cwd = std::filesystem::current_path();
+ const std::filesystem::path mapDirectoryPath = cwd / "A1" / "mapFiles";
+const std::string mapDirectory = mapDirectoryPath.string();
 
   std::cout << "Searching for .map files in: " << mapDirectory << std::endl;
   const std::vector<std::string> mapFiles = findMapFiles(mapDirectory);
