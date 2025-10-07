@@ -11,22 +11,22 @@ validate method?
 /*
 Abstract base class for all order types.
 */
-class Order {
+class Orders {
 public:
-  Order();
+  Orders();
 
   // validates an order is valid based on the current gamestate
   virtual bool validate() = 0;
 
   // executes the order, assuming it has been validated
   virtual void execute() = 0;
-  virtual Order* clone() const = 0;
+  virtual Orders* clone() const = 0;
 
   //Make destructor virtual to avoid memory leaks
-  virtual ~Order() = default;
+  virtual ~Orders() = default;
 
   //stream insertion operator for printing orders
-  friend std::ostream& operator<<(std::ostream& os, const Order& order);
+  friend std::ostream& operator<<(std::ostream& os, const Orders& order);
 
 protected:
   //order type and description
@@ -35,7 +35,7 @@ protected:
 
 };
 
-class OrderDeploy : public Order {
+class OrderDeploy : public Orders {
 public:
   OrderDeploy();
   OrderDeploy(const OrderDeploy& other);
@@ -43,10 +43,10 @@ public:
   bool validate() override;
   void execute() override;
   OrderDeploy& operator=(const OrderDeploy& other);
-  Order* clone() const override;
+  Orders* clone() const override;
 };
 
-class OrderAdvance : public Order {
+class OrderAdvance : public Orders {
 public:
   OrderAdvance();
   OrderAdvance(const OrderAdvance& other);
@@ -54,10 +54,10 @@ public:
   bool validate() override;
   void execute() override;
   OrderAdvance& operator=(const OrderAdvance& other);
-  Order* clone() const override;
+  Orders* clone() const override;
 };
 
-class OrderBomb : public Order {
+class OrderBomb : public Orders {
 public:
   OrderBomb();
   OrderBomb(const OrderBomb& other);
@@ -65,10 +65,10 @@ public:
   bool validate() override;
   void execute() override;
   OrderBomb& operator=(const OrderBomb& other);
-  Order* clone() const override;
+  Orders* clone() const override;
 };
 
-class OrderBlockade : public Order {
+class OrderBlockade : public Orders {
 public:
   OrderBlockade();
   OrderBlockade(const OrderBlockade& other);
@@ -76,10 +76,10 @@ public:
   bool validate() override;
   void execute() override;
   OrderBlockade& operator=(const OrderBlockade& other);
-  Order* clone() const override;
+  Orders* clone() const override;
 };
 
-class OrderAirlift : public Order {
+class OrderAirlift : public Orders {
 public:
   OrderAirlift();
   OrderAirlift(const OrderAirlift& other);
@@ -87,10 +87,10 @@ public:
   bool validate() override;
   void execute() override;
   OrderAirlift& operator=(const OrderAirlift& other);
-  Order* clone() const override;
+  Orders* clone() const override;
 };
 
-class OrderNegotiate : public Order {
+class OrderNegotiate : public Orders {
 public:
   OrderNegotiate();
   OrderNegotiate(const OrderNegotiate& other);
@@ -98,12 +98,12 @@ public:
   bool validate() override;
   void execute() override;
   OrderNegotiate& operator=(const OrderNegotiate& other);
-  Order* clone() const override;
+  Orders* clone() const override;
 };
 
 class OrdersList {
 public:
-  std::vector<Order*>* orders;
+  std::vector<Orders*>* orders;
 
   OrdersList();
   OrdersList(const OrdersList& other);
@@ -111,7 +111,7 @@ public:
   friend std::ostream& operator<<(std::ostream& os, const OrdersList& orderlist);
 
   //add an order to the list
-  void add(Order* order);
+  void add(Orders* order);
 
   //remove an order from the list at a given index
   void remove(int index);

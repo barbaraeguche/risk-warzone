@@ -9,7 +9,7 @@
 class Territory;
 class Card;
 class Hand;
-class Order;
+class Orders;
 class OrdersList;
 class Deck;
 
@@ -56,7 +56,7 @@ public:
   void playCard(int index, Deck* deck);
 
   // Order management
-  void issueOrder(Order* order);
+  void issueOrder(Orders* order);
   void issueDeployOrder(Territory* target, int armies);
   void issueAdvanceOrder(Territory* source, Territory* target, int armies);
   void issueBombOrder(Territory* target);

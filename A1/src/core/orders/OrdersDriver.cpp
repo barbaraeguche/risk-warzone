@@ -1,10 +1,10 @@
 #include <iostream>
-#include "Order.h"
+#include "Orders.h"
 
 void testOrdersLists() {
 
   // Testing order functions
-  Order* testOrder = new OrderDeploy();
+  Orders* testOrder = new OrderDeploy();
 
   // Testing validate() and execute()
   std::cout << "Testing validate() and execute() on a Deploy Order:" << '\n';
