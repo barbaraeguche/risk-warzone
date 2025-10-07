@@ -44,17 +44,10 @@ void testLoadMaps() {
   MapLoader mapLoader;
 
   // Find all .map files in mapFiles directory
-  // Adjust path based on where the executable is run from
-  std::string mapDirectory = "mapFiles"; // From src directory
+  const std::string cwd = std::filesystem::current_path();
+  const std::string mapDirectory = std::format("{}/mapFiles", cwd);
+
   std::cout << "Searching for .map files in: " << mapDirectory << std::endl;
-
-  // Try to resolve absolute path for debugging
-  try {
-    std::cout << "Absolute path: " << fs::absolute(mapDirectory) << std::endl;
-  } catch (...) {
-    // Ignore if path doesn't exist yet
-  }
-
   const std::vector<std::string> mapFiles = findMapFiles(mapDirectory);
 
   if (mapFiles.empty()) {
