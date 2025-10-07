@@ -115,7 +115,7 @@ Deck::Deck() {
         cards->push_back(new AirliftCard());
         cards->push_back(new DiplomacyCard());
     }
-    std::srand(std::time(nullptr));
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
 }
 
 Deck::Deck(const Deck& other) {
@@ -217,7 +217,7 @@ void Hand::printHand() const {
 }
 
 int Hand::size() const {
-    return handCards->size();
+    return static_cast<int>(handCards->size());
 }
 
 std::ostream& operator<<(std::ostream& out, const Hand& hand) {

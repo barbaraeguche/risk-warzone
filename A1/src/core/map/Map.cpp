@@ -581,11 +581,11 @@ void Map::clear() const {
 }
 
 int Map::getNumberOfTerritories() const {
-  return territories->size();
+  return static_cast<int>(territories->size());
 }
 
 int Map::getNumberOfContinents() const {
-  return continents->size();
+  return static_cast<int>(continents->size());
 }
 
 // --- HELPERS ---

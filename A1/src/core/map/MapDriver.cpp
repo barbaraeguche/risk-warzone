@@ -67,7 +67,7 @@ void testLoadMaps() {
 
   int testNumber = 1;
   int passedTests = 0;
-  const int totalTests = mapFiles.size();
+  const int totalTests = static_cast<int>(mapFiles.size());
 
   for (const std::string& filepath : mapFiles) {
     std::cout << "\n========================================" << std::endl;

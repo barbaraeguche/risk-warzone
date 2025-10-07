@@ -362,7 +362,7 @@ int Player::getTotalArmies() const {
  * @return Number of territories
  */
 int Player::getTerritoryCount() const {
-  return territories->size();
+  return static_cast<int>(territories->size());
 }
 
 // ==================== Stream Insertion Operator ====================
