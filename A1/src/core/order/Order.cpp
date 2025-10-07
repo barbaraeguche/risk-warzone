@@ -1,9 +1,48 @@
 #include "Order.h"
 
+
+// Base Order
+Order::Order():
+  type{nullptr},
+  description{nullptr} 
+  {}
+
+std::ostream& operator<<(std::ostream& os, const Order& order) { 
+  if (!order.type || !order.description) {
+    os << "This order is not properly initialized.";
+    return os;
+  }
+
+  os << "An order of type: " << *(order.type) << ". \n" << "Description: " << *(order.description) << ". \n";
+  return os;  
+}
+
 //  OrderDeploy
-OrderDeploy::OrderDeploy() {}
-OrderDeploy::OrderDeploy(const OrderDeploy& other) {}
-OrderDeploy& OrderDeploy::operator=(const OrderDeploy& other) { return *this; }
+OrderDeploy::OrderDeploy() {
+  type = new std::string("deploy");
+  description = new std::string("Deploys armies to a specified territory you own.");
+}
+
+OrderDeploy::OrderDeploy(const OrderDeploy& other) {
+  type = new std::string(*(other.type));
+  description = new std::string(*(other.description));
+}
+
+OrderDeploy::~OrderDeploy() {
+  delete type;
+  delete description;
+}
+
+OrderDeploy& OrderDeploy::operator=(const OrderDeploy& other) { 
+  if (this != &other) {
+    delete type;
+    delete description;
+    type = new std::string(*(other.type));
+    description = new std::string(*(other.description));
+  }
+  return *this;
+}
+
 bool OrderDeploy::validate() { return false; }
 void OrderDeploy::execute() {}
 
@@ -11,14 +50,33 @@ Order* OrderDeploy::clone() const {
   return new OrderDeploy(*this); 
 }
 
-std::ostream& operator<<(std::ostream& os, const OrderDeploy& order) { 
-  os << "A Deploy Order."; return os; 
-}
 
 //  OrderAdvance 
-OrderAdvance::OrderAdvance() {}
-OrderAdvance::OrderAdvance(const OrderAdvance& other) {}
-OrderAdvance& OrderAdvance::operator=(const OrderAdvance& other) { return *this; }
+OrderAdvance::OrderAdvance() {
+  type = new std::string("advance");
+  description = new std::string("Moves armies from one territory to another, can also be used to attack enemy territories.");
+}
+
+OrderAdvance::OrderAdvance(const OrderAdvance& other) {
+  type = new std::string(*(other.type));
+  description = new std::string(*(other.description));
+}
+
+OrderAdvance::~OrderAdvance() {
+  delete type;
+  delete description;
+}
+
+OrderAdvance& OrderAdvance::operator=(const OrderAdvance& other) { 
+  if (this != &other) {
+    delete type;
+    delete description;
+    type = new std::string(*(other.type));
+    description = new std::string(*(other.description));
+  }
+  return *this;
+}
+
 bool OrderAdvance::validate() { return false; }
 void OrderAdvance::execute() {}
 
@@ -26,14 +84,33 @@ Order* OrderAdvance::clone() const {
   return new OrderAdvance(*this); 
 }
 
-std::ostream& operator<<(std::ostream& os, const OrderAdvance& order) { 
-  os << "A Advance Order."; return os; 
-}
 
 //  OrderBomb 
-OrderBomb::OrderBomb() {}
-OrderBomb::OrderBomb(const OrderBomb& other) {}
-OrderBomb& OrderBomb::operator=(const OrderBomb& other) { return *this; }
+OrderBomb::OrderBomb() {
+  type = new std::string("bomb");
+  description = new std::string("Destroys half the armies on an enemy territory, can only be used once per game.");
+}
+
+OrderBomb::OrderBomb(const OrderBomb& other) {
+  type = new std::string(*(other.type));
+  description = new std::string(*(other.description));
+}
+
+OrderBomb::~OrderBomb() {
+  delete type;
+  delete description;
+}
+
+OrderBomb& OrderBomb::operator=(const OrderBomb& other) { 
+  if (this != &other) {
+    delete type;
+    delete description;
+    type = new std::string(*(other.type));
+    description = new std::string(*(other.description));
+  }
+  return *this;
+}
+
 bool OrderBomb::validate() { return false; }
 void OrderBomb::execute() {}
 
@@ -41,14 +118,33 @@ Order* OrderBomb::clone() const {
   return new OrderBomb(*this); 
 }
 
-std::ostream& operator<<(std::ostream& os, const OrderBomb& order) { 
-  os << "A Bomb Order."; return os; 
-}
 
 //  OrderBlockade 
-OrderBlockade::OrderBlockade() {}
-OrderBlockade::OrderBlockade(const OrderBlockade& other) {}
-OrderBlockade& OrderBlockade::operator=(const OrderBlockade& other) { return *this; }
+OrderBlockade::OrderBlockade() {
+  type = new std::string("blockade");
+  description = new std::string("Triples the armies on one of your territories and makes it neutral, can only be used once per game.");
+}
+
+OrderBlockade::OrderBlockade(const OrderBlockade& other) {
+  type = new std::string(*(other.type));
+  description = new std::string(*(other.description));
+}
+
+OrderBlockade::~OrderBlockade() {
+  delete type;
+  delete description;
+}
+
+OrderBlockade& OrderBlockade::operator=(const OrderBlockade& other) { 
+  if (this != &other) {
+    delete type;
+    delete description;
+    type = new std::string(*(other.type));
+    description = new std::string(*(other.description));
+  }
+  return *this;
+}
+
 bool OrderBlockade::validate() { return false; }
 void OrderBlockade::execute() {}
 
@@ -56,14 +152,33 @@ Order* OrderBlockade::clone() const {
   return new OrderBlockade(*this); 
 }
 
-std::ostream& operator<<(std::ostream& os, const OrderBlockade& order) { 
-  os << "A Blockade Order."; return os; 
-}
 
 //  OrderAirlift 
-OrderAirlift::OrderAirlift() {}
-OrderAirlift::OrderAirlift(const OrderAirlift& other) {}
-OrderAirlift& OrderAirlift::operator=(const OrderAirlift& other) { return *this; }
+OrderAirlift::OrderAirlift() {
+  type = new std::string("airlift");
+  description = new std::string("Moves any number of armies from one of your territories to another territory you own, can only be used once per game.");
+}
+
+OrderAirlift::OrderAirlift(const OrderAirlift& other) {
+  type = new std::string(*(other.type));
+  description = new std::string(*(other.description));
+}
+
+OrderAirlift::~OrderAirlift() {
+  delete type;
+  delete description;
+}
+
+OrderAirlift& OrderAirlift::operator=(const OrderAirlift& other) { 
+  if (this != &other) {
+    delete type;
+    delete description;
+    type = new std::string(*(other.type));
+    description = new std::string(*(other.description));
+  }
+  return *this;
+}
+
 bool OrderAirlift::validate() { return false; }
 void OrderAirlift::execute() {}
 
@@ -71,14 +186,33 @@ Order* OrderAirlift::clone() const {
   return new OrderAirlift(*this); 
 }
 
-std::ostream& operator<<(std::ostream& os, const OrderAirlift& order) { 
-  os << "A Airlift Order."; return os; 
-}
 
 //  OrderNegotiate 
-OrderNegotiate::OrderNegotiate() {}
-OrderNegotiate::OrderNegotiate(const OrderNegotiate& other) {}
-OrderNegotiate& OrderNegotiate::operator=(const OrderNegotiate& other) { return *this; }
+OrderNegotiate::OrderNegotiate() {
+  type = new std::string("negotiate");
+  description = new std::string("Prevents attacks between you and another player until your next turn, can only be used once per game.");
+}
+
+OrderNegotiate::OrderNegotiate(const OrderNegotiate& other) {
+  type = new std::string(*(other.type));
+  description = new std::string(*(other.description));
+}
+
+OrderNegotiate::~OrderNegotiate() {
+  delete type;
+  delete description;
+}
+
+OrderNegotiate& OrderNegotiate::operator=(const OrderNegotiate& other) { 
+  if (this != &other) {
+    delete type;
+    delete description;
+    type = new std::string(*(other.type));
+    description = new std::string(*(other.description));
+  }
+  return *this;
+}
+
 bool OrderNegotiate::validate() { return false; }
 void OrderNegotiate::execute() {}
 
@@ -86,9 +220,6 @@ Order* OrderNegotiate::clone() const {
   return new OrderNegotiate(*this); 
 }
 
-std::ostream& operator<<(std::ostream& os, const OrderNegotiate& order) { 
-  os << "A Negotiate Order."; return os; 
-}
 
 //  OrdersList 
 OrdersList::OrdersList() {
@@ -133,6 +264,8 @@ void OrdersList::remove(int index) {
 }
 
 void OrdersList::move(int fromIndex, int toIndex) {
+
+  //Validate indices
   if (!validateIndex(fromIndex) || !validateIndex(toIndex)) {
     return;
   }
