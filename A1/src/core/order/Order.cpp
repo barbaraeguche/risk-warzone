@@ -1,5 +1,22 @@
 #include "Order.h"
 
+
+// Base Order
+Order::Order():
+  type{nullptr},
+  description{nullptr} 
+  {}
+
+std::ostream& operator<<(std::ostream& os, const Order& order) { 
+  if (!order.type || !order.description) {
+    os << "This order is not properly initialized.";
+    return os;
+  }
+
+  os << "An order of type: " << *(order.type) << ". \n" << "Description: " << *(order.description) << ". \n";
+  return os;  
+}
+
 //  OrderDeploy
 OrderDeploy::OrderDeploy() {}
 OrderDeploy::OrderDeploy(const OrderDeploy& other) {}
@@ -11,9 +28,6 @@ Order* OrderDeploy::clone() const {
   return new OrderDeploy(*this); 
 }
 
-std::ostream& operator<<(std::ostream& os, const OrderDeploy& order) { 
-  os << "A Deploy Order."; return os; 
-}
 
 //  OrderAdvance 
 OrderAdvance::OrderAdvance() {}
@@ -26,9 +40,6 @@ Order* OrderAdvance::clone() const {
   return new OrderAdvance(*this); 
 }
 
-std::ostream& operator<<(std::ostream& os, const OrderAdvance& order) { 
-  os << "A Advance Order."; return os; 
-}
 
 //  OrderBomb 
 OrderBomb::OrderBomb() {}
@@ -41,9 +52,6 @@ Order* OrderBomb::clone() const {
   return new OrderBomb(*this); 
 }
 
-std::ostream& operator<<(std::ostream& os, const OrderBomb& order) { 
-  os << "A Bomb Order."; return os; 
-}
 
 //  OrderBlockade 
 OrderBlockade::OrderBlockade() {}
@@ -56,9 +64,6 @@ Order* OrderBlockade::clone() const {
   return new OrderBlockade(*this); 
 }
 
-std::ostream& operator<<(std::ostream& os, const OrderBlockade& order) { 
-  os << "A Blockade Order."; return os; 
-}
 
 //  OrderAirlift 
 OrderAirlift::OrderAirlift() {}
@@ -71,9 +76,6 @@ Order* OrderAirlift::clone() const {
   return new OrderAirlift(*this); 
 }
 
-std::ostream& operator<<(std::ostream& os, const OrderAirlift& order) { 
-  os << "A Airlift Order."; return os; 
-}
 
 //  OrderNegotiate 
 OrderNegotiate::OrderNegotiate() {}
@@ -86,9 +88,6 @@ Order* OrderNegotiate::clone() const {
   return new OrderNegotiate(*this); 
 }
 
-std::ostream& operator<<(std::ostream& os, const OrderNegotiate& order) { 
-  os << "A Negotiate Order."; return os; 
-}
 
 //  OrdersList 
 OrdersList::OrdersList() {
@@ -133,7 +132,7 @@ void OrdersList::remove(int index) {
 }
 
 void OrdersList::move(int fromIndex, int toIndex) {
-  
+
   //Validate indices
   if (!validateIndex(fromIndex) || !validateIndex(toIndex)) {
     return;

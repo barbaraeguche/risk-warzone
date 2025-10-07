@@ -4,7 +4,6 @@
 #include <iostream>
 
 /*
-store description of behavior as string
 assignement operator?
 validate method?
 */
@@ -14,6 +13,7 @@ Abstract base class for all order types.
 */
 class Order {
 public:
+  Order();
 
   // validates an order is valid based on the current gamestate
   virtual bool validate() = 0;
@@ -24,6 +24,15 @@ public:
 
   //Make destructor virtual to avoid memory leaks
   virtual ~Order() = default;
+
+  //stream insertion operator for printing orders
+  friend std::ostream& operator<<(std::ostream& os, const Order& order);
+
+private:
+  //order type and description
+  std::string* type;
+  std::string* description;
+
 };
 
 class OrderDeploy : public Order {
@@ -33,7 +42,6 @@ public:
   bool validate() override;
   void execute() override;
   OrderDeploy& operator=(const OrderDeploy& other);
-  friend std::ostream& operator<<(std::ostream& os, const OrderDeploy& order);
   Order* clone() const override;
 };
 
@@ -44,7 +52,6 @@ public:
   bool validate() override;
   void execute() override;
   OrderAdvance& operator=(const OrderAdvance& other);
-  friend std::ostream& operator<<(std::ostream& os, const OrderAdvance& order);
   Order* clone() const override;
 };
 
@@ -55,7 +62,6 @@ public:
   bool validate() override;
   void execute() override;
   OrderBomb& operator=(const OrderBomb& other);
-  friend std::ostream& operator<<(std::ostream& os, const OrderBomb& order);
   Order* clone() const override;
 };
 
@@ -66,7 +72,6 @@ public:
   bool validate() override;
   void execute() override;
   OrderBlockade& operator=(const OrderBlockade& other);
-  friend std::ostream& operator<<(std::ostream& os, const OrderBlockade& order);
   Order* clone() const override;
 };
 
@@ -77,7 +82,6 @@ public:
   bool validate() override;
   void execute() override;
   OrderAirlift& operator=(const OrderAirlift& other);
-  friend std::ostream& operator<<(std::ostream& os, const OrderAirlift& order);
   Order* clone() const override;
 };
 
@@ -88,7 +92,6 @@ public:
   bool validate() override;
   void execute() override;
   OrderNegotiate& operator=(const OrderNegotiate& other);
-  friend std::ostream& operator<<(std::ostream& os, const OrderNegotiate& order);
   Order* clone() const override;
 };
 
