@@ -7,7 +7,7 @@ void testCards(); // To be implemented in CardsDriver.cpp
 void testGameStates(); // Implemented in GameEngineDriver.cpp
 
 /**
- * Main driver function that calls all test functions for each part
+ * The Main driver function that calls all test functions for each part
  * This demonstrates the execution of all parts of the assignment
  */
 int main() {
