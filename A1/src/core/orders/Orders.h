@@ -29,11 +29,6 @@ protected:
   std::string* type;
   std::string* description;
 
-  //Context needed for validation and execution
-  // Player* player;
-  // Territory* source;
-  // Territory* target;
-  // int* soldiers;
 };
 
 class OrderDeploy : public Order {
