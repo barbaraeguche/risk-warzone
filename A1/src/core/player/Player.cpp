@@ -200,7 +200,7 @@ void Player::playCard(int index, Deck* deck) {
  * Issue a generic order
  * @param order Pointer to the order to add
  */
-void Player::issueOrder(Orders* order) {
+void Player::issueOrder(Order* order) {
   if (order) {
       orders->add(order);
   }
@@ -212,11 +212,7 @@ void Player::issueOrder(Orders* order) {
  * @param armies Number of armies to deploy
  */
 void Player::issueDeployOrder(Territory* target, int armies) {
-  if (target && ownsTerritory(target) && armies > 0 && armies <= *reinforcementPool) {
-      Orders* deployOrder = new OrderDeploy();
-      orders->add(deployOrder);
-      *reinforcementPool -= armies;
-  }
+  orders->add(new OrderDeploy(this, target, new int(armies)));
 }
 
 /**
@@ -226,10 +222,7 @@ void Player::issueDeployOrder(Territory* target, int armies) {
  * @param armies Number of armies to advance
  */
 void Player::issueAdvanceOrder(Territory* source, Territory* target, int armies) {
-  if (source && target && ownsTerritory(source) && armies > 0) {
-      Orders* advanceOrder = new OrderAdvance();
-      orders->add(advanceOrder);
-  }
+  orders->add(new OrderAdvance(this, source, target, new int(armies)));
 }
 
 /**
@@ -237,10 +230,7 @@ void Player::issueAdvanceOrder(Territory* source, Territory* target, int armies)
  * @param target Territory to bomb
  */
 void Player::issueBombOrder(Territory* target) {
-  if (target) {
-      Orders* bombOrder = new OrderBomb();
-      orders->add(bombOrder);
-  }
+  orders->add(new OrderBomb(target));
 }
 
 /**
@@ -248,10 +238,7 @@ void Player::issueBombOrder(Territory* target) {
  * @param target Territory to blockade
  */
 void Player::issueBlockadeOrder(Territory* target) {
-  if (target && ownsTerritory(target)) {
-      Orders* blockadeOrder = new OrderBlockade();
-      orders->add(blockadeOrder);
-  }
+  orders->add(new OrderBlockade(this, target));
 }
 
 /**
@@ -261,10 +248,7 @@ void Player::issueBlockadeOrder(Territory* target) {
  * @param armies Number of armies to airlift
  */
 void Player::issueAirliftOrder(Territory* source, Territory* target, int armies) {
-  if (source && target && ownsTerritory(source) && armies > 0) {
-      Orders* airliftOrder = new OrderAirlift();
-      orders->add(airliftOrder);
-  }
+  orders->add(new OrderAirlift(this, source, target, new int(armies)));
 }
 
 /**
@@ -272,10 +256,7 @@ void Player::issueAirliftOrder(Territory* source, Territory* target, int armies)
  * @param targetPlayer Player to negotiate with
  */
 void Player::issueNegotiateOrder(Player* targetPlayer) {
-  if (targetPlayer && targetPlayer != this) {
-      Orders* negotiateOrder = new OrderNegotiate();
-      orders->add(negotiateOrder);
-  }
+  orders->add(new OrderNegotiate(this, targetPlayer));
 }
 
 // ==================== Strategy Methods ====================
