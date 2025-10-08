@@ -1,109 +1,132 @@
 #pragma once
+#include "../player/Player.h"
 
 #include <vector>
 #include <iostream>
 
 /*
-assignement operator?
-validate method?
-*/
-
-/*
 Abstract base class for all order types.
 */
-class Orders {
+class Order {
 public:
-  Orders();
+  Order();
 
   // validates an order is valid based on the current gamestate
   virtual bool validate() = 0;
 
   // executes the order, assuming it has been validated
   virtual void execute() = 0;
-  virtual Orders* clone() const = 0;
+  virtual Order* clone() const = 0;
 
   //Make destructor virtual to avoid memory leaks
-  virtual ~Orders() = default;
+  virtual ~Order() = default;
 
   //stream insertion operator for printing orders
-  friend std::ostream& operator<<(std::ostream& os, const Orders& order);
+  friend std::ostream& operator<<(std::ostream& os, const Order& order);
 
 protected:
   //order type and description
   std::string* type;
   std::string* description;
 
+  //Context needed for validation and execution
+  // Player* player;
+  // Territory* source;
+  // Territory* target;
+  // int* soldiers;
 };
 
-class OrderDeploy : public Orders {
+class OrderDeploy : public Order {
+private:
+  Player* player;
+  Territory* target;
+  int* soldiers;
 public:
-  OrderDeploy();
+  OrderDeploy(Player* player, Territory* target, int* soldiers);
   OrderDeploy(const OrderDeploy& other);
   ~OrderDeploy() override;
   bool validate() override;
   void execute() override;
   OrderDeploy& operator=(const OrderDeploy& other);
-  Orders* clone() const override;
+  Order* clone() const override;
 };
 
-class OrderAdvance : public Orders {
+class OrderAdvance : public Order {
+private:
+  Player* player;
+  Territory* source;
+  Territory* target;
+  int* soldiers;
 public:
-  OrderAdvance();
+  OrderAdvance(Player* player, Territory* source, Territory* target, int* soldiers);
   OrderAdvance(const OrderAdvance& other);
   ~OrderAdvance() override;
   bool validate() override;
   void execute() override;
   OrderAdvance& operator=(const OrderAdvance& other);
-  Orders* clone() const override;
+  Order* clone() const override;
 };
 
-class OrderBomb : public Orders {
+class OrderBomb : public Order {
+private:
+  Territory* target;
 public:
-  OrderBomb();
+  OrderBomb(Territory* target);
   OrderBomb(const OrderBomb& other);
   ~OrderBomb() override;
   bool validate() override;
   void execute() override;
   OrderBomb& operator=(const OrderBomb& other);
-  Orders* clone() const override;
+  Order* clone() const override;
 };
 
-class OrderBlockade : public Orders {
+class OrderBlockade : public Order {
+private:
+  Player* player;
+  Territory* target;
 public:
-  OrderBlockade();
+  OrderBlockade(Player* player, Territory* target);
   OrderBlockade(const OrderBlockade& other);
   ~OrderBlockade() override;
   bool validate() override;
   void execute() override;
   OrderBlockade& operator=(const OrderBlockade& other);
-  Orders* clone() const override;
+  Order* clone() const override;
 };
 
-class OrderAirlift : public Orders {
+class OrderAirlift : public Order {
+private:
+  Player* player;
+  Territory* source;
+  Territory* target;
+  int* soldiers;
 public:
-  OrderAirlift();
+  OrderAirlift(Player* player, Territory* source, Territory* target, int* soldiers);
   OrderAirlift(const OrderAirlift& other);
   ~OrderAirlift() override;
   bool validate() override;
   void execute() override;
   OrderAirlift& operator=(const OrderAirlift& other);
-  Orders* clone() const override;
+  Order* clone() const override;
 };
 
-class OrderNegotiate : public Orders {
+class OrderNegotiate : public Order {
+private:
+  Player* player;
+  Player* targetPlayer;
 public:
-  OrderNegotiate();
+  OrderNegotiate(Player* player, Player* targetPlayer);
   OrderNegotiate(const OrderNegotiate& other);
   ~OrderNegotiate() override;
   bool validate() override;
   void execute() override;
   OrderNegotiate& operator=(const OrderNegotiate& other);
-  Orders* clone() const override;
+  Order* clone() const override;
 };
 
 class OrdersList {
 public:
-  std::vector<Orders*>* orders;
+  std::vector<Order*>* orders;
 
   OrdersList();
   OrdersList(const OrdersList& other);
@@ -111,7 +134,7 @@ public:
   friend std::ostream& operator<<(std::ostream& os, const OrdersList& orderlist);
 
   //add an order to the list
-  void add(Orders* order);
+  void add(Order* order);
 
   //remove an order from the list at a given index
   void remove(int index);
