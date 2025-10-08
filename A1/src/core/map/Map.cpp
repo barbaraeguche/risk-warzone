@@ -35,13 +35,21 @@ Territory::Territory(const Territory& other) : territoryName(new std::string(*ot
 
 Territory& Territory::operator=(const Territory& other) {
   if (this != &other) {
-    setName(*other.territoryName);
-    setId(*other.territoryId);
-    setOwner(other.ownerPlayer);
-    setArmies(*other.armies);
+    // clean up existing
+    delete territoryName;
+    delete territoryId;
+    delete armies;
+    delete adjTerritories;
 
-    adjTerritories = other.adjTerritories;
-    setContinent(other.continent);
+    // deep copy of primitives and containers
+    territoryName = new std::string(*other.territoryName);
+    territoryId = new int(*other.territoryId);
+    armies = new int(*other.armies);
+    adjTerritories = new std::vector<Territory*>(*other.adjTerritories);
+
+    // shallow copy for shared references
+    ownerPlayer = other.ownerPlayer;
+    continent = other.continent;
   }
   return *this;
 }
@@ -186,11 +194,19 @@ Continent::Continent(const Continent& other) : continentName(new std::string(*ot
 
 Continent& Continent::operator=(const Continent& other) {
   if (this != &other) {
-    setName(*other.continentName);
-    setId(*other.continentId);
-    setControlValue(*other.controlValue);
+    // clean up old resources
+    delete continentName;
+    delete continentId;
+    delete controlValue;
+    delete territories;
 
-    territories = other.territories;
+    // deep copy primitives
+    continentName = new std::string(*other.continentName);
+    continentId = new int(*other.continentId);
+    controlValue = new int(*other.controlValue);
+
+    // deep copy vector (shallow copy of pointers)
+    territories = new std::vector<Territory*>(*other.territories);
   }
   return *this;
 }
@@ -377,15 +393,27 @@ Map::Map(const Map& other) : mapName(new std::string(*other.mapName)),
 
 Map& Map::operator=(const Map& other) {
   if (this != &other) {
-    clear();
-    Map temp(other);
+    delete mapName;
+    delete territories;
+    delete continents;
+    delete territoryNameMap;
+    delete territoryIdMap;
+    delete continentNameMap;
 
-    setMapName(*temp.mapName);
-    territories = std::move(temp.territories);
-    continents = std::move(temp.continents);
-    territoryNameMap = std::move(temp.territoryNameMap);
-    territoryIdMap = std::move(temp.territoryIdMap);
-    continentNameMap = std::move(temp.continentNameMap);
+    mapName = new std::string(*other.mapName);
+    territories = new std::vector<std::unique_ptr<Territory>>();
+    for (const auto& t : *other.territories) {
+      territories->push_back(std::make_unique<Territory>(*t));
+    }
+
+    continents = new std::vector<std::unique_ptr<Continent>>();
+    for (const auto& c : *other.continents) {
+      continents->push_back(std::make_unique<Continent>(*c));
+    }
+
+    territoryNameMap = new std::unordered_map<std::string, Territory*>(*other.territoryNameMap);
+    territoryIdMap = new std::unordered_map<int, Territory*>(*other.territoryIdMap);
+    continentNameMap = new std::unordered_map<std::string, Continent*>(*other.continentNameMap);
   }
   return *this;
 }
@@ -587,7 +615,7 @@ void Map::displayMap() const {
   std::cout << "========================================\n" << std::endl;
 }
 
-void Map::clear() const {
+void Map::clear() {
   territories->clear();
   continents->clear();
   territoryNameMap->clear();

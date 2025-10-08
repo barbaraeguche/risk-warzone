@@ -198,7 +198,7 @@ public:
   // utility
   void displayMap() const;
 
-  void clear() const;
+  void clear();
 
   int getNumberOfTerritories() const;
 
