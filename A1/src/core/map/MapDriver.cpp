@@ -108,7 +108,6 @@ void testLoadMaps() {
     if (overallValid) {
       passedTests++;
       // optionally display full map details for valid maps
-      // map->displayMap();
     }
   }
 
