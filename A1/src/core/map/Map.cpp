@@ -284,7 +284,9 @@ bool Continent::isConnected() const {
 void Continent::displayInfo() const {
   std::cout << "Continent: "
       << (continentName ? *continentName : "None")
-      << " (ID: " << (continentId ? *continentId : -1) << ")" << std::endl;
+      << " (ID: " << (continentId ? *continentId : -1)
+      << ", Bonus: " << (controlValue ? *controlValue : 0) << ")"
+      << std::endl;
 
   std::cout << "  Territories (" << territories->size() << "): ";
   if (territories->empty()) {
