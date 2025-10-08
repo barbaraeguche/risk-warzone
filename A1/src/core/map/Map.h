@@ -84,13 +84,14 @@ class Continent {
 private:
   std::string* continentName;
   int* continentId;
+  int* controlValue;
   std::vector<Territory *>* territories; // territories continents in this continent
 
 public:
   // constructors
   Continent();
 
-  Continent(const std::string& name, int id);
+  Continent(const std::string& name, int id, int bonus);
 
   Continent(const Continent& other); // copy constructor
   Continent& operator=(const Continent& other); // assignment operator
@@ -101,12 +102,16 @@ public:
 
   int getId() const;
 
+  int getControlValue() const;
+
   const std::vector<Territory *>& getTerritories() const;
 
   // setters
   void setName(const std::string& name) const;
 
   void setId(int id) const;
+
+  void setControlValue(int bonus) const;
 
   // territory management
   bool containsTerritory(Territory* territory) const;
@@ -170,7 +175,7 @@ public:
   bool removeTerritory(const std::string& name);
 
   // continent management
-  Continent* addContinent(const std::string& name, int id);
+  Continent* addContinent(const std::string& name, int id, int bonus);
 
   Continent* getContinent(const std::string& name) const;
 
