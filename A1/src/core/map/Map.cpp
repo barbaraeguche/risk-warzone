@@ -170,21 +170,25 @@ std::ostream& operator<<(std::ostream& os, const Territory& territory) {
 
 Continent::Continent() : continentName(new std::string("")),
                          continentId(new int(0)),
+                         controlValue(new int(0)),
                          territories(new std::vector<Territory *>()) {}
 
-Continent::Continent(const std::string& name, int id) : continentName(new std::string(name)),
+Continent::Continent(const std::string& name, int id, int bonus) : continentName(new std::string(name)),
                                                         continentId(new int(id)),
+                                                        controlValue(new int(bonus)),
                                                         territories(new std::vector<Territory *>()) {}
 
 // don't copy `territories` (map will rebuild)
 Continent::Continent(const Continent& other) : continentName(new std::string(*other.continentName)),
                                                continentId(new int(*other.continentId)),
+                                               controlValue(new int(*other.controlValue)),
                                                territories(new std::vector<Territory *>()) {}
 
 Continent& Continent::operator=(const Continent& other) {
   if (this != &other) {
     setName(*other.continentName);
     setId(*other.continentId);
+    setControlValue(*other.controlValue);
 
     territories = other.territories;
   }
@@ -194,6 +198,7 @@ Continent& Continent::operator=(const Continent& other) {
 Continent::~Continent() {
   delete continentName;
   delete continentId;
+  delete controlValue;
   delete territories;
 }
 
@@ -204,6 +209,10 @@ std::string Continent::getName() const {
 
 int Continent::getId() const {
   return *continentId;
+}
+
+int Continent::getControlValue() const {
+  return *controlValue;
 }
 
 const std::vector<Territory *>& Continent::getTerritories() const {
@@ -217,6 +226,10 @@ void Continent::setName(const std::string& name) const {
 
 void Continent::setId(int id) const {
   *continentId = id;
+}
+
+void Continent::setControlValue(int bonus) const {
+  *controlValue = bonus;
 }
 
 // --- MANAGEMENT ---
@@ -455,8 +468,8 @@ bool Map::removeTerritory(const std::string& name) {
 }
 
 // --- CONTINENT MANAGEMENT ---
-Continent* Map::addContinent(const std::string& name, int id) {
-  auto continent = std::make_unique<Continent>(name, id);
+Continent* Map::addContinent(const std::string& name, int id, int bonus) {
+  auto continent = std::make_unique<Continent>(name, id, bonus);
   Continent* continentPtr = continent.get();
 
   continents->push_back(std::move(continent));
@@ -785,9 +798,17 @@ bool MapLoader::parseContinentSection(Map* map, const std::string& line) {
   }
 
   const std::string& continentName = parts[0];
-  static int continentId = 1;
+  int controlValue = 0;
 
-  map->addContinent(continentName, continentId++);
+  try {
+    controlValue = std::stoi(parts[1]);  // Parse the bonus value
+  } catch (...) {
+    std::cout << "Warning: Invalid control value for continent " << continentName << std::endl;
+    return false;
+  }
+
+  static int continentId = 1;
+  map->addContinent(continentName, continentId++, controlValue);
   return true;
 }
 
