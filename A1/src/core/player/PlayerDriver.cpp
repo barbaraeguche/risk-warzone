@@ -103,8 +103,9 @@ void testPlayers() {
     player2->issueBombOrder(territory1);
     
     // Blockade orders
-    player1->issueBlockadeOrder(territory1);
-    player2->issueBlockadeOrder(territory3);
+    // nullptr is the neutral player for blockade orders
+    player1->issueBlockadeOrder(nullptr, territory1);
+    player2->issueBlockadeOrder(nullptr, territory3);
     
     // Airlift orders
     player1->issueAirliftOrder(territory1, territory2, 1);

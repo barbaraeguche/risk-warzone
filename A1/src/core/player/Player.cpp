@@ -11,6 +11,7 @@
  * Default constructor
  */
 Player::Player() :
+  conqueredThisTurn(new bool(false)),
   playerName(new std::string("Unknown Player")),
   territories(new std::vector<Territory*>()),
   hand(new Hand()),
@@ -22,6 +23,7 @@ Player::Player() :
  * @param name The name of the player
  */
 Player::Player(const std::string& name) :
+  conqueredThisTurn(new bool(false)),
   playerName(new std::string(name)),
   territories(new std::vector<Territory*>()),
   hand(new Hand()),
@@ -33,6 +35,7 @@ Player::Player(const std::string& name) :
  * @param other The player to copy from
  */
 Player::Player(const Player& other) :
+  conqueredThisTurn(new bool(other.conqueredThisTurn)),
   playerName(new std::string(*other.playerName)),
   territories(new std::vector<Territory*>(*other.territories)),
   hand(new Hand(*other.hand)),
@@ -47,6 +50,7 @@ Player::Player(const Player& other) :
 Player& Player::operator=(const Player& other) {
   if (this != &other) {
       // Clean up existing resources
+      delete conqueredThisTurn;
       delete playerName;
       delete territories;
       delete hand;
@@ -54,6 +58,7 @@ Player& Player::operator=(const Player& other) {
       delete reinforcementPool;
 
       // Copy from other player
+      conqueredThisTurn = new bool(other.conqueredThisTurn); 
       playerName = new std::string(*other.playerName);
       territories = new std::vector<Territory*>(*other.territories);
       hand = new Hand(*other.hand);
@@ -67,6 +72,7 @@ Player& Player::operator=(const Player& other) {
  * Destructor
  */
 Player::~Player() {
+  delete conqueredThisTurn;
   delete playerName;
   delete territories;
   delete hand;
@@ -75,6 +81,14 @@ Player::~Player() {
 }
 
 // ==================== Getters ====================
+
+/**
+ * Get whether the player conquered a territory this turn
+ * @return True if conquered this turn
+ */
+bool Player::getConqueredThisTurn() const {
+  return *conqueredThisTurn;
+}
 
 /**
  * Get the player's name
@@ -117,6 +131,14 @@ int Player::getReinforcementPool() const {
 }
 
 // ==================== Setters ====================
+
+/**
+ * Set whether the player conquered a territory this turn
+ * @param conquered True if conquered this turn
+ */
+void Player::setConqueredThisTurn(bool conquered) {
+  *conqueredThisTurn = conquered;
+}
 
 /**
  * Set the player's name
@@ -230,15 +252,15 @@ void Player::issueAdvanceOrder(Territory* source, Territory* target, int armies)
  * @param target Territory to bomb
  */
 void Player::issueBombOrder(Territory* target) {
-  orders->add(new OrderBomb(target));
+  orders->add(new OrderBomb(target, this));
 }
 
 /**
  * Issue a blockade order
  * @param target Territory to blockade
  */
-void Player::issueBlockadeOrder(Territory* target) {
-  orders->add(new OrderBlockade(this, target));
+void Player::issueBlockadeOrder(Player* nPlayer, Territory* target) {
+  orders->add(new OrderBlockade(nPlayer, this, target));
 }
 
 /**

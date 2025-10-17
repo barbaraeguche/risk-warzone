@@ -21,6 +21,7 @@ class Deck;
  */
 class Player {
 private:
+  bool* conqueredThisTurn;              // Flag indicating if the player conquered a territory this turn
   std::string* playerName;                    // Player's name
   std::vector<Territory*>* territories;      // Collection of owned territories
   Hand* hand;                                // Player's hand of cards
@@ -36,6 +37,7 @@ public:
   ~Player();                                 // Destructor
 
   // Getters
+  bool getConqueredThisTurn() const;
   std::string getName() const;
   const std::vector<Territory*>& getTerritories() const;
   Hand* getHand() const;
@@ -43,6 +45,7 @@ public:
   int getReinforcementPool() const;
 
   // Setters
+  void setConqueredThisTurn(bool conquered);
   void setName(const std::string& name);
   void setReinforcementPool(int armies);
 
@@ -60,7 +63,7 @@ public:
   void issueDeployOrder(Territory* target, int armies);
   void issueAdvanceOrder(Territory* source, Territory* target, int armies);
   void issueBombOrder(Territory* target);
-  void issueBlockadeOrder(Territory* target);
+  void issueBlockadeOrder(Player* nPlayer, Territory* target);
   void issueAirliftOrder(Territory* source, Territory* target, int armies);
   void issueNegotiateOrder(Player* targetPlayer);
 

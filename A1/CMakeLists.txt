@@ -14,7 +14,7 @@ add_executable(comp_345_a1
 )
 
 # headers from other directories
-target_include_directories(comp_345_a1 PRIVATE
+target_include_directories(comp_345_a1 PUBLIC
 	include
 	src/core
 	src/core/map

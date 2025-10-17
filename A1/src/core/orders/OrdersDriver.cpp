@@ -17,8 +17,8 @@ void testOrdersLists() {
   OrdersList ordersList;
   ordersList.add(new OrderDeploy(nullptr, nullptr, nullptr));
   ordersList.add(new OrderAdvance(nullptr, nullptr, nullptr, nullptr));
-  ordersList.add(new OrderBomb(nullptr));
-  ordersList.add(new OrderBlockade(nullptr, nullptr));
+  ordersList.add(new OrderBomb(nullptr, nullptr));
+  ordersList.add(new OrderBlockade(nullptr, nullptr, nullptr));
   ordersList.add(new OrderAirlift(nullptr, nullptr, nullptr, nullptr));
   ordersList.add(new OrderNegotiate(nullptr, nullptr));
 

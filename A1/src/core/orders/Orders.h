@@ -1,8 +1,15 @@
 #pragma once
-#include "../player/Player.h"
+#include <Player.h>
+#include <Map.h>
 
 #include <vector>
 #include <iostream>
+#include <memory>
+
+struct NegotiationRecord {
+    Player* player1;
+    Player* player2;
+};
 
 /*
 Abstract base class for all order types.
@@ -24,7 +31,13 @@ public:
   //stream insertion operator for printing orders
   friend std::ostream& operator<<(std::ostream& os, const Order& order);
 
+  //static method to access negotiation records
+  static void clearNegotiationRecords();
+
 protected:
+  // Needs to be cleared every turn in the game engine
+  static std::unique_ptr<std::vector<NegotiationRecord>> negotiationRecords;
+
   //order type and description
   std::string* type;
   std::string* description;
@@ -64,9 +77,10 @@ public:
 
 class OrderBomb : public Order {
 private:
+  Player* player;
   Territory* target;
 public:
-  OrderBomb(Territory* target);
+  OrderBomb(Territory* target, Player* player);
   OrderBomb(const OrderBomb& other);
   ~OrderBomb() override;
   bool validate() override;
@@ -77,10 +91,11 @@ public:
 
 class OrderBlockade : public Order {
 private:
+  Player* nPlayer; // Neutral player
   Player* player;
   Territory* target;
 public:
-  OrderBlockade(Player* player, Territory* target);
+  OrderBlockade(Player* nPlayer, Player* player, Territory* target);
   OrderBlockade(const OrderBlockade& other);
   ~OrderBlockade() override;
   bool validate() override;
