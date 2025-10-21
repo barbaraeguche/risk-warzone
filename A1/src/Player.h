@@ -1,5 +1,4 @@
-#ifndef COMP_345_PLAYER_H
-#define COMP_345_PLAYER_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -79,5 +78,3 @@ public:
   // Stream insertion operator
   friend std::ostream& operator<<(std::ostream& os, const Player& player);
 };
-
-#endif //COMP_345_PLAYER_H
