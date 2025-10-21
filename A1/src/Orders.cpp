@@ -1,5 +1,7 @@
 #include "Orders.h"
 
+std::unique_ptr<std::vector<NegotiationRecord>> Order::negotiationRecords = std::make_unique<std::vector<NegotiationRecord>>();
+
 // Base Order
 Order::Order():
   type{nullptr},
@@ -14,6 +16,10 @@ std::ostream& operator<<(std::ostream& os, const Order& order) {
 
   os << "An order of type: " << *(order.type) << ". \n" << "Description: " << *(order.description) << ". \n";
   return os;  
+}
+
+void Order::clearNegotiationRecords() {
+  negotiationRecords->clear();
 }
 
 //  OrderDeploy
@@ -64,7 +70,8 @@ bool OrderDeploy::validate() {
 void OrderDeploy::execute() {
   if (this->validate())
   {
-
+    target->setArmies(target->getArmies() + *soldiers);
+    player->setReinforcementPool(player->getReinforcementPool() - *soldiers);
   }
 }
 
@@ -112,13 +119,69 @@ OrderAdvance& OrderAdvance::operator=(const OrderAdvance& other) {
 }
 
 bool OrderAdvance::validate() { 
-  if (source && target && player->ownsTerritory(source) && *soldiers > 0) {
+  if (source && target && source->isAdjacentTo(target) && player->ownsTerritory(source) && *soldiers > 0 && source->getArmies() - 1 >= *soldiers) {
+    Player* targetPlayer = target->getOwner();
+    // Check for negotiation
+    for (const auto& record : *(this->negotiationRecords)) {
+      if ((record.player1 == player && record.player2 == targetPlayer) ||
+          (record.player1 == targetPlayer && record.player2 == player)) {
+        return false; // Negotiation exists, cannot attack
+      }
+    }
     return true;
   }else{
     return false;
   }
 }
-void OrderAdvance::execute() {}
+
+void OrderAdvance::execute() {
+  if(this->validate()){
+    if (player->ownsTerritory(target)){
+      source->setArmies(source->getArmies() - *soldiers);
+      target->setArmies(target->getArmies() + *soldiers);
+    } else {
+      // Remove soldiers from source territory
+      source->setArmies(source->getArmies() - *soldiers);
+
+      int attackers = *soldiers;
+      int defenders = target->getArmies();
+
+      int attackSuccesses = 0;
+      int defenseSuccesses = 0;
+
+      for (int i = 0; i < *soldiers; i++) {
+        if((rand() % 100) < 60) {
+          attackSuccesses++;
+        }
+      }
+
+      for (int i = 0; i < target->getArmies(); i++) {
+        if((rand() % 100) < 70) {
+          defenseSuccesses++;
+        }
+      }
+
+      attackers -= defenseSuccesses;
+      defenders -= attackSuccesses;
+
+      if(defenders <= 0){
+          player->setConqueredThisTurn(true);
+          player->addTerritory(target);
+          target->setOwner(player);
+          if(attackers < 0){
+            attackers = 1; // At least one army must occupy the conquered territory
+            // Rare edge case where all attackers die but defenders also die
+          }
+          target->setArmies(attackers);
+      } else {
+        target->setArmies(defenders);
+        if(attackers >= 0){
+          source->setArmies(source->getArmies() + attackers); // Return surviving attackers back to source
+        }
+      }
+    }
+  }
+}
 
 Order* OrderAdvance::clone() const { 
   return new OrderAdvance(*this); 
@@ -126,14 +189,16 @@ Order* OrderAdvance::clone() const {
 
 
 //  OrderBomb 
-OrderBomb::OrderBomb(Territory* target) {
+OrderBomb::OrderBomb(Territory* target, Player* player) {
   this->target = target;
+  this->player = player;
   type = new std::string("bomb");
   description = new std::string("Destroys half the armies on an enemy territory, can only be used once per game.");
 }
 
 OrderBomb::OrderBomb(const OrderBomb& other) {
   this->target = other.target;
+  this->player = other.player;
   type = new std::string(*(other.type));
   description = new std::string(*(other.description));
 }
@@ -150,15 +215,28 @@ OrderBomb& OrderBomb::operator=(const OrderBomb& other) {
     type = new std::string(*(other.type));
     description = new std::string(*(other.description));
     this->target = other.target;
+    this->player = other.player;
   }
   return *this;
 }
 
-bool OrderBomb::validate() { return target; }
+bool OrderBomb::validate() { 
+  if (target && !player->ownsTerritory(target)) {
+    for (auto& t : player->getTerritories()) {
+      if (t->isAdjacentTo(target)) {
+        return true;
+      }
+    }
+    return false;
+  }else {
+    return false;
+  }
+}
+
 void OrderBomb::execute() {
   if (this->validate())
   {
-
+    target->setArmies(target->getArmies() / 2);
   }
 }
 
@@ -168,7 +246,8 @@ Order* OrderBomb::clone() const {
 
 
 //  OrderBlockade 
-OrderBlockade::OrderBlockade(Player* player, Territory* target) {
+OrderBlockade::OrderBlockade(Player* nPlayer, Player* player, Territory* target) {
+  this->nPlayer = nPlayer;
   this->player = player;
   this->target = target;
   type = new std::string("blockade");
@@ -176,6 +255,7 @@ OrderBlockade::OrderBlockade(Player* player, Territory* target) {
 }
 
 OrderBlockade::OrderBlockade(const OrderBlockade& other) {
+  this->nPlayer = other.nPlayer;
   this->player = other.player;
   this->target = other.target;
   type = new std::string(*(other.type));
@@ -193,6 +273,7 @@ OrderBlockade& OrderBlockade::operator=(const OrderBlockade& other) {
     delete description;
     type = new std::string(*(other.type));
     description = new std::string(*(other.description));
+    this->nPlayer = other.nPlayer;
     this->player = other.player;
     this->target = other.target;
   }
@@ -206,7 +287,16 @@ bool OrderBlockade::validate() {
     return false;
   }
 }
-void OrderBlockade::execute() {}
+
+void OrderBlockade::execute() {
+  if (this->validate())
+  {
+    target->setArmies(target->getArmies() * 2);
+    player->removeTerritory(target);
+    nPlayer->addTerritory(target);
+    target->setOwner(nPlayer);
+  }
+}
 
 Order* OrderBlockade::clone() const { 
   return new OrderBlockade(*this); 
@@ -252,14 +342,19 @@ OrderAirlift& OrderAirlift::operator=(const OrderAirlift& other) {
 }
 
 bool OrderAirlift::validate() { 
-  if (source && target && player->ownsTerritory(source) && *soldiers > 0) {
+  if (source && target && player->ownsTerritory(source) && player->ownsTerritory(target) && *soldiers > 0 && source->getArmies() >= *soldiers ) {
     return true;
   }else{
     return false;
   }
 }
 
-void OrderAirlift::execute() {}
+void OrderAirlift::execute() {
+  if(this->validate()){
+    source->setArmies(source->getArmies() - *soldiers);
+    target->setArmies(target->getArmies() + *soldiers);
+  }
+}
 
 Order* OrderAirlift::clone() const { 
   return new OrderAirlift(*this); 
@@ -306,7 +401,12 @@ bool OrderNegotiate::validate() {
   }
 }
 
-void OrderNegotiate::execute() {}
+void OrderNegotiate::execute() {
+  if (this->validate())
+  {
+    this->negotiationRecords->push_back(NegotiationRecord{player, targetPlayer});
+  }
+}
 
 Order* OrderNegotiate::clone() const { 
   return new OrderNegotiate(*this); 
