@@ -1,7 +1,7 @@
 #include "Player.h"
-#include "../map/Map.h"
-#include "../card-deck-hand/Cards.h"
-#include "../orders/Orders.h"
+#include "Map.h"
+#include "Cards.h"
+#include "Orders.h"
 #include <algorithm>
 #include <random>
 

@@ -1,27 +1,22 @@
 # create executable for A1
 add_executable(comp_345_a1
 	src/MainDriver.cpp
-	src/core/map/Map.cpp
-	src/core/map/MapDriver.cpp
-	src/core/player/Player.cpp
-	src/core/player/PlayerDriver.cpp
-	src/core/orders/Orders.cpp
-	src/core/orders/OrdersDriver.cpp
-	src/core/card-deck-hand/Cards.cpp
-	src/core/card-deck-hand/CardsDriver.cpp
-	src/core/game-engine/GameEngine.cpp
-	src/core/game-engine/GameEngineDriver.cpp
+	src/Map.cpp
+	src/MapDriver.cpp
+	src/Player.cpp
+	src/PlayerDriver.cpp
+	src/Orders.cpp
+	src/OrdersDriver.cpp
+	src/Cards.cpp
+	src/CardsDriver.cpp
+	src/GameEngine.cpp
+	src/GameEngineDriver.cpp
 )
 
 # headers from other directories
 target_include_directories(comp_345_a1 PUBLIC
 	include
-	src/core
-	src/core/map
-	src/core/player
-	src/core/orders
-	src/core/card-deck-hand
-	src/core/game-engine
+	src
 )
 
 # change compiler warning level
