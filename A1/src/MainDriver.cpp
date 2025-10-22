@@ -1,10 +1,11 @@
 #include <iostream>
 
-void testLoadMaps(); // Implemented in MapDriver.cpp
-void testPlayers(); // To be implemented in PlayerDriver.cpp
-void testOrdersLists(); // To be implemented in OrdersDriver.cpp
-void testCards(); // To be implemented in CardsDriver.cpp
-void testGameStates(); // Implemented in GameEngineDriver.cpp
+void testLoadMaps(); 
+void testPlayers(); 
+void testOrdersLists(); 
+void testOrderExecution(); 
+void testCards(); 
+void testGameStates(); 
 
 /**
  * The Main driver function that calls all test functions for each part
@@ -34,6 +35,7 @@ int main() {
     std::cout << "PART 3: ORDERS TESTING" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
     testOrdersLists();
+    testOrderExecution();
 
     // Part 4: Cards Testing
     std::cout << "\n" << std::string(50, '=') << std::endl;
