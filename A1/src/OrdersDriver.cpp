@@ -52,12 +52,13 @@ void testOrdersLists() {
 void testOrderExecution() {
   Player* player1 = new Player("Player1");
   Player* player2 = new Player("Player2");
+  Player* nPlayer = new Player("Neutral player");
 
   Territory* territoryA = new Territory("TerritoryA", 1);
-  territoryA->setArmies(10);
+  territoryA->setArmies(20);
 
   Territory* territoryB = new Territory("TerritoryB", 2);
-  territoryB->setArmies(5);
+  territoryB->setArmies(4);
 
   Territory* territoryC = new Territory("TerritoryC", 3);
   territoryC->setArmies(8);
@@ -80,52 +81,50 @@ void testOrderExecution() {
   player2->addTerritory(territoryD);
   territoryD->setOwner(player2);
 
-  int* soldiersToDeploy = new int(5);
-  Order* deployOrder = &OrderDeploy(player1, territoryA, soldiersToDeploy);
+  territoryC->addAdjacentTerritory(territoryD);
+  territoryD->addAdjacentTerritory(territoryC);
 
-// (1) each order is validated before being executed according to the above descriptions; 
-  std::cout << "Executing Deploy Order:" << '\n';
-  int* soldiersToDeploy = new int(5);
-  Order* deployOrder = new OrderDeploy(player1, territoryA, soldiersToDeploy);
-  if (deployOrder->validate()) {
-    deployOrder->execute();
-  } else {
-    std::cout << "Deploy Order is invalid." << '\n';
-  }
-  delete soldiersToDeploy;
-  delete deployOrder;
 
-  std::cout << "Executing Advance Order:" << '\n';
-  int* soldiersToAdvance = new int(7);
-  Order* advanceOrder = new OrderAdvance(player1, territoryA, territoryB, soldiersToAdvance);
-  if (advanceOrder->validate()) {
-    advanceOrder->execute();
-  } else {
-    std::cout << "Advance Order is invalid." << '\n';
-  }
-  delete soldiersToAdvance;
-  delete advanceOrder;
+  // (1) each order is validated before being executed according to the above descriptions; 
+  // (2) ownership of a territory is transferred to the attacking player if a territory is conquered as a result of an advance order;
+  // (3) one card is given to a player if they conquer at least one territory in a turn (not more than one card per turn); 
+  std::cout << "Before Advance Order Execution: " << territoryB->getArmies() << " armies in TerritoryA, belongs to " << territoryB->getOwner()->getName() << '\n';
+  std::cout << "Before attack Player1->conqueredThisTurn = "<< player1->getConqueredThisTurn() << '\n';
 
-  std::cout << "Executing Bomb Order:" << '\n';
-  Order* bombOrder = new OrderBomb(territoryB, player1);
-  if (bombOrder->validate()) {
-    bombOrder->execute();
-  } else {
-    std::cout << "Bomb Order is invalid." << '\n';
-  }
-  delete bombOrder;
+  Order* advanceOrder = new OrderAdvance(player1, territoryA, territoryB, new int(19));
+  advanceOrder->execute();
+  std::cout << "After Advance Order Execution: " << territoryB->getArmies() << " armies in TerritoryA, belongs to " << territoryB->getOwner()->getName() << '\n';
+  std::cout << "After attack Player1->conqueredThisTurn = "<< player1->getConqueredThisTurn() << '\n';
+  std::cout << "\n";
 
-  // Clean up
-  delete player1;
-  delete player2;
+  // (4) the negotiate order prevents attacks between the two players involved; 
+  Order* negotiateOrder = new OrderNegotiate(player1, player2);
+  negotiateOrder->execute();
+  std::cout << "Before Advance Order Execution with Negotiation: " << territoryD->getArmies() << " armies in TerritoryD, belongs to " << territoryD->getOwner()->getName() << '\n';
+  Order* advanceOrderWithNegotiation = new OrderAdvance(player1, territoryC, territoryD, new int(5));
+  advanceOrderWithNegotiation->execute();
+  std::cout << "After Advance Order Execution with Negotiation: " << territoryD->getArmies() << " armies in TerritoryD, belongs to " << territoryD->getOwner()->getName() << '\n';
+  std::cout << "\n";
+
+  // (5) the blockade order transfers ownership to the Neutral player; 
+  std::cout << "Before Blockade Order Execution: " << territoryC->getArmies() << " armies in TerritoryC, belongs to " << territoryC->getOwner()->getName() << '\n';
+  Order* blockadeOrder = new OrderBlockade(nPlayer, player1, territoryC);
+  blockadeOrder->execute();
+  std::cout << "After Blockade Order Execution: " << territoryC->getArmies() << " armies in TerritoryC, belongs to " << territoryC->getOwner()->getName() << '\n';
+  std::cout << "\n";
+
+  //6) all the orders described above can be issued by a player and executed by the game engine. This driver function must be in the OrdersDriver.cpp file. 
+  player1->issueAdvanceOrder(territoryA, territoryB, 10);
+  player1->issueNegotiateOrder(player2);
+  player1->issueBlockadeOrder(nPlayer, territoryA);
+  std::cout << "Player1's Orders List:" << '\n';
+  std::cout << *(player1->getOrders()) << '\n';
+
   delete territoryA;
   delete territoryB;
   delete territoryC;
   delete territoryD;
-
-
-// (2) ownership of a territory is transferred to the attacking player if a territory is conquered as a result of an advance order;
-// (3) one card is given to a player if they conquer at least one territory in a turn (not more than one card per turn); 
-// (4) the negotiate order prevents attacks between the two players involved; 
-// (5) the blockade order transfers ownership to the Neutral player; 
+  delete player1;
+  delete player2;
+  delete nPlayer;
 }
