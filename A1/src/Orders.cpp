@@ -119,12 +119,12 @@ OrderAdvance& OrderAdvance::operator=(const OrderAdvance& other) {
 }
 
 bool OrderAdvance::validate() { 
-  if (source && target && source->isAdjacentTo(target) && player->ownsTerritory(source) && *soldiers > 0 && source->getArmies() - 1 >= *soldiers) {
+  if (source && target && source->isAdjacentTo(target) && player->ownsTerritory(source) && *soldiers > 0 && (source->getArmies() - 1 >= *soldiers) ) {
     Player* targetPlayer = target->getOwner();
     // Check for negotiation
     for (const auto& record : *(this->negotiationRecords)) {
-      if ((record.player1 == player && record.player2 == targetPlayer) ||
-          (record.player1 == targetPlayer && record.player2 == player)) {
+      if ((record.player1 == player && record.player2 == targetPlayer) || (record.player1 == targetPlayer && record.player2 == player)) {
+        std::cout << "Advance Order Validation Failed: Negotiation exists between " << player->getName() << " and " << targetPlayer->getName() << ". Cannot attack.\n";
         return false; // Negotiation exists, cannot attack
       }
     }
@@ -136,6 +136,7 @@ bool OrderAdvance::validate() {
 
 void OrderAdvance::execute() {
   if(this->validate()){
+    std::cout << "Executing Advance Order: Moving " << *soldiers << " armies from " << source->getName() << " to " << target->getName() << ".\n";
     if (player->ownsTerritory(target)){
       source->setArmies(source->getArmies() - *soldiers);
       target->setArmies(target->getArmies() + *soldiers);
@@ -180,7 +181,10 @@ void OrderAdvance::execute() {
         }
       }
     }
+  }else{
+    std::cout << "Advance Order validation failed. Order not executed.\n";
   }
+
 }
 
 Order* OrderAdvance::clone() const { 
@@ -437,7 +441,11 @@ OrdersList& OrdersList::operator=(const OrdersList& other) {
 }
 
 std::ostream& operator<<(std::ostream& os, const OrdersList& orderList) {
-  os << "A Orders List"; return os;
+  os << "A Orders List:\n";
+  for (const auto& order : *orderList.orders) {
+    os << *order << '\n';
+  }
+  return os;
 }
 
 bool OrdersList::validateIndex(int index) {
