@@ -7,7 +7,6 @@
 
 class State;
 class Transition;
-class Command;
 
 
 class GameEngine {
@@ -77,24 +76,3 @@ public:
     std::string getCommand() const;
     std::string getTargetState() const;
 };
-
-
-class Command {
-private:
-    std::string* commandString;
-
-public:
-    Command();
-    Command(const std::string& command);
-    Command(const Command& other);
-    ~Command();
-
-    Command& operator=(const Command& other);
-
-    friend std::ostream& operator<<(std::ostream& os, const Command& command);
-
-    std::string getCommandString() const;
-    bool isValid() const;
-};
-
-void testGameStates();
