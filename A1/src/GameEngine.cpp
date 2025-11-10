@@ -525,7 +525,7 @@ bool Command::isValid() const {
     return false;
 }
 
-//----------A2 implementation-----------
+//==========A2 implementation==========
 namespace fs = std::filesystem;
 
 // List .map files under A1/mapFiles 
@@ -543,7 +543,7 @@ static std::vector<std::string> listMapFiles(const std::string& root) {
     std::sort(files.begin(), files.end());
     return files;
 }
-//--------Startup phase method-------------
+//=========Startup phase method========
 void GameEngine::startupPhase() {
     std::cout << "\n=== STARTUP PHASE: loadmap + validatemap ===\n";
 
@@ -695,10 +695,8 @@ void GameEngine::startupPhase() {
             std::cout << "\n";
             std::cout << "Hint: add between 2 and 6 players total, then type 'gamestart'.\n";
 
-   //=====GAMESTART==========
+        //=====GAMESTART==========
         } else if (cmd == "gamestart") {
-            //PRECONDITION CHECks
-
 
             // Requires a loaded and validated map
             if (!map_) {
