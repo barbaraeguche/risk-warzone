@@ -528,7 +528,7 @@ bool Command::isValid() const {
 //----------A2 implementation-----------
 namespace fs = std::filesystem;
 
-// List .map files under A1/mapFiles (matches your A1 driver convention)
+// List .map files under A1/mapFiles 
 static std::vector<std::string> listMapFiles(const std::string& root) {
     std::vector<std::string> files;
     try {
@@ -558,7 +558,7 @@ void GameEngine::startupPhase() {
     std::cout << "Available maps:\n";
     for (const auto& m : maps) std::cout << "  - " << m << "\n";
 
-    // 2) Loop: expect "loadmap <file>", then "validatemap"
+    // 2) Loop expect "loadmap <file>", then "validatemap"
     MapLoader loader;                  // from Map.h / Map.cpp
     map_.reset();
     bool hasLoaded = false;
@@ -638,7 +638,7 @@ void GameEngine::startupPhase() {
                 transitionTo("map validated");
                 isValid = true;
 
-                // show additional info for clarity
+                // show additional info
                 std::cout << "\nMap Summary:" << std::endl;
                 std::cout << "Map Name: " << map_->getMapName() << std::endl;
                 std::cout << "Number of Territories: " << map_->getNumberOfTerritories() << std::endl;
