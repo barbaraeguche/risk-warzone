@@ -4,14 +4,14 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <memory>   // add
+#include <memory>   
 
 
 class State;
 class Transition;
 class Command;
-class Map;         // add
-class Player;      // add
+class Map;         
+class Player;      
 class Deck;
 
 
@@ -21,8 +21,8 @@ private:
     std::map<std::string, State*>* states;
     std::vector<std::string>* stateHistory;
 
-    // --- A2: startup phase state ---
-    std::unique_ptr<Map> map_;         //  add: holds the loaded/validated map
+    //A2: startup phase state
+    std::unique_ptr<Map> map_;         //  add: holds the loaded/validated map using smart pointer
     std::vector<Player*> players_;     // players created by addplayer
     Deck* deck_;
 public:
@@ -40,7 +40,7 @@ public:
     void displayValidCommands() const;
     void displayStateHistory() const;
 
-    void startupPhase();         // <-- add
+    void startupPhase();       
 
 private:
     void initializeStates();
