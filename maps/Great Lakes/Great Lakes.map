@@ -1,0 +1,258 @@
+[Map]
+author=Rob Werhand
+image=Great Lakes.bmp
+wrap=yes
+scroll=none
+warn=yes
+
+[Continents]
+Minnesota=20
+Wisconsin=20
+Michigan=15
+
+[Territories]
+Kittson,67,77,Minnesota,Roseau,Marshall
+Roseau,136,83,Minnesota,Kittson,Marshall,Lake of the Woods,Beltrami
+Marshall,91,126,Minnesota,Kittson,Roseau,Beltrami,Pennington,Polk MN
+Lake of the Woods,204,109,Minnesota,Roseau,Beltrami,Koochiching
+Beltrami,203,201,Minnesota,Roseau,Lake of the Woods,Koochiching,Marshall,Pennington,Clearwater,Hubbard,Itasca
+Pennington,113,159,Minnesota,Marshall,Beltrami,Clearwater,Red Lake,Polk MN
+Red Lake,106,183,Minnesota,Pennington,Polk MN
+Polk MN,77,204,Minnesota,Marshall,Pennington,Red Lake,Norman,Mahnomen,Clearwater
+Clearwater,158,220,Minnesota,Pennington,Beltrami,Hubbard,Becker,Mahnomen,Polk MN
+Norman,73,238,Minnesota,Mahnomen,Becker,Clay,Polk MN
+Mahnomen,124,243,Minnesota,Clearwater,Norman,Becker,Polk MN
+Koochiching,281,150,Minnesota,Lake of the Woods,Beltrami,Itasca,St. Louis
+Itasca,289,232,Minnesota,Koochiching,St. Louis,Beltrami,Cass MN,Aitkin
+Clay,67,287,Minnesota,Norman,Becker,Otter Tail,Wilkin
+Becker,128,286,Minnesota,Clearwater,Norman,Mahnomen,Clay,Otter Tail,Wadena,Hubbard
+Hubbard,189,272,Minnesota,Clearwater,Beltrami,Becker,Cass MN,Wadena
+Cass MN,247,294,Minnesota,Itasca,Hubbard,Wadena,Todd,Morrison,Crow Wing,Aitkin
+Wilkin,66,345,Minnesota,Clay,Traverse,Grant MN,Otter Tail
+Otter Tail,122,345,Minnesota,Clay,Becker,Wilkin,Grant MN,Douglas MN,Todd,Wadena
+Wadena,180,332,Minnesota,Becker,Hubbard,Cass MN,Otter Tail,Todd
+Crow Wing,249,345,Minnesota,Cass MN,Aitkin,Morrison
+Aitkin,300,332,Minnesota,St. Louis,Itasca,Cass MN,Carlton,Pine,Kanabec,Mille Lacs,Crow Wing
+St. Louis,379,232,Minnesota,Koochiching,Itasca,Aitkin,Carlton,Lake MN,Douglas WI
+Lake MN,455,225,Minnesota,St. Louis,Cook
+Cook,524,196,Minnesota,Lake MN
+Carlton,356,338,Minnesota,St. Louis,Aitkin,Pine,Douglas WI
+Pine,349,392,Minnesota,Aitkin,Carlton,Kanabec,Chisago,Douglas WI,Burnett
+Kanabec,302,410,Minnesota,Aitkin,Pine,Mille Lacs,Isanti
+Mille Lacs,279,409,Minnesota,Aitkin,Morrison,Kanabec,Isanti,Sherburne,Benton
+Morrison,232,397,Minnesota,Cass MN,Crow Wing,Todd,Stearns,Benton,Mille Lacs
+Todd,182,389,Minnesota,Cass MN,Otter Tail,Wadena,Douglas MN,Stearns,Morrison
+Douglas MN,137,399,Minnesota,Otter Tail,Grant MN,Pope,Todd
+Grant MN,95,398,Minnesota,Wilkin,Otter Tail,Traverse,Stevens,Douglas MN
+Traverse,61,413,Minnesota,Wilkin,Big Stone,Stevens,Grant MN
+Big Stone,61,446,Minnesota,Traverse,Stevens,Swift,Lac Qui Parle
+Stevens,93,435,Minnesota,Traverse,Grant MN,Big Stone,Swift,Pope
+Swift,115,470,Minnesota,Big Stone,Stevens,Pope,Chippewa MN,Kandiyohi,Lac Qui Parle
+Pope,136,437,Minnesota,Douglas MN,Stevens,Swift,Kandiyohi,Stearns
+Chippewa MN,124,502,Minnesota,Swift,Lac Qui Parle,Yellow Medicine,Renville,Kandiyohi
+Stearns,205,446,Minnesota,Todd,Morrison,Pope,Benton,Sherburne,Wright,Meeker,Kandiyohi
+Kandiyohi,166,489,Minnesota,Pope,Stearns,Swift,Chippewa MN,Renville,Meeker
+Benton,252,432,Minnesota,Morrison,Mille Lacs,Stearns,Sherburne
+Renville,170,536,Minnesota,Chippewa MN,Kandiyohi,Meeker,Yellow Medicine,McLeod,Sibley,Nicollet,Redwood
+Meeker,206,494,Minnesota,Stearns,Kandiyohi,Renville,McLeod,Wright
+Sherburne,268,461,Minnesota,Mille Lacs,Stearns,Benton,Wright,Anoka,Isanti
+Isanti,303,449,Minnesota,Mille Lacs,Kanabec,Sherburne,Anoka,Chisago
+Chisago,336,465,Minnesota,Pine,Isanti,Anoka,Washington MN,Burnett,Polk WI
+Wright,248,491,Minnesota,Stearns,Sherburne,Meeker,McLeod,Carver,Hennepin
+Anoka,306,485,Minnesota,Sherburne,Isanti,Chisago,Hennepin,Ramsey,Washington MN
+Washington MN,333,509,Minnesota,Chisago,Anoka,Dakota,Ramsey,Polk WI,St. Croix,Pierce
+Ramsey,316,512,Minnesota,Hennepin,Anoka,Washington MN,Dakota
+Hennepin,284,507,Minnesota,Wright,Carver,Scott,Dakota,Ramsey,Anoka
+McLeod,224,528,Minnesota,Meeker,Wright,Renville,Sibley,Carver
+Carver,260,536,Minnesota,Wright,Hennepin,McLeod,Sibley,Scott
+Sibley,235,556,Minnesota,Renville,McLeod,Nicollet,Le Sueur,Scott,Carver
+Nicollet,226,584,Minnesota,Renville,Sibley,Brown MN,Blue Earth,Le Sueur
+Scott,283,552,Minnesota,Hennepin,Sibley,Carver,Dakota,Rice,Le Sueur
+Dakota,316,554,Minnesota,Hennepin,Washington MN,Ramsey,Scott,Goodhue,Rice,Pierce
+Le Sueur,263,583,Minnesota,Sibley,Scott,Nicollet,Blue Earth,Waseca,Rice
+Rice,298,586,Minnesota,Scott,Dakota,Le Sueur,Waseca,Steele,Goodhue
+Goodhue,339,585,Minnesota,Dakota,Rice,Wabasha,Olmsted,Dodge MN,Pierce,Pepin
+Wabasha,383,596,Minnesota,Goodhue,Olmsted,Winona,Pepin,Buffalo
+Lac Qui Parle,74,500,Minnesota,Big Stone,Swift,Chippewa MN,Yellow Medicine
+Yellow Medicine,107,530,Minnesota,Lac Qui Parle,Chippewa MN,Lincoln MN,Lyon,Redwood,Renville
+Lincoln MN,61,568,Minnesota,Yellow Medicine,Lyon,Pipestone
+Lyon,96,566,Minnesota,Yellow Medicine,Lincoln MN,Murray,Redwood
+Redwood,144,572,Minnesota,Yellow Medicine,Renville,Lyon,Murray,Cottonwood,Brown MN
+Brown MN,187,590,Minnesota,Redwood,Nicollet,Cottonwood,Watonwan,Blue Earth
+Pipestone,59,608,Minnesota,Lincoln MN,Rock MN,Murray
+Murray,97,611,Minnesota,Lyon,Redwood,Pipestone,Nobles,Cottonwood
+Cottonwood,146,615,Minnesota,Redwood,Brown MN,Murray,Jackson MN,Watonwan
+Watonwan,192,623,Minnesota,Brown MN,Cottonwood,Martin,Blue Earth
+Blue Earth,235,619,Minnesota,Brown MN,Nicollet,Le Sueur,Watonwan,Waseca,Faribault,Martin
+Waseca,274,621,Minnesota,Le Sueur,Rice,Blue Earth,Faribault,Freeborn,Steele
+Steele,303,621,Minnesota,Rice,Waseca,Dodge MN,Freeborn
+Dodge MN,332,623,Minnesota,Goodhue,Steele,Olmsted,Mower
+Olmsted,368,629,Minnesota,Goodhue,Wabasha,Dodge MN,Mower,Fillmore,Winona
+Winona,416,630,Minnesota,Wabasha,Olmsted,Fillmore,Houston,Buffalo,Trempealeau,La Crosse
+Rock MN,57,647,Minnesota,Pipestone,Nobles
+Nobles,96,649,Minnesota,Murray,Rock MN,Jackson MN
+Jackson MN,146,653,Minnesota,Cottonwood,Nobles,Martin
+Martin,193,654,Minnesota,Watonwan,Blue Earth,Jackson MN,Faribault
+Faribault,242,655,Minnesota,Blue Earth,Waseca,Martin,Freeborn
+Freeborn,291,658,Minnesota,Waseca,Steele,Faribault,Mower
+Mower,339,661,Minnesota,Dodge MN,Olmsted,Freeborn,Fillmore
+Fillmore,392,665,Minnesota,Olmsted,Winona,Mower,Houston
+Houston,439,664,Minnesota,Winona,Fillmore,La Crosse,Vernon
+
+Douglas WI,412,362,Wisconsin,Burnett,Washburn,Bayfield,St. Louis,Carlton,Pine
+Bayfield,465,361,Wisconsin,Douglas WI,Sawyer,Ashland
+Ashland,508,392,Wisconsin,Bayfield,Sawyer,Price,Iron WI
+Iron WI,552,395,Wisconsin,Ashland,Price,Vilas,Gogebic
+Vilas,599,406,Wisconsin,Iron WI,Oneida,Forest,Gogebic,Price
+Forest,657,455,Wisconsin,Vilas,Florence,Oneida,Langlade,Oconto,Marinette,Iron MI
+Florence,682,427,Wisconsin,Forest,Marinette,Iron MI,Dickinson
+Marinette,705,463,Wisconsin,Florence,Forest,Oconto,Dickinson,Menominee MI
+Burnett,384,419,Wisconsin,Douglas WI,Polk WI,Washburn,Barron,Pine,Chisago
+Washburn,423,420,Wisconsin,Douglas WI,Burnett,Barron,Sawyer
+Sawyer,472,424,Wisconsin,Bayfield,Ashland,Washburn,Rusk,Price
+Price,532,446,Wisconsin,Ashland,Iron WI,Sawyer,Rusk,Taylor,Lincoln WI,Oneida,Vilas
+Oneida,596,442,Wisconsin,Vilas,Price,Lincoln WI,Langlade,Forest
+Polk WI,371,469,Wisconsin,Burnett,St. Croix,Barron,Chisago,Washington MN
+Barron,416,473,Wisconsin,Burnett,Washburn,Polk WI,Dunn,Chippewa WI,Rusk
+Rusk,471,468,Wisconsin,Sawyer,Price,Barron,Chippewa WI,Taylor
+St. Croix,369,513,Wisconsin,Polk WI,Pierce,Dunn,Washington MN
+Pierce,376,549,Wisconsin,St. Croix,Pepin,Washington MN,Dakota,Goodhue,Dunn
+Dunn,414,525,Wisconsin,Barron,St. Croix,Pepin,Eau Claire,Chippewa WI,Pierce
+Pepin,411,556,Wisconsin,Pierce,Dunn,Buffalo,Eau Claire,Goodhue,Wabasha
+Chippewa WI,460,513,Wisconsin,Barron,Rusk,Dunn,Eau Claire,Clark,Taylor
+Eau Claire,463,550,Wisconsin,Dunn,Chippewa WI,Pepin,Trempealeau,Clark,Jackson WI
+Taylor,520,497,Wisconsin,Price,Rusk,Chippewa WI,Clark,Marathon,Lincoln WI
+Clark,511,551,Wisconsin,Chippewa WI,Taylor,Eau Claire,Jackson WI,Wood,Marathon
+Lincoln WI,581,485,Wisconsin,Price,Oneida,Taylor,Langlade,Marathon
+Langlade,630,493,Wisconsin,Oneida,Forest,Lincoln WI,Marathon,Shawano,Menominee WI,Oconto
+Oconto,692,521,Wisconsin,Forest,Marinette,Langlade,Menominee WI,Brown WI,Shawano
+Menominee WI,663,519,Wisconsin,Langlade,Oconto,Shawano
+Marathon,576,531,Wisconsin,Taylor,Lincoln WI,Langlade,Clark,Wood,Portage,Shawano
+Shawano,647,540,Wisconsin,Langlade,Oconto,Menominee WI,Marathon,Waupaca,Outagamie,Brown WI
+Buffalo,424,582,Wisconsin,Pepin,Trempealeau,Wabasha,Winona
+Trempealeau,453,596,Wisconsin,Buffalo,Eau Claire,Jackson WI,La Crosse,Winona
+Jackson WI,499,597,Wisconsin,Trempealeau,Clark,La Crosse,Monroe WI,Juneau,Wood,Eau Claire
+Wood,555,581,Wisconsin,Clark,Marathon,Jackson WI,Juneau,Adams,Portage
+Portage,600,578,Wisconsin,Marathon,Wood,Adams,Waushara,Waupaca
+Waupaca,641,582,Wisconsin,Shawano,Portage,Waushara,Winnebago,Outagamie
+Outagamie,680,586,Wisconsin,Shawano,Waupaca,Winnebago,Calumet,Brown WI
+Brown WI,715,585,Wisconsin,Oconto,Shawano,Outagamie,Kewaunee,Calumet,Manitowoc
+Kewaunee,744,574,Wisconsin,Door,Brown WI,Manitowoc
+Door,755,544,Wisconsin,Kewaunee
+La Crosse,472,641,Wisconsin,Trempealeau,Jackson WI,Monroe WI,Vernon,Winona,Houston
+Monroe WI,509,636,Wisconsin,La Crosse,Vernon,Jackson WI,Juneau
+Juneau,548,641,Wisconsin,Vernon,Jackson WI,Monroe WI,Wood,Adams,Sauk
+Adams,575,625,Wisconsin,Wood,Juneau,Portage,Marquette WI,Waushara,Columbia
+Waushara,618,619,Wisconsin,Portage,Waupaca,Adams,Marquette WI,Winnebago,Green Lake
+Marquette WI,607,650,Wisconsin,Adams,Columbia,Green Lake,Waushara
+Green Lake,634,654,Wisconsin,Columbia,Marquette WI,Waushara,Winnebago,Dodge WI,Fond du Lac
+Winnebago,662,624,Wisconsin,Waupaca,Waushara,Outagamie,Calumet,Fond du Lac,Green Lake
+Calumet,700,621,Wisconsin,Outagamie,Brown WI,Winnebago,Fond du Lac,Manitowoc,Sheboygan
+Manitowoc,731,616,Wisconsin,Kewaunee,Brown WI,Calumet,Sheboygan,Mason
+Fond du Lac,666,658,Wisconsin,Calumet,Sheboygan,Winnebago,Dodge WI,Washington WI,Green Lake
+Sheboygan,720,661,Wisconsin,Calumet,Manitowoc,Ozaukee,Washington WI,Fond du Lac
+Vernon,487,675,Wisconsin,La Crosse,Monroe WI,Sauk,Juneau,Richland,Crawford WI,Houston
+Crawford WI,487,711,Wisconsin,Vernon,Richland,Grant WI
+Richland,522,698,Wisconsin,Vernon,Crawford WI,Grant WI,Sauk,Iowa
+Sauk,564,694,Wisconsin,Vernon,Richland,Juneau,Columbia,Dane,Iowa
+Columbia,611,689,Wisconsin,Sauk,Adams,Dane,Dodge WI,Green Lake,Marquette WI
+Dodge WI,659,695,Wisconsin,Dane,Columbia,Green Lake,Fond du Lac,Jefferson,Waukesha,Washington WI
+Washington WI,700,701,Wisconsin,Sheboygan,Fond du Lac,Dodge WI,Waukesha,Ozaukee
+Ozaukee,722,696,Wisconsin,Sheboygan,Milwaukee,Washington WI
+Grant WI,499,752,Wisconsin,Crawford WI,Richland,Iowa,Lafayette
+Iowa,546,741,Wisconsin,Grant WI,Richland,Lafayette,Green,Dane,Sauk
+Lafayette,547,776,Wisconsin,Grant WI,Iowa,Green
+Dane,603,734,Wisconsin,Iowa,Sauk,Green,Rock WI,Jefferson,Dodge WI,Columbia
+Green,588,774,Wisconsin,Iowa,Lafayette,Dane,Rock WI
+Rock WI,633,776,Wisconsin,Green,Dane,Jefferson,Walworth
+Jefferson,656,737,Wisconsin,Dane,Dodge WI,Rock WI,Walworth,Waukesha
+Walworth,675,775,Wisconsin,Rock WI,Jefferson,Kenosha,Racine,Waukesha
+Waukesha,693,738,Wisconsin,Dodge WI,Jefferson,Walworth,Racine,Milwaukee,Washington WI
+Milwaukee,719,741,Wisconsin,Waukesha,Racine,Ozaukee,Muskegon
+Racine,715,767,Wisconsin,Walworth,Waukesha,Kenosha,Milwaukee
+Kenosha,717,785,Wisconsin,Walworth,Racine
+
+Gogebic,589,367,Michigan,Ontonagon,Iron MI,Iron WI,Vilas
+Ontonagon,615,338,Michigan,Gogebic,Iron MI,Houghton
+Houghton,657,306,Michigan,Ontonagon,Keweenaw,Baraga,Iron MI
+Keweenaw,699,264,Michigan,Houghton
+Baraga,681,345,Michigan,Houghton,Iron MI,Marquette MI
+Iron MI,672,387,Michigan,Gogebic,Ontonagon,Houghton,Baraga,Dickinson,Marquette MI,Forest,Florence
+Marquette MI,736,362,Michigan,Baraga,Iron MI,Dickinson,Menominee MI,Alger,Delta
+Dickinson,723,409,Michigan,Iron MI,Menominee MI,Marquette MI,Florence,Marinette
+Menominee MI,747,453,Michigan,Dickinson,Marquette MI,Delta,Marinette
+Alger,799,377,Michigan,Marquette MI,Delta,Schoolcraft,Luce
+Delta,797,409,Michigan,Marquette MI,Menominee MI,Alger,Schoolcraft
+Schoolcraft,850,388,Michigan,Delta,Alger,Mackinac,Luce
+Luce,895,358,Michigan,Alger,Schoolcraft,Mackinac,Chippewa MI
+Chippewa MI,960,372,Michigan,Luce,Mackinac
+Mackinac,949,397,Michigan,Schoolcraft,Luce,Chippewa MI,Emmet,Cheboygan
+Emmet,951,451,Michigan,Mackinac,Charlevou,Cheboygan
+Cheboygan,980,468,Michigan,Mackinac,Emmet,Presque Isle,Otsego,Montmorency
+Presque Isle,1023,474,Michigan,Cheboygan,Montmorency,Alpena
+Charlevou,945,491,Michigan,Emmet,Otsego,Antrim
+Leelanau,880,532,Michigan,Grand Traverse,Benzie
+Antrim,937,516,Michigan,Charlevou,Otsego,Kalkaska,Grand Traverse
+Otsego,975,513,Michigan,Cheboygan,Charlevou,Montmorency,Crawford MI,Antrim
+Montmorency,1013,509,Michigan,Cheboygan,Presque Isle,Alpena,Oscoda,Otsego
+Alpena,1047,506,Michigan,Presque Isle,Montmorency,Alcona
+Benzie,868,557,Michigan,Leelanau,Manistee,Grand Traverse
+Grand Traverse,901,554,Michigan,Antrim,Leelanau,Benzie,Wexford,Kalkaska
+Kalkaska,939,547,Michigan,Antrim,Grand Traverse,Missaukee,Crawford MI
+Crawford MI,976,547,Michigan,Otsego,Kalkaska,Roscommon,Oscoda
+Oscoda,1013,544,Michigan,Montmorency,Crawford MI,Ogemaw,Alcona
+Alcona,1054,544,Michigan,Alpena,Oscoda,Iosco
+Manistee,865,587,Michigan,Benzie,Wexford,Lake MI,Mason
+Wexford,903,587,Michigan,Grand Traverse,Missaukee,Lake MI,Osceola,Manistee
+Missaukee,941,585,Michigan,Kalkaska,Roscommon,Osceola,Clare,Wexford
+Roscommon,977,583,Michigan,Crawford MI,Ogemaw,Clare,Gladwin,Missaukee
+Ogemaw,1013,582,Michigan,Oscoda,Iosco,Gladwin,Arenac,Roscommon
+Iosco,1050,577,Michigan,Alcona,Arenac,Ogemaw
+Mason,854,626,Michigan,Manistee,Oceana,Lake MI,Manitowoc
+Lake MI,886,624,Michigan,Wexford,Manistee,Mason,Newaygo,Osceola
+Osceola,925,625,Michigan,Missaukee,Wexford,Lake MI,Mecosta,Clare
+Clare,961,623,Michigan,Roscommon,Missaukee,Osceola,Isabella,Gladwin
+Gladwin,995,621,Michigan,Ogemaw,Roscommon,Clare,Midland,Arenac,Bay
+Arenac,1030,611,Michigan,Iosco,Ogemaw,Gladwin,Bay
+Oceana,852,666,Michigan,Mason,Muskegon,Newaygo
+Newaygo,888,676,Michigan,Lake MI,Oceana,Muskegon,Kent,Montcalm,Mecosta
+Mecosta,924,662,Michigan,Osceola,Newaygo,Montcalm,Isabella
+Isabella,963,660,Michigan,Clare,Mecosta,Montcalm,Gratiot,Midland
+Midland,1000,658,Michigan,Gladwin,Isabella,Gratiot,Saginaw,Bay
+Bay,1024,652,Michigan,Gladwin,Midland,Tuscola,Arenac,Saginaw
+Muskegon,859,704,Michigan,Oceana,Newaygo,Ottawa,Kent,Milwaukee
+Montcalm,943,700,Michigan,Newaygo,Mecosta,Isabella,Gratiot,Ionia,Kent
+Gratiot,983,696,Michigan,Isabella,Midland,Saginaw,Clinton,Montcalm
+Saginaw,1025,691,Michigan,Midland,Tuscola,Genesee,Shiawassee,Gratiot,Bay
+Ottawa,874,739,Michigan,Muskegon,Kent,Allegan
+Kent,909,731,Michigan,Newaygo,Muskegon,Ottawa,Allegan,Montcalm,Ionia,Barry
+Ionia,948,737,Michigan,Montcalm,Kent,Barry,Eaton,Clinton
+Clinton,985,735,Michigan,Gratiot,Ionia,Eaton,Ingham,Shiawassee
+Shiawassee,1023,733,Michigan,Saginaw,Clinton,Ingham,Livingston,Genesee
+Genesee,1057,724,Michigan,Tuscola,Saginaw,Shiawassee,Livingston,Oakland,Lapeer
+Allegan,885,778,Michigan,Ottawa,Kent,Barry,Kalamazoo,Van Buren
+Barry,930,777,Michigan,Allegan,Kent,Ionia,Kalamazoo,Calhoun,Eaton
+Eaton,968,771,Michigan,Ionia,Clinton,Barry,Ingham,Jackson MI,Calhoun
+Ingham,1006,770,Michigan,Clinton,Shiawassee,Eaton,Jackson MI,Livingston
+Livingston,1043,767,Michigan,Shiawassee,Genesee,Ingham,Washtenaw,Oakland
+Van Buren,875,816,Michigan,Allegan,Kalamazoo,Cass MI,Berrien
+Kalamazoo,914,814,Michigan,Allegan,Van Buren,Barry,St. Joseph,Calhoun
+Calhoun,958,812,Michigan,Barry,Eaton,Kalamazoo,Branch,Jackson MI,Hillsdale
+Jackson MI,1003,808,Michigan,Eaton,Ingham,Calhoun,Hillsdale,Lenawee,Washtenaw
+Washtenaw,1049,808,Michigan,Livingston,Oakland,Jackson MI,Monroe MI,Wayne,Lenawee
+Berrien,846,847,Michigan,Van Buren,Cass MI
+Cass MI,877,850,Michigan,Van Buren,Berrien,St. Joseph
+St. Joseph,917,850,Michigan,Cass MI,Kalamazoo,Branch
+Branch,953,849,Michigan,Calhoun,Hillsdale,St. Joseph
+Hillsdale,993,849,Michigan,Calhoun,Jackson MI,Lenawee,Branch
+Lenawee,1034,846,Michigan,Jackson MI,Monroe MI,Hillsdale,Washtenaw
+Tuscola,1076,673,Michigan,Huron,Bay,Saginaw,Genesee,Lapeer,Sanilac
+Huron,1105,631,Michigan,Tuscola,Sanilac
+Sanilac,1123,677,Michigan,Huron,Tuscola,Lapeer,St. Clair
+Lapeer,1093,716,Michigan,Tuscola,Sanilac,Genesee,Oakland,Macomb,St. Clair
+St. Clair,1139,719,Michigan,Sanilac,Lapeer,Macomb
+Oakland,1083,760,Michigan,Genesee,Lapeer,Livingston,Washtenaw,Wayne,Macomb
+Macomb,1121,753,Michigan,Lapeer,Oakland,Wayne,St. Clair
+Wayne,1090,804,Michigan,Oakland,Macomb,Washtenaw,Monroe MI
+Monroe MI,1075,841,Michigan,Washtenaw,Wayne,Lenawee
+
