@@ -7,3 +7,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # add subdirectories for phases
 add_subdirectory(A1)
+add_subdirectory(A2)

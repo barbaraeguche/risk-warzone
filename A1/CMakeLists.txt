@@ -14,10 +14,7 @@ add_executable(comp_345_a1
 )
 
 # headers from other directories
-target_include_directories(comp_345_a1 PUBLIC
-	include
-	src
-)
+target_include_directories(comp_345_a1 PUBLIC src)
 
 # change compiler warning level
 target_compile_options(comp_345_a1 PRIVATE
