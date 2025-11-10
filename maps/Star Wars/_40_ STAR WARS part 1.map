@@ -1,0 +1,105 @@
+[Map]
+image=_40_ STAR WARS part 1.bmp
+wrap=no
+scroll=none
+warn=no
+author=_MIKE CRUSH_
+
+[Continents]
+
+Millennium Falcon=3
+X WING FIGHTER=2
+R2D2=1
+
+TOP TIE FIGHTER=3
+BOTTOM TIE FIGHTER=3
+AT AT=5
+
+[Territories]
+
+m1,77,95,Millennium Falcon,m2
+m2,81,112,Millennium Falcon,m1,m3
+m3,169,126,Millennium Falcon,m2,m4,m11,m12,x3
+m4,237,112,Millennium Falcon,m3,m5,m13
+m5,254,77,Millennium Falcon,m4,m6,m8,m10,m14
+m6,227,51,Millennium Falcon,m5,m7,m14
+m7,198,49,Millennium Falcon,m6
+m8,299,79,Millennium Falcon,m5,m9,m10
+m9,318,86,Millennium Falcon,m8,tt2
+m10,318,135,Millennium Falcon,m5,m8,aa31
+m11,257,175,Millennium Falcon,m3,bt4
+m12,172,94,Millennium Falcon,m3,m13
+m13,200,87,Millennium Falcon,m4,m12,m14
+m14,214,74,Millennium Falcon,m5,m6,m13
+
+x1,74,301,X WING FIGHTER,x2,x5
+x2,101,296,X WING FIGHTER,x1,x5
+x3,180,271,X WING FIGHTER,x4,m3
+x4,193,290,X WING FIGHTER,x3,bt2
+x5,96,319,X WING FIGHTER,x1,x2,x6
+x6,66,335,X WING FIGHTER,x5,r2
+x7,208,338,X WING FIGHTER,x8,x10,r1
+x8,209,326,X WING FIGHTER,x7,x9
+x9,279,366,X WING FIGHTER,x8,x10
+x10,274,376,X WING FIGHTER,x7,x9
+
+r1,115,471,R2D2,r3,x7
+r2,96,495,R2D2,r3,x6
+r3,123,496,R2D2,r1,r2,r4
+r4,147,495,R2D2,r3,bt3
+
+tt1,609,100,TOP TIE FIGHTER,tt2,tt3,tt4,tt5
+tt2,574,75,TOP TIE FIGHTER,tt1,tt3,m9
+tt3,576,128,TOP TIE FIGHTER,tt1,tt2,aa29
+tt4,655,67,TOP TIE FIGHTER,tt1,tt5,aa21
+tt5,655,129,TOP TIE FIGHTER,tt1,tt4,aa26
+
+bt1,494,420,BOTTOM TIE FIGHTER,bt2,bt3,bt4,bt5
+bt2,460,394,BOTTOM TIE FIGHTER,bt1,bt3,x4
+bt3,461,448,BOTTOM TIE FIGHTER,bt1,bt2,r4
+bt4,539,390,BOTTOM TIE FIGHTER,bt1,bt5,m11,aa7
+bt5,539,449,BOTTOM TIE FIGHTER,bt1,bt4,aa1
+
+aa1,682,451,AT AT,aa2,bt5
+aa2,680,422,AT AT,aa1,aa3,aa4
+aa3,658,418,AT AT,aa2,aa4,aa5
+aa4,691,385,AT AT,aa2,aa3,aa5,aa6
+aa5,665,379,AT AT,aa3,aa4,aa7
+aa6,699,340,AT AT,aa4,aa7,aa8
+aa7,667,339,AT AT,aa5,aa6,bt4
+aa8,704,313,AT AT,aa6,aa9
+aa9,710,284,AT AT,aa8,aa24,aa27
+
+aa10,790,461,AT AT,aa11
+aa11,789,419,AT AT,aa10,aa12
+aa12,806,365,AT AT,aa11,aa25
+aa13,869,445,AT AT,aa14
+aa14,861,416,AT AT,aa13,aa15
+aa15,867,372,AT AT,aa14,aa16
+aa16,868,320,AT AT,aa15,aa17
+aa17,866,285,AT AT,aa16,aa18,aa19
+
+aa18,881,211,AT AT,aa17,aa19,aa20
+aa19,842,222,AT AT,aa17,aa18,aa20,aa21
+aa20,830,184,AT AT,aa18,aa19,aa21
+aa21,791,200,AT AT,aa19,aa20,aa22,aa23,aa24,tt4
+aa22,745,202,AT AT,aa21,aa23,aa24,aa26,aa27
+aa23,780,239,AT AT,aa21,aa22
+aa24,790,278,AT AT,aa21,aa22,aa25,aa9
+aa25,801,298,AT AT,aa12,aa24
+aa26,692,204,AT AT,aa22,aa27,tt5
+aa27,685,244,AT AT,aa26,aa22,aa9,aa28
+aa28,633,261,AT AT,aa27,aa29,aa30
+aa29,568,250,AT AT,aa28,aa30,aa31,tt3
+aa30,587,268,AT AT,aa28,aa29,aa31
+
+aa31,512,257,AT AT,aa29,aa30,m10
+
+
+
+
+
+
+
+
+
