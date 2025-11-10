@@ -4,10 +4,15 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>   // add
+
 
 class State;
 class Transition;
 class Command;
+class Map;         // add
+class Player;      // add
+class Deck;
 
 
 class GameEngine {
@@ -16,6 +21,10 @@ private:
     std::map<std::string, State*>* states;
     std::vector<std::string>* stateHistory;
 
+    // --- A2: startup phase state ---
+    std::unique_ptr<Map> map_;         //  add: holds the loaded/validated map
+    std::vector<Player*> players_;     // players created by addplayer
+    Deck* deck_;
 public:
     GameEngine();
     GameEngine(const GameEngine& other);
@@ -31,9 +40,12 @@ public:
     void displayValidCommands() const;
     void displayStateHistory() const;
 
+    void startupPhase();         // <-- add
+
 private:
     void initializeStates();
     void cleanupStates();
+
 };
 
 
