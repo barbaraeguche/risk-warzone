@@ -740,9 +740,7 @@ void GameEngine::startupPhase() {
                     oldOwner->removeTerritory(terr);   // keep oldOwner's list clean
                 }
 
-                //  Attach to new owner on BOTH sides
-                // If your Player::addTerritory sets terr->setOwner(this), this is enough.
-                // If it doesn't, we also set the owner explicitly (guarded to avoid dups).
+                //  Attach to new owner on both sides
                 if (!newOwner->ownsTerritory(terr)) {
                     newOwner->addTerritory(terr);
                 }
