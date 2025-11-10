@@ -123,3 +123,11 @@ void testInvalidCommands() {
 
     std::cout << "\n=== End of Invalid Commands Test ===" << std::endl;
 }
+
+//function to test startupPhase() in gameEngine
+void testStartupPhase() {
+    std::cout << "\n=== testStartupPhase: loadmap + validatemap ===\n";
+    GameEngine engine;
+    std::cout << "Current state: " << engine.getCurrentStateName() << "\n";
+    engine.startupPhase(); 
+}
