@@ -1,7 +1,6 @@
 # create executable for A1
 add_executable(comp_345_a2
 	src/CommandProcessing.cpp
-	src/CommandProcessing.h
 	src/CommandProcessingDriver.cpp
 )
 
