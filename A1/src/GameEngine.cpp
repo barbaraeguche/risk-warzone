@@ -1,7 +1,35 @@
 #include "GameEngine.h"
 #include <algorithm>
 #include <iostream>
+#include "Map.h"               
+#include <filesystem>          
+#include <sstream>            
+#include "Player.h"
+#include "Cards.h"
+#include <random>
+#include <cctype>
+#include <set>
+#include <map>
 
+
+// Static method to determine which phases can lead to another
+static const std::map<std::string, std::set<std::string>> kAllowed {
+        {"startup",         {"loadmap"}},
+        {"map loaded",      {"loadmap", "validatemap"}},
+        {"maploaded",       {"loadmap", "validatemap"}},
+        {"map validated",   {"addplayer"}},
+        {"mapvalidated",    {"addplayer"}},
+        {"players added",   {"addplayer", "gamestart"}},
+        {"playersadded",    {"addplayer", "gamestart"}},
+        {"play",            {}}
+};
+
+// Helper function that will be used in the startup phase
+static bool isAllowed(const std::string& state, const std::string& cmd) {
+    auto it = kAllowed.find(state);
+    if (it == kAllowed.end()) return false;
+    return it->second.count(cmd) > 0;
+}
 // ========== GameEngine Implementation ==========
 
 /**
@@ -14,6 +42,7 @@ GameEngine::GameEngine() {
     initializeStates();
     currentState = (*states)["startup"];
     stateHistory->push_back("startup");
+    deck_ = new Deck();    // allocate a new Deck object on the heap
 }
 
 /**
@@ -40,6 +69,13 @@ GameEngine::~GameEngine() {
     cleanupStates();
     delete states;
     delete stateHistory;
+
+    // Free dynamically created players
+    for (auto* p : players_)
+        delete p;
+
+    players_.clear();
+    delete deck_; // free deck
 }
 
 /**
@@ -489,3 +525,316 @@ bool Command::isValid() const {
     return false;
 }
 
+//----------A2 implementation-----------
+namespace fs = std::filesystem;
+
+// List .map files under A1/mapFiles (matches your A1 driver convention)
+static std::vector<std::string> listMapFiles(const std::string& root) {
+    std::vector<std::string> files;
+    try {
+        if (fs::exists(root)) {
+            for (const auto& p : fs::recursive_directory_iterator(root)) {
+                if (p.is_regular_file() && p.path().extension() == ".map") {
+                    files.push_back(p.path().string());
+                }
+            }
+        }
+    } catch (...) {}
+    std::sort(files.begin(), files.end());
+    return files;
+}
+//--------Startup phase method-------------
+void GameEngine::startupPhase() {
+    std::cout << "\n=== STARTUP PHASE: loadmap + validatemap ===\n";
+
+    // 1) Show available .map files
+    const fs::path base = fs::current_path() / "A1" / "mapFiles";
+    const auto maps = listMapFiles(base.string());
+    if (maps.empty()) {
+        std::cout << "No .map files found under: " << base << "\n";
+        std::cout << "Ensure A1/mapFiles exists and contains .map files.\n";
+        return;
+    }
+    std::cout << "Available maps:\n";
+    for (const auto& m : maps) std::cout << "  - " << m << "\n";
+
+    // 2) Loop: expect "loadmap <file>", then "validatemap"
+    MapLoader loader;                  // from Map.h / Map.cpp
+    map_.reset();
+    bool hasLoaded = false;
+    bool isValid   = false;
+
+    std::cout << "\nCommands (Part 2):\n"
+              << "  loadmap <path-or-name> (ex. 'loadmap Alberta/Alberta.map') \n"
+              << "  validatemap\n";
+
+    auto trim = [](std::string s) {
+        auto wsfront = std::find_if_not(s.begin(), s.end(), [](int c){return std::isspace(c);});
+        auto wsback  = std::find_if_not(s.rbegin(), s.rend(), [](int c){return std::isspace(c);}).base();
+        return (wsback <= wsfront ? std::string() : std::string(wsfront, wsback));
+    };
+
+    std::string line;
+    while (true) {
+        std::cout << "> ";
+        if (!std::getline(std::cin, line)) break;
+        line = trim(line);
+        if (line.empty()) continue;
+
+        std::istringstream iss(line);
+        std::string cmd; iss >> cmd;
+
+        // Global check is command valid in current state
+        if (!isAllowed(getCurrentStateName(), cmd)) {
+            std::cout << " Command '" << cmd << "' is invalid in state '"
+                      << getCurrentStateName() << "'.\nType 'help' for valid commands.\n";
+            continue;
+        }
+
+        if (cmd == "loadmap") {
+            std::string arg; std::getline(iss, arg); arg = trim(arg);
+            if (arg.empty()) { std::cout << "Usage: loadmap <path>\n"; continue; }
+
+            fs::path candidate(arg);
+            if (!fs::exists(candidate)) candidate = base / arg; // allow bare filename
+
+            std::cout << "Loading: " << candidate.string() << " ...\n";
+            // MapLoader::loadMap returns std::unique_ptr<Map>
+            auto loaded = loader.loadMap(candidate.string());
+            if (!loaded) { std::cout << "Error Could not load file.\n"; continue; }
+
+            map_ = std::move(loaded);
+            hasLoaded = true;
+            isValid = false;
+            std::cout << "Success Map loaded: " << map_->getMapName() << "\n";
+            // A2 state table: loadmap moves to maploaded
+            transitionTo("map loaded");
+            std::cout << "Next: type 'validatemap'\n";
+        }
+        else if (cmd == "validatemap") {
+            if (!hasLoaded || !map_) { std::cout << "Load a map first.\n";
+                continue;
+            }
+            std::cout << "\n--- VALIDATION TESTS ---" << std::endl;
+
+            const bool isConnected = map_->isConnectedGraph();
+            std::cout << "1. Map is a connected graph: "
+                      << (isConnected ? "PASS" : "FAIL") << std::endl;
+
+            const bool continentsConnected = map_->areContinentsConnected();
+            std::cout << "2. Continents are connected subgraphs: "
+                      << (continentsConnected ? "PASS" : "FAIL") << std::endl;
+
+            const bool territoriesInContinents = map_->eachTerritoryBelongsToOneContinent();
+            std::cout << "3. Each territory belongs to one continent: "
+                      << (territoriesInContinents ? "PASS" : "FAIL") << std::endl;
+
+            const bool overallValid = map_->validate();
+            std::cout << "\n--- OVERALL VALIDATION ---" << std::endl;
+            std::cout << "Overall Result: "
+                      << (overallValid ? "VALID MAP" : "INVALID MAP") << std::endl;
+
+            if (overallValid) {
+                transitionTo("map validated");
+                isValid = true;
+
+                // show additional info for clarity
+                std::cout << "\nMap Summary:" << std::endl;
+                std::cout << "Map Name: " << map_->getMapName() << std::endl;
+                std::cout << "Number of Territories: " << map_->getNumberOfTerritories() << std::endl;
+                std::cout << "Number of Continents: " << map_->getNumberOfContinents() << std::endl;
+
+                std::cout << "\nMap validated successfully. Transitioned to 'mapvalidated' state.\n";
+            } else {
+                std::cout << " Invalid map. Load a different one.\n";
+            }
+        }
+        else if (cmd == "addplayer") {
+
+            // read the name (rest of line), trim, and strip quotes
+            std::string name; std::getline(iss, name); name = trim(name);
+            if (!name.empty() &&
+                ((name.front()=='"' && name.back()=='"') || (name.front()=='\'' && name.back()=='\''))) {
+                name = name.substr(1, name.size()-2);
+                }
+
+            if (name.empty()) {
+                std::cout << "Usage: addplayer <playername>\n";
+                continue;
+            }
+
+            if (players_.size() >= 6) {
+                std::cout << "Maximum of 6 players reached.\n";
+                continue;
+            }
+
+            // reject duplicate names
+            bool duplicate = false;
+            for (auto* p : players_) {
+                if (p && p->getName() == name) { duplicate = true; break; }
+            }
+            if (duplicate) {
+                std::cout << "A player named '" << name << "' already exists. Pick another name.\n";
+                continue;
+            }
+
+            // create and store the player
+            auto* np = new Player(name);
+            players_.push_back(np);
+
+            // transition to playersadded
+            transitionTo("players added");
+
+            // output
+            std::cout << "Added player: " << name << "\n";
+            std::cout << "Current players (" << players_.size() << "): ";
+            for (size_t i = 0; i < players_.size(); ++i) {
+                std::cout << players_[i]->getName();
+                if (i + 1 < players_.size()) std::cout << ", ";
+            }
+            std::cout << "\n";
+            std::cout << "Hint: add between 2 and 6 players total, then type 'gamestart'.\n";
+
+   //=====GAMESTART==========
+        } else if (cmd == "gamestart") {
+            //PRECONDITION CHECks
+
+
+            // Requires a loaded and validated map
+            if (!map_) {
+                std::cout << "No map loaded. Use 'loadmap <file>' first.\n";
+                continue;
+            }
+            if (!isValid) {
+                std::cout << " Map is not validated yet. Use 'validatemap' first.\n";
+                continue;
+            }
+
+            // Players: must be 2–6
+            if (players_.size() < 2 || players_.size() > 6) {
+                std::cout << " 'gamestart' requires between 2 and 6 players. Current: "
+                          << players_.size() << "\n";
+                continue;
+            }
+
+            //all preconditions are satisfied.
+            std::cout << "Preconditions satisfied for 'gamestart'. Proceeding to game setup...\n";
+
+            // ---------- distribute all territories ----------
+            std::vector<Territory*> all;
+            const auto& territories = map_->getTerritories();
+            all.reserve(territories.size());
+            for (const auto& t : territories) {
+                all.push_back(t.get());
+            }
+
+            std::mt19937 rng(std::random_device{}());
+            std::shuffle(all.begin(), all.end(), rng);
+
+            for (size_t i = 0; i < all.size(); ++i) {
+                Territory* terr = all[i];
+                Player* newOwner = players_[i % players_.size()];
+
+                // 1) Detach from previous owner
+                if (Player* oldOwner = terr->getOwner(); oldOwner && oldOwner != newOwner) {
+                    oldOwner->removeTerritory(terr);   // keep oldOwner's list clean
+                }
+
+                //  Attach to new owner on BOTH sides
+                // If your Player::addTerritory sets terr->setOwner(this), this is enough.
+                // If it doesn't, we also set the owner explicitly (guarded to avoid dups).
+                if (!newOwner->ownsTerritory(terr)) {
+                    newOwner->addTerritory(terr);
+                }
+                if (terr->getOwner() != newOwner) {
+                    terr->setOwner(newOwner);
+                }
+            }
+
+            //------------Randomly set the play order----------
+            std::shuffle(players_.begin(), players_.end(), rng);
+
+            //-------------Give 50 armies to each player-------------
+            for (auto* p : players_) {
+                p->setReinforcementPool(50);
+            }
+            // ---------- Each player draws 2 cards from the deck ----------
+            if (deck_) {
+                for (auto* p : players_) {
+                    for (int j = 0; j < 2; ++j) {
+                        if (Card* c = deck_->draw()) {
+                            p->addCard(c);
+                        }
+                    }
+                }
+            }
+            // ---------- Output for gamestart demo  ----------
+
+            // 1 Territory distribution results
+            std::cout << "\n=== TERRITORY DISTRIBUTION RESULTS ===" << std::endl;
+            std::cout << "Total territories on map: " << all.size() << std::endl;
+            std::cout << "Number of players: " << players_.size() << std::endl;
+
+            for (auto* p : players_) {
+                std::cout << " - " << p->getName()
+                          << " received " << p->getTerritoryCount()
+                          << " territories." << std::endl;
+            }
+            std::cout << "Territories distributed evenly among all players.\n";
+
+            // 2️ Player order after shuffling
+            std::cout << "\n=== PLAYER ORDER  ===" << std::endl;
+            std::cout << "Play order: ";
+            for (size_t i = 0; i < players_.size(); ++i) {
+                std::cout << players_[i]->getName();
+                if (i + 1 < players_.size()) std::cout << " -> ";
+            }
+            std::cout << std::endl;
+
+            // 3 Reinforcement pool
+            std::cout << "\n=== REINFORCEMENT POOLS ===" << std::endl;
+            for (auto* p : players_) {
+                std::cout << " - " << p->getName()
+                          << " starts with " << p->getReinforcementPool()
+                          << " armies." << std::endl;
+            }
+
+
+            // 4 Cards drawn from the deck
+            std::cout << "\n=== INITIAL CARDS DRAWN ===" << std::endl;
+            for (auto* p : players_) {
+                std::cout << p->getName() << " drew 2 cards and now has\n ";
+                p->getHand()->printHand();
+                std::cout<< std::endl;
+            }
+
+            // ---------- Transition to play phase ----------
+            if (states && states->count("play")) {
+                transitionTo("play");
+                std::cout << "gamestart complete. Transitioned to 'play' state.\n";
+
+                // Display the current state to confirm
+                std::cout << "Current Game State: " << getCurrentStateName() << std::endl;
+            }
+            break; //exit the startupPhase loop after playphase transitition
+
+        }
+        else if (cmd == "help") {
+            std::cout << "Commands:\n"
+           << "  loadmap <path-or-name>\n"
+           << "  validatemap\n"
+           << "  addplayer <name>\n"
+           << "  gamestart\n";
+        }
+        else {
+            std::cout << "Unknown command. Try 'help'.\n";
+        }
+    }
+
+    if (!hasLoaded || !isValid) {
+        std::cout << "StartupPhase aborted (no valid map).\n";
+        return;
+    }
+
+
+}
