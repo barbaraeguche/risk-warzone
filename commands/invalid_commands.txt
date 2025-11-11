@@ -1,0 +1,12 @@
+start
+loadmap testmap.map
+addplayer TooEarly
+validatemap
+addplayer Alice
+addplayer Bob
+gamestart
+issueorder
+invalidcommand
+execorder
+endexecorders
+quit
