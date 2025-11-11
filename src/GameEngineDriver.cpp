@@ -1,6 +1,76 @@
 #include "GameEngine.h"
+#include "Player.h"
+#include "Map.h"
+#include "Cards.h"
 #include <iostream>
 #include <string>
+#include <vector>
+
+
+    /**
+     * Main game loop integrated with GameEngine states
+     * Demonstrates turn-based gameplay using states:
+     * "play", "assign reinforcement", "issue orders", "execute orders", "win"
+     */
+    void testMainGameLoop() {
+    GameEngine engine;
+
+    Map* map = new Map();
+
+    // Create a few territories for demonstration
+    Territory* t1 = new Territory("Alaska", 1);
+    Territory* t2 = new Territory("Northwest Territory", 2);
+    Territory* t3 = new Territory("Greenland", 3);
+    Territory* t4 = new Territory("Alberta", 4);
+
+    // Add territories to a continent
+    Continent* c1 = map->addContinent("North America", 1, 5);
+    Continent* c2 = map->addContinent("Europe", 2, 3);
+    c1->addTerritory(t1);
+    c1->addTerritory(t2);
+    c1->addTerritory(t3);
+    c1->addTerritory(t4);
+
+    engine.setMap(map);
+
+    // 2. Create players
+    Player* p1 = new Player("Alice");
+    Player* p2 = new Player("Bob");
+
+    // Add players to the game
+    engine.addPlayer(p1);
+    engine.addPlayer(p2);
+
+    // 3. Assign territories
+    p1->addTerritory(t1);
+    p1->addTerritory(t2);
+    t1->setOwner(p1);
+    t2->setOwner(p1);
+
+    p2->addTerritory(t3);
+    p2->addTerritory(t4);
+    t3->setOwner(p2);
+    t4->setOwner(p2);
+
+    // 4. Set initial reinforcement pool
+    p1->setReinforcementPool(50);
+    p2->setReinforcementPool(50);
+
+    // 5. Give initial cards
+    Deck* deck = new Deck();
+    p1->getHand()->addCard(deck->draw());
+    p1->getHand()->addCard(deck->draw());
+
+    p2->getHand()->addCard(deck->draw());
+    p2->getHand()->addCard(deck->draw());
+
+    // Optional: store deck in game if needed
+    engine.setDeck(deck);
+
+    std::cout << "Mock setup complete: 2 players, 4 territories, initial reinforcements and cards assigned.\n";
+
+    engine.mainGameLoop();
+    }
 
 /**
  * Driver function to test the GameEngine functionality

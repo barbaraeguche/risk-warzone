@@ -59,6 +59,7 @@ public:
 
   // Order management
   void issueOrder(Order* order);
+  void issueOrder();
   void issueDeployOrder(Territory* target, int armies);
   void issueAdvanceOrder(Territory* source, Territory* target, int armies);
   void issueBombOrder(Territory* target);
