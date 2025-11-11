@@ -5,6 +5,8 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include "Player.h"
+#include "Map.h"
 
 class State;
 class Transition;
@@ -39,7 +41,7 @@ public:
     void displayValidCommands() const;
     void displayStateHistory() const;
 
-    void startupPhase():
+    void startupPhase();
 
     void mainGameLoop();
     void reinforcementPhase();
@@ -48,6 +50,7 @@ public:
 
     void addPlayer(Player* player);
     void setMap(Map* map);
+    void loadMap(const std::string& filename);
     void setDeck(Deck* deck);
 
 private:
