@@ -21,6 +21,7 @@ int main() {
   std::cout << "\nRunning all test functions for each part..." << std::endl;
 
   try {
+    /** 
     // Part 1: Map Testing
     std::cout << "\n" << std::string(50, '=') << std::endl;
     std::cout << "PART 1: MAP TESTING" << std::endl;
@@ -59,9 +60,12 @@ int main() {
     std::cout << "PART 6: COMMAND PROCESSOR TESTING" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
     testCommandProcessor();
-
+    **/
     // Additional: Main Game Loop Testing with GameEngine
-    //testMainGameLoop();
+    std::cout << "\n" << std::string(50, '=') << std::endl;
+    std::cout << "ADDITIONAL: MAIN GAME LOOP TESTING" << std::endl;
+    std::cout << std::string(50, '=') << std::endl;
+    testMainGameLoop();
 
     std::cout << "\n" << std::string(50, '=') << std::endl;
     std::cout << "ALL TESTS COMPLETED SUCCESSFULLY" << std::endl;

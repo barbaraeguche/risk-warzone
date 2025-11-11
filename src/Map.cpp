@@ -130,6 +130,24 @@ void Territory::removeAdjacentTerritory(Territory* territory) {
   std::erase(*adjTerritories, territory);
 }
 
+Territory* chooseTerritory(const std::vector<Territory*>& territories) {
+    if (territories.empty()) return nullptr;
+
+    std::cout << "Choose a territory:\n";
+    for (size_t i = 0; i < territories.size(); i++) {
+        std::cout << i << ": " << territories[i]->getName() 
+                  << " (Armies: " << territories[i]->getArmies() << ")\n";
+    }
+
+    int choice = -1;
+    while (choice < 0 || choice >= territories.size()) {
+        std::cout << "Enter the number of your choice: ";
+        std::cin >> choice;
+    }
+
+    return territories[choice];
+}
+
 // --- UTILITY ---
 void Territory::displayInfo() const {
   std::cout << "Territory: " << (territoryName ? *territoryName : "None")

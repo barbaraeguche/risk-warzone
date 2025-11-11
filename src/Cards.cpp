@@ -1,4 +1,10 @@
 #include "Cards.h"
+#include "Player.h"
+#include "Map.h"
+#include "Orders.h"
+#include "GameEngine.h"
+#include <iostream>
+#include <vector>
 
 // Base Card
 Card::Card() {}
@@ -19,10 +25,26 @@ BombCard::~BombCard() {}
 
 std::string BombCard::getType() const { return "bomb"; }
 void BombCard::play(Player* player, OrdersList* ordersList, Deck* deck) {
-    std::cout << "Playing Bomb Card -> (creates Bomb Order)" << std::endl;
-    if (deck) {
-        deck->returnCard(new BombCard());
+    if (!player || !ordersList) return;
+
+    std::cout << player->getName() << " plays Bomb Card -> create Bomb Order\n";
+
+    // Choose target: must be an adjacent enemy territory
+    std::vector<Territory*> attackable;
+    for (Territory* t : player->getTerritories()) {
+        for (Territory* adj : t->getAdjTerritories()) {
+            if (!player->ownsTerritory(adj)) {
+                attackable.push_back(adj);
+            }
+        }
     }
+
+    Territory* target = chooseTerritory(attackable);
+    if (target) {
+        ordersList->add(new OrderBomb(target, player));
+    }
+
+    if (deck) deck->returnCard(new BombCard());
 }
 
 // ReinforcementCard
@@ -33,7 +55,14 @@ ReinforcementCard::~ReinforcementCard() {}
 
 std::string ReinforcementCard::getType() const { return "reinforcement"; }
 void ReinforcementCard::play(Player* player, OrdersList* ordersList, Deck* deck) {
-    std::cout << "Playing Reinforcement Card -> (creates Reinforcement Order)" << std::endl;
+     if (!player) return;
+
+    std::cout << player->getName() << " plays Reinforcement Card -> adds 5 reinforcements for next phase.\n";
+
+    // Simply increase player's reinforcement pool for next reinforcement phase
+    int bonus = 5; // example: could be any number
+    player->setReinforcementPool(player->getReinforcementPool() + bonus);
+
     if (deck) {
         deck->returnCard(new ReinforcementCard());
     }
@@ -47,11 +76,17 @@ BlockadeCard::~BlockadeCard() {}
 
 std::string BlockadeCard::getType() const { return "blockade"; }
 void BlockadeCard::play(Player* player, OrdersList* ordersList, Deck* deck) {
-    std::cout << "Playing Blockade Card -> (creates Blockade Order)" << std::endl;
+    if (!player || !ordersList) return;
 
-    if (deck) {
-        deck->returnCard(new BlockadeCard());
+    std::cout << player->getName() << " plays Blockade Card -> create Blockade Order\n";
+
+    Territory* target = chooseTerritory(player->toDefend());
+    if (target) {
+        Player* neutralPlayer = GameEngine::getNeutralPlayer();
+        ordersList->add(new OrderBlockade(neutralPlayer, player, target));
     }
+
+    if (deck) deck->returnCard(new BlockadeCard());
 }
 
 // AirliftCard
@@ -62,11 +97,22 @@ AirliftCard::~AirliftCard() {}
 
 std::string AirliftCard::getType() const { return "airlift"; }
 void AirliftCard::play(Player* player, OrdersList* ordersList, Deck* deck) {
-    std::cout << "Playing Airlift Card -> (creates Airlift Order)" << std::endl;
+    if (!player || !ordersList) return;
 
-    if (deck) {
-        deck->returnCard(new AirliftCard());
+    std::cout << player->getName() << " plays Airlift Card -> create Airlift Order\n";
+
+    std::cout << "Choose source and target territories for airlift:\n";
+    Territory* source = chooseTerritory(player->toDefend());
+    Territory* target = chooseTerritory(player->toDefend());
+
+    if (source && target && source != target) {
+        int armies = source->getArmies() / 2;
+        if (armies > 0) {
+            ordersList->add(new OrderAirlift(player, source, target, new int(armies)));
+        }
     }
+
+    if (deck) deck->returnCard(new AirliftCard());
 }
 
 // DiplomacyCard
@@ -77,10 +123,23 @@ DiplomacyCard::~DiplomacyCard() {}
 
 std::string DiplomacyCard::getType() const { return "diplomacy"; }
 void DiplomacyCard::play(Player* player, OrdersList* ordersList, Deck* deck) {
-    std::cout << "Playing Diplomacy Card -> (creates Diplomacy Order)" << std::endl;
-    if (deck) {
-        deck->returnCard(new DiplomacyCard());
+    if (!player || !ordersList) return;
+
+    std::cout << player->getName() << " plays Diplomacy Card -> create Negotiate Order\n";
+
+    // Choose another player
+    std::vector<Player*> others;
+    GameEngine engine; 
+    for (Player* p : engine.getPlayers()) {
+        if (p != player) others.push_back(p);
     }
+
+    Player* targetPlayer = player->choosePlayer(others);
+    if (targetPlayer) {
+        ordersList->add(new OrderNegotiate(player, targetPlayer));
+    }
+
+    if (deck) deck->returnCard(new DiplomacyCard());
 }
 
 Card* cloneCard(const Card* card) {
