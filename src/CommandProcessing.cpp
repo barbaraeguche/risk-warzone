@@ -134,7 +134,6 @@ bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine
   }
 
   // validate based on current state
-  if (currState == "startup" && (baseCmd == "start" || baseCmd == "loadmap")) return true;
   if (currState == "startup" && baseCmd == "start") return true;
   if (currState == "start" && baseCmd == "loadmap") return true;
   if (currState == "map loaded" && (baseCmd == "loadmap" || baseCmd == "validatemap")) return true;
