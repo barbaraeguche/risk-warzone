@@ -4,10 +4,16 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>   
+
 
 class State;
 class Transition;
-
+class GameCommand;
+class Map;         
+class Player;      
+class Deck;
+class CommandProcessor;
 
 class GameEngine {
 private:
@@ -15,6 +21,10 @@ private:
     std::map<std::string, State*>* states;
     std::vector<std::string>* stateHistory;
 
+    //A2: startup phase state
+    std::unique_ptr<Map> map_;         //  add: holds the loaded/validated map using smart pointer
+    std::vector<Player*> players_;     // players created by addplayer
+    Deck* deck_;
 public:
     GameEngine();
     GameEngine(const GameEngine& other);
@@ -30,9 +40,13 @@ public:
     void displayValidCommands() const;
     void displayStateHistory() const;
 
+    void startupPhase();
+    void startupPhase(CommandProcessor&);
+
 private:
     void initializeStates();
     void cleanupStates();
+
 };
 
 
@@ -76,3 +90,24 @@ public:
     std::string getCommand() const;
     std::string getTargetState() const;
 };
+
+
+class GameCommand {
+private:
+    std::string* commandString;
+
+public:
+    GameCommand();
+    GameCommand(const std::string& command);
+    GameCommand(const GameCommand& other);
+    ~GameCommand();
+
+    GameCommand& operator=(const GameCommand& other);
+
+    friend std::ostream& operator<<(std::ostream& os, const GameCommand& command);
+
+    std::string getCommandString() const;
+    bool isValid() const;
+};
+
+void testGameStates();

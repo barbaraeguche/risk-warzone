@@ -138,13 +138,14 @@ bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine
   if (currState == "start" && baseCmd == "loadmap") return true;
   if (currState == "map loaded" && (baseCmd == "loadmap" || baseCmd == "validatemap")) return true;
   if (currState == "map validated" && baseCmd == "addplayer") return true;
-  if (currState == "players added" && (baseCmd == "addplayer" || baseCmd == "assigncountries")) return true;
+  if (currState == "players added" && (baseCmd == "addplayer" || baseCmd == "gamestart")) return true;
   if (currState == "assigncountries" && baseCmd == "play") return true;
   if (currState == "play" && baseCmd == "play") return true;
   if (currState == "assign reinforcement" && baseCmd == "issueorder") return true;
   if (currState == "issue orders" && (baseCmd == "issueorder" || baseCmd == "endissueorders")) return true;
   if (currState == "execute orders" && (baseCmd == "execorder" || baseCmd == "endexecorders" || baseCmd == "win")) return true;
   if (currState == "win" && (baseCmd == "end" || baseCmd == "play")) return true;
+  if (baseCmd == "help") return true;
 
   return false;
 }

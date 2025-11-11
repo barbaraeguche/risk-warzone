@@ -1,6 +1,17 @@
 #include "GameEngine.h"
+#include "CommandProcessing.h"
 #include <algorithm>
 #include <iostream>
+#include "Map.h"
+#include <filesystem>
+#include <sstream>
+#include "Player.h"
+#include "Cards.h"
+#include <random>
+#include <cctype>
+#include <set>
+#include <map>
+
 
 // ========== GameEngine Implementation ==========
 
@@ -14,6 +25,7 @@ GameEngine::GameEngine() {
     initializeStates();
     currentState = (*states)["startup"];
     stateHistory->push_back("startup");
+    deck_ = new Deck();    // allocate a new Deck object on the heap
 }
 
 /**
@@ -40,6 +52,13 @@ GameEngine::~GameEngine() {
     cleanupStates();
     delete states;
     delete stateHistory;
+
+    // Free dynamically created players
+    for (auto* p : players_)
+        delete p;
+
+    players_.clear();
+    delete deck_; // free deck
 }
 
 /**
@@ -158,6 +177,7 @@ void GameEngine::initializeStates() {
     (*states)["map loaded"] = new State("map loaded");
     (*states)["map validated"] = new State("map validated");
     (*states)["players added"] = new State("players added");
+    (*states)["gamestart"] = new State("gamestart");
     (*states)["assigncountries"] = new State("assigncountries");
     (*states)["play"] = new State("play");
     (*states)["assign reinforcement"] = new State("assign reinforcement");
@@ -177,8 +197,10 @@ void GameEngine::initializeStates() {
     (*states)["map validated"]->addTransition(new Transition("addplayer", "players added"));
 
     (*states)["players added"]->addTransition(new Transition("addplayer", "players added"));
+    (*states)["players added"]->addTransition(new Transition("gamestart", "gamestart"));
     (*states)["players added"]->addTransition(new Transition("assigncountries", "assigncountries"));
 
+    (*states)["gamestart"]->addTransition(new Transition("play", "play"));
     (*states)["assigncountries"]->addTransition(new Transition("play", "play"));
 
     (*states)["play"]->addTransition(new Transition("play", "assign reinforcement"));
@@ -406,4 +428,374 @@ std::string Transition::getCommand() const {
  */
 std::string Transition::getTargetState() const {
     return *targetState;
+}
+
+// ========== GameCommand Implementation ==========
+
+/**
+ * Default constructor for GameCommand
+ */
+GameCommand::GameCommand() {
+    commandString = new std::string("");
+}
+
+/**
+ * Constructor for GameCommand with command string
+ * @param command The command string
+ */
+GameCommand::GameCommand(const std::string& command) {
+    commandString = new std::string(command);
+}
+
+/**
+ * Copy constructor for GameCommand
+ * @param other The Command object to copy from
+ */
+GameCommand::GameCommand(const GameCommand& other) {
+    commandString = new std::string(*other.commandString);
+}
+
+/**
+ * Destructor for GameCommand
+ * Cleans up all allocated memory
+ */
+GameCommand::~GameCommand() {
+    delete commandString;
+}
+
+/**
+ * Assignment operator for GameCommand
+ * @param other The Command object to assign from
+ * @return Reference to this Command
+ */
+GameCommand& GameCommand::operator=(const GameCommand& other) {
+    if (this != &other) {
+        delete commandString;
+        commandString = new std::string(*other.commandString);
+    }
+    return *this;
+}
+
+/**
+ * Stream insertion operator for GameCommand
+ * @param os Output stream
+ * @param command Command object to output
+ * @return Reference to the output stream
+ */
+std::ostream& operator<<(std::ostream& os, const GameCommand& command) {
+    os << "GameCommand: " << command.getCommandString();
+    return os;
+}
+
+/**
+ * Get the command string
+ * @return Command string
+ */
+std::string GameCommand::getCommandString() const {
+    return *commandString;
+}
+
+/**
+ * Check if the command is valid (not empty and not whitespace only)
+ * @return True if valid, false otherwise
+ */
+bool GameCommand::isValid() const {
+    if (commandString->empty()) return false;
+
+    // Check if string contains only whitespace
+    for (char c : *commandString) {
+        if (!std::isspace(c)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+//==========A2 implementation==========
+namespace fs = std::filesystem;
+
+// Helper: list .map files under a directory
+static std::vector<std::string> listMapFiles(const std::string& root) {
+    std::vector<std::string> files;
+    try {
+        if (fs::exists(root)) {
+            for (const auto& p : fs::recursive_directory_iterator(root)) {
+                if (p.is_regular_file() && p.path().extension() == ".map") {
+                    files.push_back(p.path().string());
+                }
+            }
+        }
+    } catch (...) {}
+    std::sort(files.begin(), files.end());
+    return files;
+}
+
+// Helper to trim copy
+static std::string trimCopy(const std::string& s) {
+    auto b = std::find_if_not(s.begin(), s.end(), [](int c){ return std::isspace(c); });
+    auto e = std::find_if_not(s.rbegin(), s.rend(), [](int c){ return std::isspace(c); }).base();
+    return (e <= b) ? std::string() : std::string(b, e);
+}
+
+// Startup phase that reads via CommandProcessor (console or file)
+void GameEngine::startupPhase(CommandProcessor& cmdSrc) {
+    std::cout << "\n=== STARTUP PHASE ===\n";
+    std::cout << "Commands:\n"
+              << "  loadmap <path-or-name>\n"
+              << "  validatemap\n"
+              << "  addplayer <playername>\n"
+              << "  gamestart\n";
+
+    // Show available map files under A1/mapFiles
+    const fs::path base = fs::current_path() / "A1" / "mapFiles";
+    const auto maps = listMapFiles(base.string());
+    if (maps.empty()) {
+        std::cout << "No .map files found under: " << base << "\n"
+                  << "Ensure A1/mapFiles exists and contains .map files.\n";
+    } else {
+        std::cout << "\nAvailable maps:\n";
+        for (const auto& m : maps) std::cout << "  - " << m << "\n";
+    }
+
+    MapLoader loader;
+    map_.reset();
+    bool hasLoaded = false;
+    bool isValid   = false;
+
+    while (true) {
+        // Read one command via CommandProcessor
+        auto* c = cmdSrc.getCommand();     // <- avoids type ambiguity
+        if (!c) break;
+
+        std::string line = trimCopy(c->getCommand());
+        if (line.empty()) continue;
+
+        // Validate command against current state
+        if (!cmdSrc.validate(line, this)) {
+            std::istringstream tmp(line);
+            std::string base; tmp >> base;
+            std::cout << " Command '" << base << "' is invalid in state '"
+                      << getCurrentStateName() << "'.\n";
+            c->saveEffect("Invalid for current state");
+            continue;
+        }
+
+        // Parse base command
+        std::istringstream iss(line);
+        std::string cmd;
+        iss >> cmd;
+
+        if (cmd == "loadmap") {
+            std::string arg; std::getline(iss, arg); arg = trimCopy(arg);
+            if (arg.empty()) {
+                std::cout << "Usage: loadmap <path-or-name>\n";
+                c->saveEffect("Missing path");
+                continue;
+            }
+
+            fs::path candidate(arg);
+            if (!fs::exists(candidate)) candidate = base / arg; // allow bare filename
+
+            std::cout << "Loading: " << candidate.string() << " ...\n";
+            auto loaded = loader.loadMap(candidate.string());
+            if (!loaded) {
+                std::cout << "Error: could not load file.\n";
+                c->saveEffect("Load failed");
+                continue;
+            }
+
+            map_ = std::move(loaded);
+            hasLoaded = true;
+            isValid = false;
+
+            std::cout << "Success: map loaded: " << map_->getMapName() << "\n";
+            transitionTo("map loaded");
+            std::cout << "Next: type 'validatemap'\n";
+            c->saveEffect("Map loaded; state -> map loaded");
+        }
+        else if (cmd == "validatemap") {
+            if (!hasLoaded || !map_) {
+                std::cout << "Load a map first.\n";
+                c->saveEffect("No map loaded");
+                continue;
+            }
+
+            std::cout << "\n--- VALIDATION TESTS ---\n";
+            const bool isConnected = map_->isConnectedGraph();
+            std::cout << "1. Map is a connected graph: " << (isConnected ? "PASS" : "FAIL") << "\n";
+
+            const bool continentsConnected = map_->areContinentsConnected();
+            std::cout << "2. Continents are connected subgraphs: " << (continentsConnected ? "PASS" : "FAIL") << "\n";
+
+            const bool territoriesInContinents = map_->eachTerritoryBelongsToOneContinent();
+            std::cout << "3. Each territory belongs to one continent: "
+                      << (territoriesInContinents ? "PASS" : "FAIL") << "\n";
+
+            const bool overallValid = map_->validate();
+            std::cout << "\n--- OVERALL VALIDATION ---\n"
+                      << "Overall Result: " << (overallValid ? "VALID MAP" : "INVALID MAP") << "\n";
+
+            if (overallValid) {
+                transitionTo("map validated");
+                isValid = true;
+
+                // summary
+                std::cout << "\nMap Summary:\n";
+                std::cout << "Map Name: " << map_->getMapName() << "\n";
+                std::cout << "Number of Territories: " << map_->getNumberOfTerritories() << "\n";
+                std::cout << "Number of Continents: " << map_->getNumberOfContinents() << "\n";
+
+                std::cout << "\nMap validated successfully. Transitioned to 'map validated'.\n";
+                c->saveEffect("Map validated; state -> map validated");
+            } else {
+                std::cout << "Invalid map. Load a different one.\n";
+                c->saveEffect("Invalid map");
+            }
+        }
+        else if (cmd == "addplayer") {
+            std::string name; std::getline(iss, name); name = trimCopy(name);
+            if (!name.empty() && ((name.front()=='"' && name.back()=='"') || (name.front()=='\'' && name.back()=='\''))) {
+                name = name.substr(1, name.size()-2);
+            }
+            if (name.empty()) {
+                std::cout << "Usage: addplayer <playername>\n";
+                c->saveEffect("Missing player name");
+                continue;
+            }
+            if (players_.size() >= 6) {
+                std::cout << "Maximum of 6 players reached.\n";
+                c->saveEffect("Too many players");
+                continue;
+            }
+            bool duplicate = false;
+            for (auto* p : players_) if (p && p->getName() == name) { duplicate = true; break; }
+            if (duplicate) {
+                std::cout << "A player named '" << name << "' already exists. Pick another name.\n";
+                c->saveEffect("Duplicate name");
+                continue;
+            }
+
+            auto* np = new Player(name);
+            players_.push_back(np);
+            transitionTo("players added");
+
+            std::cout << "Added player: " << name << "\n";
+            std::cout << "Current players (" << players_.size() << "): ";
+            for (size_t i = 0; i < players_.size(); ++i) {
+                std::cout << players_[i]->getName();
+                if (i + 1 < players_.size()) std::cout << ", ";
+            }
+            std::cout << "\nHint: add between 2 and 6 players total, then type 'gamestart'.\n";
+            c->saveEffect("Player added; state -> players added");
+        }
+        else if (cmd == "gamestart") {
+            if (!map_) {
+                std::cout << "No map loaded. Use 'loadmap <file>' first.\n";
+                c->saveEffect("No map");
+                continue;
+            }
+            if (!isValid) {
+                std::cout << "Map is not validated yet. Use 'validatemap' first.\n";
+                c->saveEffect("Map not validated");
+                continue;
+            }
+            if (players_.size() < 2 || players_.size() > 6) {
+                std::cout << "'gamestart' requires between 2 and 6 players. Current: " << players_.size() << "\n";
+                c->saveEffect("Invalid player count");
+                continue;
+            }
+
+            std::cout << "Preconditions satisfied for 'gamestart'. Proceeding to game setup...\n";
+
+            // Distribute all territories evenly
+            std::vector<Territory*> all;
+            const auto& territories = map_->getTerritories();
+            all.reserve(territories.size());
+            for (const auto& t : territories) all.push_back(t.get());
+
+            std::mt19937 rng(std::random_device{}());
+            std::shuffle(all.begin(), all.end(), rng);
+            for (size_t i = 0; i < all.size(); ++i) {
+                Territory* terr = all[i];
+                Player* newOwner = players_[i % players_.size()];
+                if (Player* oldOwner = terr->getOwner(); oldOwner && oldOwner != newOwner) {
+                    oldOwner->removeTerritory(terr);
+                }
+                if (!newOwner->ownsTerritory(terr)) newOwner->addTerritory(terr);
+                if (terr->getOwner() != newOwner) terr->setOwner(newOwner);
+            }
+
+            // Randomize play order
+            std::shuffle(players_.begin(), players_.end(), rng);
+
+            // 50 armies each
+            for (auto* p : players_) p->setReinforcementPool(50);
+
+            // Draw 2 initial cards each
+            if (deck_) {
+                for (auto* p : players_) {
+                    for (int j = 0; j < 2; ++j) {
+                        if (Card* card = deck_->draw()) { p->addCard(card); }
+                    }
+                }
+            }
+
+            // Output
+            std::cout << "\n=== TERRITORY DISTRIBUTION RESULTS ===\n";
+            std::cout << "Total territories on map: " << all.size() << "\n";
+            std::cout << "Number of players: " << players_.size() << "\n";
+            for (auto* p : players_) {
+                std::cout << " - " << p->getName()
+                          << " received " << p->getTerritoryCount() << " territories.\n";
+            }
+
+            std::cout << "\n=== PLAYER ORDER ===\nPlay order: ";
+            for (size_t i = 0; i < players_.size(); ++i) {
+                std::cout << players_[i]->getName();
+                if (i + 1 < players_.size()) std::cout << " -> ";
+            }
+            std::cout << "\n";
+
+            std::cout << "\n=== REINFORCEMENT POOLS ===\n";
+            for (auto* p : players_) {
+                std::cout << " - " << p->getName()
+                          << " starts with " << p->getReinforcementPool() << " armies.\n";
+            }
+
+            std::cout << "\n=== INITIAL CARDS DRAWN ===\n";
+            for (auto* p : players_) {
+                std::cout << p->getName() << " drew 2 cards and now has\n ";
+                p->getHand()->printHand();
+                std::cout << "\n";
+            }
+
+            transitionTo("play");
+            std::cout << "gamestart complete. Transitioned to 'play' state.\n";
+            std::cout << "Current Game State: " << getCurrentStateName() << "\n";
+            c->saveEffect("Game started; state -> play");
+            break; // leave startup loop
+        }
+        else if (cmd == "help") {
+            std::cout << "Commands:\n"
+                      << "  loadmap <path-or-name>\n"
+                      << "  validatemap\n"
+                      << "  addplayer <name>\n"
+                      << "  gamestart\n";
+            c->saveEffect("Help shown");
+        }
+        else {
+            std::cout << "Unknown command. Try 'help'.\n";
+            c->saveEffect("Unknown command");
+        }
+    }
+
+    if (!hasLoaded || !isValid) {
+        std::cout << "StartupPhase aborted (no valid map).\n";
+    }
+}
+
+// === Keep signature working console by default
+void GameEngine::startupPhase() {
+    CommandProcessor consoleCP;       // reads from stdin
+    startupPhase(consoleCP);
 }
