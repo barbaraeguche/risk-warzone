@@ -8,6 +8,7 @@ void testCards();
 void testGameStates(); 
 void testMainGameLoop();
 void testStartupPhase();
+void testCommandProcessor();
 
 /**
  * The Main driver function that calls all test functions for each part
@@ -52,6 +53,13 @@ int main() {
     testGameStates();
     
     testStartupPhase();
+
+    // Part 6: Command Processor Testing
+    std::cout << "\n" << std::string(50, '=') << std::endl;
+    std::cout << "PART 6: COMMAND PROCESSOR TESTING" << std::endl;
+    std::cout << std::string(50, '=') << std::endl;
+    testCommandProcessor();
+
     // Additional: Main Game Loop Testing with GameEngine
     //testMainGameLoop();
 
