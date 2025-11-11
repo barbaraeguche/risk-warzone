@@ -138,6 +138,9 @@ public:
     void playAll(Player* player, OrdersList* ordersList, Deck* deck);
     void printHand() const;
     int size() const;
+    const std::vector<Card*>* getCards() const {
+        return handCards;
+    }
 
     // Stream insertion operator
     friend std::ostream& operator<<(std::ostream& out, const Hand& hand);

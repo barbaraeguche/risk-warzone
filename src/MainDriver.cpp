@@ -6,6 +6,7 @@ void testOrdersLists();
 void testOrderExecution(); 
 void testCards(); 
 void testGameStates(); 
+void testMainGameLoop();
 
 /**
  * The Main driver function that calls all test functions for each part
@@ -48,6 +49,9 @@ int main() {
     std::cout << "PART 5: GAME ENGINE TESTING" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
     testGameStates();
+    
+    // Additional: Main Game Loop Testing with GameEngine
+    testMainGameLoop();
 
     std::cout << "\n" << std::string(50, '=') << std::endl;
     std::cout << "ALL TESTS COMPLETED SUCCESSFULLY" << std::endl;

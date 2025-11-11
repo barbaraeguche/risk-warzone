@@ -7,6 +7,11 @@
 
 class State;
 class Transition;
+class Map;
+class Player;
+class Deck;
+class Territory;
+class Order;
 
 
 class GameEngine {
@@ -14,6 +19,9 @@ private:
     State* currentState;
     std::map<std::string, State*>* states;
     std::vector<std::string>* stateHistory;
+    std::vector<Player*>* players;
+    Map* map;
+    Deck* deck;
 
 public:
     GameEngine();
@@ -29,6 +37,15 @@ public:
     std::string getCurrentStateName() const;
     void displayValidCommands() const;
     void displayStateHistory() const;
+
+    void mainGameLoop();
+    void reinforcementPhase();
+    void issueOrdersPhase();
+    void executeOrdersPhase();
+
+    void addPlayer(Player* player);
+    void setMap(Map* map);
+    void setDeck(Deck* deck);
 
 private:
     void initializeStates();

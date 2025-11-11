@@ -227,6 +227,34 @@ void Player::issueOrder(Order* order) {
       orders->add(order);
   }
 }
+void Player::issueOrder() {
+    std::cout << "Player " << getName() << " is issuing an order." << std::endl;
+
+    // 1. Deploy orders
+    std::vector<Territory*> defendList = toDefend();
+    if (*reinforcementPool > 0 && !defendList.empty()) {
+        Territory* terr = defendList.front();
+        int deploy = std::min(*reinforcementPool, 2);
+        issueDeployOrder(terr, deploy);
+        *reinforcementPool -= deploy;
+        return;
+    }
+
+    // 2. Attack orders
+    std::vector<Territory*> attackList = toAttack();
+    if (!attackList.empty() && !territories->empty()) {
+        Territory* source = territories->front();
+        Territory* target = attackList.front();
+        issueAdvanceOrder(source, target, 1);
+        return;
+    }
+
+    // 3. Play cards from hand
+    if (hand && hand->size() > 0) {
+        hand->playCard(0, this, orders, nullptr); 
+        return;
+    }
+}
 
 /**
  * Issue a deploy order
