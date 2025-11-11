@@ -1,0 +1,25 @@
+start
+loadmap conquestmap.map
+validatemap
+addplayer Alice
+addplayer Bob
+addplayer Charlie
+assigncountries
+gamestart
+issueorder
+issueorder
+issueorder
+endissueorders
+execorder
+execorder
+execorder
+endexecorders
+issueorder
+issueorder
+endissueorders
+execorder
+execorder
+endexecorders
+win
+replay
+end

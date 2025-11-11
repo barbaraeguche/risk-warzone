@@ -1,0 +1,27 @@
+start
+loadmap worldmap.map
+validatemap
+addplayer Player1
+addplayer Player2
+addplayer Player3
+assigncountries
+gamestart
+issueorder
+issueorder
+issueorder
+endissueorders
+execorder
+execorder
+execorder
+endexecorders
+issueorder
+endissueorders
+execorder
+endexecorders
+win
+replay
+loadmap newmap.map
+validatemap
+addplayer NewPlayer1
+gamestart
+quit
