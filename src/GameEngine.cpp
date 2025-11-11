@@ -32,6 +32,7 @@ static bool isAllowed(const std::string& state, const std::string& cmd) {
     if (it == kAllowed.end()) return false;
     return it->second.count(cmd) > 0;
 }
+
 // ========== GameEngine Implementation ==========
 
 /**
@@ -44,9 +45,9 @@ GameEngine::GameEngine() {
     initializeStates();
     currentState = (*states)["startup"];
     stateHistory->push_back("startup");
-    players = new std::vector<Player*>();
-    map = nullptr;
-    deck = new Deck();
+    std::vector<Player*> players_;
+    map_ = nullptr;
+    deck_ = new Deck();
 }
 
 /**
@@ -65,23 +66,23 @@ GameEngine::GameEngine(const GameEngine& other) {
     currentState = (*states)[other.getCurrentStateName()];
 
     //Deep Copy Map
-    if (other.map != nullptr) {
-        map = new Map(*other.map);
+    if (other.map_) {
+        map_ = std::make_unique<Map>(*other.map_);
     } else {
-        map = nullptr;
+        map_ = nullptr;
     }
 
     //Deep Copy Deck
-    if (other.deck != nullptr) {
-        deck = new Deck(*other.deck);
+    if (other.deck_ != nullptr) {
+        deck_ = new Deck(*other.deck_);
     } else {
-        deck = nullptr;
+        deck_ = nullptr;
     }
 
     //Deep Copy Players
-    players->clear();
-    for (Player* p : *other.players) {
-        players->push_back(new Player(*p)); 
+    players_.clear();
+    for (auto p : other.players_) {
+        players_.push_back(new Player(*p)); 
     }
 }
 
@@ -93,12 +94,11 @@ GameEngine::~GameEngine() {
     cleanupStates();
     delete states;
     delete stateHistory;
-    delete map;
-    delete deck;
-    for (auto* player : *players) {
-        delete player;
+    delete deck_;
+    for (auto p : players_) {
+        delete p;
     }
-    players.clear();
+    players_.clear();
 }
 
 /**
@@ -122,6 +122,25 @@ GameEngine& GameEngine::operator=(const GameEngine& other) {
         }
 
         currentState = (*states)[other.getCurrentStateName()];
+
+        if (other.map_)
+            map_ = std::make_unique<Map>(*other.map_);
+        else
+            map_.reset();
+
+        for (auto p : players_) {
+            delete p;
+        }
+        players_.clear();
+        for (auto p : other.players_) {
+            players_.push_back(new Player(*p)); 
+        }
+
+        if (other.deck_ != nullptr) {
+            deck_ = new Deck(*other.deck_);
+        } else {
+            deck_ = nullptr;
+        }
     }
     return *this;
 }
@@ -139,7 +158,7 @@ std::ostream& operator<<(std::ostream& os, const GameEngine& engine) {
 
 namespace fs = std::filesystem;
 
-// List .map files under A1/mapFiles (matches your A1 driver convention)
+
 static std::vector<std::string> listMapFiles(const std::string& root) {
     std::vector<std::string> files;
     try {
@@ -160,7 +179,7 @@ void GameEngine::startupPhase() {
     std::cout << "\n=== STARTUP PHASE: loadmap + validatemap ===\n";
 
     // 1) Show available .map files
-    const fs::path base = fs::current_path() / "A1" / "mapFiles";
+    const fs::path base = fs::current_path() / "mapFiles";
     const auto maps = listMapFiles(base.string());
     if (maps.empty()) {
         std::cout << "No .map files found under: " << base << "\n";
@@ -702,13 +721,13 @@ std::vector<std::string> State::getValidCommands() const {
 }
 
 void GameEngine::addPlayer(Player* player) {
-    players->push_back(player);
+    players_.push_back(player);
 }
 void GameEngine::setMap(Map* map) {
-    this->map = map;
+    map_ = std::make_unique<Map>(*map);
 }
 void GameEngine::setDeck(Deck* deck) {
-    this->deck = deck;
+    deck_ = deck;
 }
 
 void GameEngine::mainGameLoop() {
@@ -724,7 +743,7 @@ void GameEngine::mainGameLoop() {
             transitionTo("assign reinforcement");
             reinforcementPhase();
 
-        for (Player* player : *players) {
+        for (Player* player : players_) {
             std::cout << "\n--- Player: " << player->getName() << " ---" << std::endl;
 
             // Issue Orders Phase
@@ -736,19 +755,19 @@ void GameEngine::mainGameLoop() {
             executeOrdersPhase();
 
             // Check win condition
-            if (player->getTerritories().size() == map->getTerritories().size()) {
+            if (player->getTerritories().size() == map_->getTerritories().size()) {
                 transitionTo("win");
                 std::cout << "Player " << player->getName() << " has won the game!" << std::endl;
                 gameOver = true;
                 break;
             }
         }
-        for (auto it = players->begin(); it != players->end();) {
+        for (auto it = players_.begin(); it != players_.end();) {
         Player* p = *it;
         if (p->getTerritories().empty()) {
             std::cout << "Player " << p->getName() << " has been eliminated!\n";
             delete p;
-            it = players->erase(it);
+            it = players_.erase(it);
         } else {
             ++it;
         }
@@ -761,9 +780,9 @@ void GameEngine::mainGameLoop() {
 }
 
 void GameEngine::reinforcementPhase() {
-    for (Player* player : *players) {
+    for (Player* player : players_) {
         int reinforcement = std::max(3, static_cast<int>(player->getTerritories().size()) / 3);
-        for (auto& continent : map->getContinents()) {
+        for (auto& continent : map_->getContinents()) {
         bool controlsAll = true;
         for (Territory* terr : continent->getTerritories()) {
             if (terr->getOwner() != player) {
@@ -784,7 +803,7 @@ void GameEngine::issueOrdersPhase() {
     bool anyOrdersLeft;
     do {
         anyOrdersLeft = false;
-        for (Player* player : *players) {
+        for (Player* player : players_) {
             std::cout << "\nPlayer " << player->getName() << "'s turn to issue an order." << std::endl;
             if (player->getReinforcementPool() > 0 || !player->getHand()->getCards()->empty()) {
                 std::cout << "Reinforcement Pool: " << player->getReinforcementPool() << std::endl;
@@ -799,7 +818,7 @@ void GameEngine::executeOrdersPhase() {
     bool ordersLeft;
     do {
         ordersLeft = false;
-        for (Player* player : *players) {
+        for (Player* player : players_) {
             auto* orderList = player->getOrders()->orders;
             if (!orderList->empty()) {
                 Order* order = orderList->front();
