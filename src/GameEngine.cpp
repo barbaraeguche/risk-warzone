@@ -179,7 +179,7 @@ void GameEngine::startupPhase() {
     std::cout << "\n=== STARTUP PHASE: loadmap + validatemap ===\n";
 
     // 1) Show available .map files
-    const fs::path base = fs::current_path() / "mapFiles";
+    const fs::path base = fs::current_path() / "maps";
     const auto maps = listMapFiles(base.string());
     if (maps.empty()) {
         std::cout << "No .map files found under: " << base << "\n";
