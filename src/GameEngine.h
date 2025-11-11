@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>
 
 class State;
 class Transition;
@@ -19,9 +20,9 @@ private:
     State* currentState;
     std::map<std::string, State*>* states;
     std::vector<std::string>* stateHistory;
-    std::vector<Player*>* players;
-    Map* map;
-    Deck* deck;
+    std::unique_ptr<Map> map_;         //  add: holds the loaded/validated map
+    std::vector<Player*> players_;     // players created by addplayer
+    Deck* deck_;
 
 public:
     GameEngine();
@@ -38,6 +39,8 @@ public:
     void displayValidCommands() const;
     void displayStateHistory() const;
 
+    void startupPhase():
+
     void mainGameLoop();
     void reinforcementPhase();
     void issueOrdersPhase();
@@ -50,6 +53,7 @@ public:
 private:
     void initializeStates();
     void cleanupStates();
+    
 };
 
 
