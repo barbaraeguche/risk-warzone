@@ -1,12 +1,13 @@
 #pragma once
 
 #include <fstream>
-#include <iostream>
 #include <string>
 #include <vector>
 
 
 // forward declarations
+class GameEngine;
+
 class Command;
 class CommandProcessor;
 class FileLineReader;
@@ -43,7 +44,8 @@ public:
 
 /**
  * The CommandProcessor class handles reading and storing commands.
- * The commands can be read from the console.
+ * The commands can be read from the console or overridden by subclasses.
+ * Game components must get their commands from this processor.
  */
 class CommandProcessor {
 private:
@@ -57,13 +59,14 @@ public:
 
   // getters
   Command* getCommand();
+  std::vector<Command*> getCommands() const;
 
   // utility
   void saveCommand(Command* cmd);
-  bool validate() const;
+  bool validate(const std::string& cmd, const GameEngine* engine) const;
 
   // stream insertion
-  friend std::ostream& operator<<(std::ostream& os, const CommandProcessor& cmdProcessor);
+  friend std::ostream& operator<<(std::ostream& os, const CommandProcessor& cp);
 
 private:
   // utility
@@ -96,7 +99,7 @@ public:
 
 /**
  * The FileCommandProcessorAdapter class adapts CommandProcessor to read from files.
- * It implements the adapter design pattern.
+ * It implements the Adapter design pattern.
  */
 class FileCommandProcessorAdapter : public CommandProcessor {
 private:
