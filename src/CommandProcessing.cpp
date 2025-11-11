@@ -1,4 +1,5 @@
 #include "CommandProcessing.h"
+#include "GameEngine.h"
 
 #include <iostream>
 #include <vector>
@@ -101,6 +102,10 @@ Command* CommandProcessor::getCommand() {
   return cmd;
 }
 
+std::vector<Command*> CommandProcessor::getCommands() const {
+  return *commands;
+}
+
 // --- UTILITY ---
 std::string CommandProcessor::readCommand() const {
   std::string cmdStr;
@@ -113,11 +118,42 @@ void CommandProcessor::saveCommand(Command* cmd) {
   commands->push_back(cmd);
 }
 
+bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine) const {
+  if (cmd.empty() || engine == nullptr) {
+    return false;
+  }
+
+  // get the current state name
+  std::string currState = engine->getCurrentStateName();
+
+  // parse the base command
+  std::string baseCmd = cmd;
+  std::size_t spacePos = cmd.find(' ');
+  if (spacePos != std::string::npos) {
+    baseCmd = cmd.substr(0, spacePos);
+  }
+
+  // validate based on current state
+  if (currState == "startup" && baseCmd == "start") return true;
+  if (currState == "start" && baseCmd == "loadmap") return true;
+  if (currState == "map loaded" && (baseCmd == "loadmap" || baseCmd == "validatemap")) return true;
+  if (currState == "map validated" && baseCmd == "addplayer") return true;
+  if (currState == "players added" && (baseCmd == "addplayer" || baseCmd == "assigncountries")) return true;
+  if (currState == "assigncountries" && baseCmd == "play") return true;
+  if (currState == "play" && baseCmd == "play") return true;
+  if (currState == "assign reinforcement" && baseCmd == "issueorder") return true;
+  if (currState == "issue orders" && (baseCmd == "issueorder" || baseCmd == "endissueorders")) return true;
+  if (currState == "execute orders" && (baseCmd == "execorder" || baseCmd == "endexecorders" || baseCmd == "win")) return true;
+  if (currState == "win" && (baseCmd == "end" || baseCmd == "play")) return true;
+
+  return false;
+}
+
 // --- STREAM INSERTION ---
-std::ostream& operator<<(std::ostream& os, const CommandProcessor& cmdProcessor) {
-  os << "CommandProcessor[" << cmdProcessor.commands->size() << " commands:\n";
-  for (int i = 0; i < cmdProcessor.commands->size(); i++) {
-    os << " " << (i + 1) << ". " << *(*cmdProcessor.commands)[i] << "\n";
+std::ostream& operator<<(std::ostream& os, const CommandProcessor& cp) {
+  os << "CommandProcessor[" << cp.commands->size() << " commands:\n";
+  for (size_t i = 0; i < cp.commands->size(); i++) {
+    os << " " << (i + 1) << ". " << *(*cp.commands)[i] << "\n";
   }
   os << "]";
   return os;
@@ -145,6 +181,9 @@ FileLineReader::FileLineReader(const FileLineReader& other) :
 
 FileLineReader& FileLineReader::operator=(const FileLineReader& other) {
   if (this != &other) {
+    if (file->is_open()) {
+      file->close();
+    }
     delete file;
     delete fileName;
 
@@ -189,7 +228,9 @@ std::ostream& operator<<(std::ostream& os, const FileLineReader& flr) {
 
 
 // ==================== FileCommandProcessorAdapter Class Implementation ====================
-FileCommandProcessorAdapter::FileCommandProcessorAdapter() : fileReader(new FileLineReader()) {}
+FileCommandProcessorAdapter::FileCommandProcessorAdapter() :
+  CommandProcessor(),
+  fileReader(new FileLineReader()) {}
 
 FileCommandProcessorAdapter::FileCommandProcessorAdapter(const std::string& fileName) :
  CommandProcessor(),
@@ -233,25 +274,3 @@ std::ostream& operator<<(std::ostream& os, const FileCommandProcessorAdapter& fc
   os << "]";
   return os;
 }
-
-
-
-
-
-
-//
-// /**
-//  * Check if the command is valid (not empty and not whitespace only)
-//  * @return True if valid, false otherwise
-//  */
-// bool Command::isValid() const {
-//     if (commandString->empty()) return false;
-//
-//     // Check if string contains only whitespace
-//     for (char c : *commandString) {
-//         if (!std::isspace(c)) {
-//             return true;
-//         }
-//     }
-//     return false;
-// }
