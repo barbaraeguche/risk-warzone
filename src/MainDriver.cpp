@@ -5,7 +5,9 @@ void testPlayers();
 void testOrdersLists(); 
 void testOrderExecution(); 
 void testCards(); 
-void testGameStates(); 
+void testGameStates();
+void testCommandProcessor();
+void testStartupPhase();
 
 /**
  * The Main driver function that calls all test functions for each part
@@ -48,6 +50,18 @@ int main() {
     std::cout << "PART 5: GAME ENGINE TESTING" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
     testGameStates();
+
+    // Part 6: Command Processor Testing
+    std::cout << "\n" << std::string(50, '=') << std::endl;
+    std::cout << "PART 6: COMMAND PROCESSOR TESTING" << std::endl;
+    std::cout << std::string(50, '=') << std::endl;
+    testCommandProcessor();
+
+    // Part 7: startup phase Testing
+    std::cout << "\n" << std::string(50, '=') << std::endl;
+    std::cout << "PART 6: STARTUP PHASE TESTING" << std::endl;
+    std::cout << std::string(50, '=') << std::endl;
+    testStartupPhase();
 
     std::cout << "\n" << std::string(50, '=') << std::endl;
     std::cout << "ALL TESTS COMPLETED SUCCESSFULLY" << std::endl;

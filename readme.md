@@ -21,6 +21,6 @@ cmake --build build
 - run a1
 
 ```bash
-./build/A1/Debug/comp_345_a1  # windows
-./build/A1/comp_345_a1  # mac
+./build/Debug/comp_345  # windows
+./build/bin/comp_345   # mac
 ```
