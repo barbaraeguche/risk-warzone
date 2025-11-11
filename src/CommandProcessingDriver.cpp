@@ -62,10 +62,16 @@ void testCommandProcessor() {
     * and valid commands result in the correct effect and state change
     */
     if (isValid) {
+      // process the command to get the effect
+      std::string oldState = engine->getCurrentStateName();
       engine->processCommand(cmd->getCommand());
-      cmd->saveEffect("Command executed successfully");
+      std::string newState = engine->getCurrentStateName();
+
+      // save the effect of the transition
+      std::string effect = "Transitioned from '" + oldState + "' to '" + newState + "'";
+      cmd->saveEffect(effect);
     } else {
-      std::string errorMsg = "Error: Invalid command '" + cmd->getCommand() +
+      std::string errorMsg = "Invalid command '" + cmd->getCommand() +
                              "' in state '" + engine->getCurrentStateName() + "'";
       cmd->saveEffect(errorMsg);
       std::cout << errorMsg << std::endl;
