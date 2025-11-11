@@ -142,6 +142,10 @@ public:
         return handCards;
     }
 
+    bool empty() const {
+        return !handCards || handCards->empty();
+    }
+
     // Stream insertion operator
     friend std::ostream& operator<<(std::ostream& out, const Hand& hand);
 };
