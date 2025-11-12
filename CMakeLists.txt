@@ -16,6 +16,8 @@ add_executable(comp_345
 	src/CommandProcessingDriver.cpp
 	src/GameEngine.cpp
 	src/GameEngineDriver.cpp
+	src/LoggingObserver.cpp
+	src/LoggingObserverDriver.cpp
 	src/MainDriver.cpp
 	src/Map.cpp
 	src/MapDriver.cpp

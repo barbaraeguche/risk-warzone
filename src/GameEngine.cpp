@@ -19,20 +19,17 @@
  * Default constructor for GameEngine
  * Initializes the game engine with startup state
  */
-GameEngine::GameEngine() {
-    states = new std::map<std::string, State*>();
-    stateHistory = new std::vector<std::string>();
+GameEngine::GameEngine() : Subject(), currentState(nullptr), states(new std::map<std::string, State*>()), stateHistory(new std::vector<std::string>()), map_(nullptr), deck_(new Deck()) {
     initializeStates();
     currentState = (*states)["startup"];
     stateHistory->push_back("startup");
-    deck_ = new Deck();    // allocate a new Deck object on the heap
 }
 
 /**
  * Copy constructor for GameEngine
  * @param other The GameEngine object to copy from
  */
-GameEngine::GameEngine(const GameEngine& other) {
+GameEngine::GameEngine(const GameEngine& other) : Subject(other) {
     states = new std::map<std::string, State*>();
     stateHistory = new std::vector<std::string>(*other.stateHistory);
 
@@ -68,6 +65,7 @@ GameEngine::~GameEngine() {
  */
 GameEngine& GameEngine::operator=(const GameEngine& other) {
     if (this != &other) {
+        Subject::operator=(other);
         // Clean up current resources
         cleanupStates();
         delete states;
@@ -106,7 +104,7 @@ void GameEngine::processCommand(const std::string& command) {
 
     if (transition != nullptr) {
         std::cout << "Executing command: " << command << std::endl;
-        transitionTo(transition->getTargetState());
+        transitionState(transition->getTargetState());
     } else {
         std::cout << "Invalid command: " << command << std::endl;
         std::cout << "Valid commands for state '" << currentState->getName() << "': ";
@@ -123,12 +121,13 @@ void GameEngine::processCommand(const std::string& command) {
  * Transition to a new state
  * @param stateName Name of the state to transition to
  */
-void GameEngine::transitionTo(const std::string& stateName) {
+void GameEngine::transitionState(const std::string& stateName) {
     auto stateIt = states->find(stateName);
     if (stateIt != states->end()) {
         currentState = stateIt->second;
         stateHistory->push_back(stateName);
         std::cout << "Transitioned to state: " << stateName << std::endl;
+        notify();
     } else {
         std::cout << "Error: State '" << stateName << "' does not exist!" << std::endl;
     }
@@ -140,6 +139,10 @@ void GameEngine::transitionTo(const std::string& stateName) {
  */
 std::string GameEngine::getCurrentStateName() const {
     return currentState->getName();
+}
+
+std::string GameEngine::stringToLog() const {
+    return "GameEngine state changed to: " + getCurrentStateName();
 }
 
 /**
@@ -609,7 +612,7 @@ void GameEngine::startupPhase(CommandProcessor& cmdSrc) {
             isValid = false;
 
             std::cout << "Success: map loaded: " << map_->getMapName() << "\n";
-            transitionTo("map loaded");
+            transitionState("map loaded");
             std::cout << "Next: type 'validatemap'\n";
             c->saveEffect("Map loaded; state -> map loaded");
         }
@@ -636,7 +639,7 @@ void GameEngine::startupPhase(CommandProcessor& cmdSrc) {
                       << "Overall Result: " << (overallValid ? "VALID MAP" : "INVALID MAP") << "\n";
 
             if (overallValid) {
-                transitionTo("map validated");
+                transitionState("map validated");
                 isValid = true;
 
                 // summary
@@ -677,7 +680,7 @@ void GameEngine::startupPhase(CommandProcessor& cmdSrc) {
 
             auto* np = new Player(name);
             players_.push_back(np);
-            transitionTo("players added");
+            transitionState("players added");
 
             std::cout << "Added player: " << name << "\n";
             std::cout << "Current players (" << players_.size() << "): ";
@@ -769,7 +772,7 @@ void GameEngine::startupPhase(CommandProcessor& cmdSrc) {
                 std::cout << "\n";
             }
 
-            transitionTo("play");
+            transitionState("play");
             std::cout << "gamestart complete. Transitioned to 'play' state.\n";
             std::cout << "Current Game State: " << getCurrentStateName() << "\n";
             c->saveEffect("Game started; state -> play");

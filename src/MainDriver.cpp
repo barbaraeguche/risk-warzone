@@ -8,6 +8,7 @@ void testCards();
 void testGameStates();
 void testCommandProcessor();
 void testStartupPhase();
+void testLoggingObserver();
 
 /**
  * The Main driver function that calls all test functions for each part
@@ -62,6 +63,11 @@ int main() {
     std::cout << "PART 6: STARTUP PHASE TESTING" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
     testStartupPhase();
+
+    std::cout << "\n" << std::string(50, '=') << std::endl;
+    std::cout << "PART 7: LOGGING OBSERVER TESTING" << std::endl;
+    std::cout << std::string(50, '=') << std::endl;
+    testLoggingObserver();
 
     std::cout << "\n" << std::string(50, '=') << std::endl;
     std::cout << "ALL TESTS COMPLETED SUCCESSFULLY" << std::endl;
