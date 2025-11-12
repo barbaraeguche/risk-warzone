@@ -436,8 +436,29 @@ void GameEngine::mainGameLoop() {
     
     std::cout << "\n=== Starting Main Game Loop ===" << std::endl;
 
+    std::cout << "Type 'quit' to exit the test." << std::endl;
+    std::cout << "Type 'help' to see valid commands for the current state." << std::endl;
+    std::cout << "Type 'history' to see the state transition history." << std::endl;
+    std::cout << "Type 'continue' to proceed with the game phases." << std::endl;
+
+
     while (!gameOver) {
         std::cout << "\n=== Turn " << turn << " ===" << std::endl;
+        
+        std::cout << "\nEnter command: ";
+        std::getline(std::cin, input);
+
+        // Handle special commands
+        if (input == "quit") {
+            std::cout << "Exiting Game Engine test." << std::endl;
+            break;
+        } else if (input == "help") {
+            engine.displayValidCommands();
+            continue;
+        } else if (input == "history") {
+            engine.displayStateHistory();
+            continue;
+        }
         
         // Reinforcement Phase
         transitionState("assign reinforcement");
