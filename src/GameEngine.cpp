@@ -232,7 +232,7 @@ void GameEngine::displayStateHistory() const {
 }
 
 /**
- * Initialize all game states and their transitions
+ * Initialise all game states and their transitions
  */
 void GameEngine::initializeStates() {
     // Create all states based on the assignment state diagram
@@ -982,7 +982,7 @@ void GameEngine::startupPhase(CommandProcessor& cmdSrc) {
                 if (terr->getOwner() != newOwner) terr->setOwner(newOwner);
             }
 
-            // Randomize play order
+            // Randomise play order
             std::shuffle(players_.begin(), players_.end(), rng);
 
             // 50 armies each
