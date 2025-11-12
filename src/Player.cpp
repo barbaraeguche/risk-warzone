@@ -287,7 +287,7 @@ void Player::issueOrder(bool deployPhase, bool& advanceIssued, Deck* deck_) {
               int cardIndex = -1;
               std::cout << "Choose a card to play: (-1 for no cards) ";
               std::cin >> cardIndex;
-              if(cardIndex != -1) return;
+              if(cardIndex == -1) return;
               else if(cardIndex < 0 || cardIndex >= hand->size()) std::cout << "Invalid card index.\n";
 
               playCard(cardIndex, deck_);
@@ -303,61 +303,99 @@ void Player::issueOrder(bool deployPhase, bool& advanceIssued, Deck* deck_) {
                       << " (Armies: " << territories->at(i)->getArmies() << ")\n";
         }
 
-        int sourceIndex = -1;
-        while (sourceIndex < 0 || sourceIndex >= territories->size() || territories->at(sourceIndex)->getArmies() <= 1) {
-          std::cout << "Choose source territory (index): ";
-          std::cin >> sourceIndex;
-        }
+        std::vector<Territory*> territoriesWithEnemies;
 
-        Territory* source = territories->at(sourceIndex);
-
-        int targetType = -1;
-        int targetIndex = -1;
-        
-        while(targetType != 0 && targetType != 1) {
-          std::cout << "Target type: 0 = defend (own), 1 = attack (enemy): ";
-          std::cin >> targetType;
-        }
-
-        Territory* target = nullptr;
-        const std::vector<Territory*>& adjTerritories = source->getAdjTerritories();
-
-        // Filter adjacent territories based on target type
-        std::vector<Territory*> validTargets;
-        for (Territory* adj : adjTerritories) {
-            if (!adj) continue;
-            if (targetType == 1 && !ownsTerritory(adj)) { // attack
-                validTargets.push_back(adj);
-            } else if (targetType == 0 && ownsTerritory(adj)) { // defend/reinforce
-                validTargets.push_back(adj);
+        for (Territory* t : *territories) { // all territories you own
+            if (!t) continue;
+            const std::vector<Territory*>& adj = t->getAdjTerritories();
+            for (Territory* a : adj) {
+                if (a && !ownsTerritory(a)) { // if adjacent to enemy
+                    territoriesWithEnemies.push_back(t);
+                    break; // only need one enemy to qualify
+                }
             }
         }
 
-        // Display valid targets
-        for (size_t i = 0; i < validTargets.size(); ++i) {
-            std::cout << i << ": " << validTargets[i]->getName()
-                      << " (Armies: " << validTargets[i]->getArmies() << ")\n";
+        // Display
+        if (territoriesWithEnemies.empty()) {
+            std::cout << "No territories adjacent to enemies.\n";
+        } else {
+            std::cout << "Your territories adjacent to enemies:\n";
+            for (size_t i = 0; i < territoriesWithEnemies.size(); ++i) {
+                std::cout << i << ": " << territoriesWithEnemies[i]->getName()
+                          << " (Armies: " << territoriesWithEnemies[i]->getArmies() << ")\n";
+            }
         }
 
-        // Choose target
-        while (targetIndex < 0 || targetIndex >= validTargets.size()) {
-            std::cout << "Choose target territory (index): ";
-            std::cin >> targetIndex;
+        int sourceIndex = -1;
+        Territory* source = nullptr;
+        Territory* target = nullptr;
+
+        while (true) { // loop until a valid source + target is chosen
+            // Choose source territory
+            sourceIndex = -1;
+            while (sourceIndex < 0 || sourceIndex >= territories->size() || territories->at(sourceIndex)->getArmies() <= 1) {
+                std::cout << "Choose source territory (index, must have >1 army): ";
+                std::cin >> sourceIndex;
+            }
+            source = territories->at(sourceIndex);
+          
+            // Choose target type
+            int targetType = -1;
+            while (targetType != 0 && targetType != 1) {
+                std::cout << "Target type: 0 = defend (own), 1 = attack (enemy): ";
+                std::cin >> targetType;
+            }
+          
+            // Filter adjacent territories based on target type
+            const std::vector<Territory*>& adjTerritories = source->getAdjTerritories();
+            std::vector<Territory*> validTargets;
+            for (Territory* adj : adjTerritories) {
+                if (!adj) continue;
+                if (targetType == 1 && !ownsTerritory(adj)) { // attack
+                    validTargets.push_back(adj);
+                } else if (targetType == 0 && ownsTerritory(adj)) { // defend/reinforce
+                    validTargets.push_back(adj);
+                }
+            }
+          
+            // If no valid targets, notify and restart loop
+            if (validTargets.empty()) {
+                std::cout << "No valid adjacent territories for this source. Choose another source.\n";
+                continue; // back to source selection
+            }
+          
+            // Display valid targets
+            for (size_t i = 0; i < validTargets.size(); ++i) {
+                std::cout << i << ": " << validTargets[i]->getName()
+                          << " (Armies: " << validTargets[i]->getArmies() << ")\n";
+            }
+          
+            // Choose target
+            int targetIndex = -1;
+            while (targetIndex < -1 || targetIndex >= validTargets.size()) {
+                std::cout << "Choose target territory (index): -1 to reselect source: ";
+                std::cin >> targetIndex;
+            }
+            if (targetIndex == -1) continue; // reselect source
+            target = validTargets[targetIndex];
+          
+            // Choose number of armies to move
+            int armies = -1;
+            while (armies <= 0 || armies > source->getArmies() - 1) {
+                std::cout << "Enter number of armies to move (max " << source->getArmies() - 1 << "): ";
+                std::cin >> armies;
+            }
+          
+            // Issue order and exit loop
+            issueAdvanceOrder(source, target, armies);
+            std::cout << "Advance order issued from " << source->getName() 
+                      << " to " << target->getName() << " with " << armies << " armies.\n";
+          
+            advanceIssued = true;
+            std::cout << "Advance order issued.\n";
+            break; // exit the while(true) loop
         }
-        target = validTargets[targetIndex];
-
-        int armies = -1;
-        while (armies <= 0 || armies > source->getArmies() - 1) {
-            std::cout << "Enter number of armies to move (max " << source->getArmies() - 1 << "): ";
-            std::cin >> armies;
-        }
-
-        issueAdvanceOrder(source, target, armies);
-        std::cout << "Advance order issued from " << source->getName() 
-                  << " to " << target->getName() << " with " << armies << " armies.\n";
-
-        advanceIssued = true;
-        std::cout << "Advance order issued.\n";
 
         if (!hand->empty()) {
             std::cout << "Your cards:\n";
@@ -368,7 +406,7 @@ void Player::issueOrder(bool deployPhase, bool& advanceIssued, Deck* deck_) {
             std::cout << "Choose a card to play: (-1 for no cards) ";
             std::cin >> cardIndex;
 
-            if(cardIndex != -1) return;
+            if(cardIndex == -1) return;
             else if(cardIndex < 0 || cardIndex >= hand->size()) std::cout << "Invalid card index.\n";
 
             playCard(cardIndex, deck_);

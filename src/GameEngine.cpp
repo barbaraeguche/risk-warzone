@@ -810,7 +810,7 @@ void GameEngine::reinforcementPhase() {
         int totalreinforcement = reinforcement + player->getPendingReinforcements();
         player->setReinforcementPool(totalreinforcement);
         player->setPendingReinforcements(0);
-        std::cout << "Player " << player->getName() << " receives " << reinforcement << " reinforcement armies." << std::endl;
+        std::cout << "Player " << player->getName() << " receives " << totalreinforcement << " reinforcement armies." << std::endl;
     }
 }
 
