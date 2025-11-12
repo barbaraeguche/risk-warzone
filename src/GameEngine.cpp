@@ -17,7 +17,7 @@
 
 /**
  * Default constructor for GameEngine
- * Initializes the game engine with startup state
+ * Initializes the game engine with startup state (before start)
  */
 GameEngine::GameEngine() {
     states = new std::map<std::string, State*>();
@@ -102,7 +102,15 @@ std::ostream& operator<<(std::ostream& os, const GameEngine& engine) {
  * @param command The command string to process
  */
 void GameEngine::processCommand(const std::string& command) {
-    Transition* transition = currentState->getTransition(command);
+    // Extract base command (before any parameters)
+    std::string baseCommand = command;
+    std::size_t spacePos = command.find(' ');
+    if (spacePos != std::string::npos) {
+        baseCommand = command.substr(0, spacePos);
+    }
+
+    // Look for transition using base command
+    Transition* transition = currentState->getTransition(baseCommand);
 
     if (transition != nullptr) {
         std::cout << "Executing command: " << command << std::endl;
@@ -171,51 +179,50 @@ void GameEngine::displayStateHistory() const {
  * Initialize all game states and their transitions
  */
 void GameEngine::initializeStates() {
-    // Create all states
+    // Create all states based on the assignment state diagram
     (*states)["startup"] = new State("startup");
     (*states)["start"] = new State("start");
     (*states)["map loaded"] = new State("map loaded");
     (*states)["map validated"] = new State("map validated");
     (*states)["players added"] = new State("players added");
-    (*states)["gamestart"] = new State("gamestart");
-    (*states)["assigncountries"] = new State("assigncountries");
-    (*states)["play"] = new State("play");
     (*states)["assign reinforcement"] = new State("assign reinforcement");
     (*states)["issue orders"] = new State("issue orders");
     (*states)["execute orders"] = new State("execute orders");
     (*states)["win"] = new State("win");
-    (*states)["end"] = new State("end");
 
-    // Set up transitions based on the state diagram
+    // Set up transitions based on the assignment state diagram
+    // From startup state (the initial state before start)
     (*states)["startup"]->addTransition(new Transition("start", "start"));
 
+    // From start state
     (*states)["start"]->addTransition(new Transition("loadmap", "map loaded"));
 
+    // From map loaded state
     (*states)["map loaded"]->addTransition(new Transition("loadmap", "map loaded"));
     (*states)["map loaded"]->addTransition(new Transition("validatemap", "map validated"));
 
+    // From map validated state
     (*states)["map validated"]->addTransition(new Transition("addplayer", "players added"));
 
+    // From players added state
     (*states)["players added"]->addTransition(new Transition("addplayer", "players added"));
-    (*states)["players added"]->addTransition(new Transition("gamestart", "gamestart"));
-    (*states)["players added"]->addTransition(new Transition("assigncountries", "assigncountries"));
+    (*states)["players added"]->addTransition(new Transition("gamestart", "assign reinforcement"));
 
-    (*states)["gamestart"]->addTransition(new Transition("play", "play"));
-    (*states)["assigncountries"]->addTransition(new Transition("play", "play"));
-
-    (*states)["play"]->addTransition(new Transition("play", "assign reinforcement"));
-
+    // From assign reinforcement state
     (*states)["assign reinforcement"]->addTransition(new Transition("issueorder", "issue orders"));
 
+    // From issue orders state
     (*states)["issue orders"]->addTransition(new Transition("issueorder", "issue orders"));
     (*states)["issue orders"]->addTransition(new Transition("endissueorders", "execute orders"));
 
+    // From execute orders state
     (*states)["execute orders"]->addTransition(new Transition("execorder", "execute orders"));
     (*states)["execute orders"]->addTransition(new Transition("endexecorders", "assign reinforcement"));
     (*states)["execute orders"]->addTransition(new Transition("win", "win"));
 
-    (*states)["win"]->addTransition(new Transition("end", "end"));
-    (*states)["win"]->addTransition(new Transition("play", "play"));
+    // From win state
+    (*states)["win"]->addTransition(new Transition("replay", "start"));
+    (*states)["win"]->addTransition(new Transition("quit", "win")); // stays in win, but signals exit
 }
 
 /**
