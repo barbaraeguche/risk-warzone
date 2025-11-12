@@ -594,7 +594,16 @@ void GameEngine::startupPhase(CommandProcessor& cmdSrc) {
         std::istringstream iss(line);
         std::string cmd;
         iss >> cmd;
-
+        if (cmd == "start") {
+            if (getCurrentStateName() == "startup") {
+                transitionState("start");
+                std::cout << "Transitioned to 'start'. Now you can use 'loadmap <file>'.\n";
+                c->saveEffect("state -> start");
+            } else {
+                std::cout << "Already past 'startup'.\n";
+                c->saveEffect("no-op");
+            }
+        }
         if (cmd == "loadmap") {
             std::string arg; std::getline(iss, arg); arg = trimCopy(arg);
             if (arg.empty()) {
