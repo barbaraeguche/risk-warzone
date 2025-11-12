@@ -10,6 +10,7 @@ void testCommandProcessor();
 void testStartupPhase();
 void testLoggingObserver();
 void testMainGameLoop();
+void automatictestMainGameLoop();
 
 
 /**
@@ -70,19 +71,19 @@ int main() {
     
     // Part 8: Main Game Loop Testing with GameEngine
     std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "ADDITIONAL: MAIN GAME LOOP TESTING" << std::endl;
+    std::cout << "PART 8: MAIN GAME LOOP TESTING" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
-    testMainGameLoop();
+    automatictestMainGameLoop();
     
     //Part 9: Testing order execution
     std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "PART 8: ORDER EXECUTION TESTING" << std::endl;
+    std::cout << "PART 9: ORDER EXECUTION TESTING" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
     testOrderExecution();
 
     // Part 10: logging observer Testing
     std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "PART 8: LOGGING OBSERVER TESTING" << std::endl;
+    std::cout << "PART 10: LOGGING OBSERVER TESTING" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
     testLoggingObserver();
 

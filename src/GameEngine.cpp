@@ -434,20 +434,30 @@ void GameEngine::mainGameLoop() {
 
     std::cout << "\n=== Starting Main Game Loop ===" << std::endl;
 
-    std::cout << "Type 'quit' to exit the test." << std::endl;
-    std::cout << "Type 'help' to see valid commands for the current state." << std::endl;
-    std::cout << "Type 'history' to see the state transition history." << std::endl;
-    std::cout << "Type 'continue' to proceed with the game phases." << std::endl;
+    //std::cout << "Type 'quit' to exit the test." << std::endl;
+    //std::cout << "Type 'continue' to proceed with the game phases." << std::endl;
 
+    if (players_.empty() || !map_) {
+        std::cout << "Error: Cannot start main game loop without players and map.\n";
+        return;
+    }
 
     while (!gameOver) {
         std::cout << "\n=== Turn " << turn << " ===" << std::endl;
         
-        std::cout << "\nEnter command: ";
-        std::getline(std::cin, input);
+        //std::cout << "\nEnter command: ";
+        //std::getline(std::cin, input);
+
+         // Clear negotiation records at the start of each turn
+        Order::clearNegotiationRecords();
+
+        // Reset conquered flag for all players
+        for (Player* player : players_) {
+            player->setConqueredThisTurn(false);
+        }
 
         // Handle special commands
-        if (input == "quit") {
+        /**if (input == "quit") {
             std::cout << "Exiting Game Engine test." << std::endl;
             gameOver = true;
             break;
@@ -457,17 +467,27 @@ void GameEngine::mainGameLoop() {
         } else if (input == "history") {
             engine.displayStateHistory();
             continue;
-        }
+        } */
 
         // Reinforcement Phase
-        transitionState("assign reinforcement");
         reinforcementPhase();
 
-        transitionState("issue orders");
+        // Issue Orders Phase
         issueOrdersPhase();
         
-        transitionState("execute orders");
+        // Execute Orders Phase
         executeOrdersPhase();
+
+        // Give cards to players who conquered territories
+        for (Player* player : players_) {
+            if (player->getConqueredThisTurn() && deck_) {
+                Card* drawnCard = deck_->draw();
+                if (drawnCard) {
+                    player->addCard(drawnCard);
+                    std::cout << player->getName() << " conquered a territory this turn and receives a card!\n";
+                }
+            }
+        }
 
         // --- Remove eliminated players ---
         for (auto it = players_.begin(); it != players_.end();) {
@@ -487,6 +507,11 @@ void GameEngine::mainGameLoop() {
             transitionState("win");
             std::cout << "Player " << winner->getName() << " has won the game!" << std::endl;
             gameOver = true;
+        } else if (players_.empty()) {
+            gameOver = true;
+            std::cout << "\n========================================\n";
+            std::cout << "GAME OVER - No players remaining!\n";
+            std::cout << "========================================\n";
         }
 
         turn++;
@@ -496,21 +521,42 @@ void GameEngine::mainGameLoop() {
 }
 
 void GameEngine::reinforcementPhase() {
+    std::cout << "\n--- REINFORCEMENT PHASE ---\n";
+    transitionState("assign reinforcement");
+
     for (Player* player : players_) {
         int reinforcement = std::max(3, static_cast<int>(player->getTerritories().size()) / 3);
 
-        for (auto& continent : map_->getContinents()) {
-            bool controlsAll = true;
-            for (Territory* terr : continent->getTerritories()) {
-                if (terr->getOwner() != player) {
-                    controlsAll = false;
+        // Add continent bonuses
+        std::map<Continent*, bool> continentOwnership;
+        const auto& continents = map_->getContinents();
+        
+        // Initialize all continents as potentially owned
+        for (const auto& continent : continents) {
+            continentOwnership[continent.get()] = true;
+        }
+
+        // Check each continent to see if player owns all territories
+        for (const auto& continent : continents) {
+            for (const auto& territory : continent->getTerritories()) {
+                if (territory->getOwner() != player) {
+                    continentOwnership[continent.get()] = false;
                     break;
                 }
             }
-            if (controlsAll) {
-                reinforcement += continent->getControlValue();
+        }
+
+        // Add bonuses for owned continents
+        int continentBonus = 0;
+        for (const auto& pair : continentOwnership) {
+            if (pair.second) {
+                continentBonus += pair.first->getControlValue();
+                std::cout << "  " << player->getName() << " controls all of " 
+                          << pair.first->getName() << " (+" << pair.first->getControlValue() << " bonus)\n";
             }
         }
+
+        reinforcement += continentBonus;
 
         int totalreinforcement = reinforcement + player->getPendingReinforcements();
         player->setReinforcementPool(totalreinforcement);
@@ -520,7 +566,11 @@ void GameEngine::reinforcementPhase() {
 }
 
 void GameEngine::issueOrdersPhase() {
+    std::cout << "\n--- ISSUING ORDERS PHASE ---\n";
+    transitionState("issue orders");
+    /** 
     std::cout << "Deploy phase\n";
+
     bool deployRemaining = true;
     bool dummy = false;
 
@@ -547,10 +597,43 @@ void GameEngine::issueOrdersPhase() {
     }
 
     std::cout << "Orders Issued\n";
+    */
+
+    bool anyPlayerIssuedOrder = true;
+    std::set<Player*> playersWhoPassed;
+
+    while (anyPlayerIssuedOrder && playersWhoPassed.size() < players_.size()) {
+        anyPlayerIssuedOrder = false;
+
+        for (Player* player : players_) {
+            // Skip players who have already passed
+            if (playersWhoPassed.find(player) != playersWhoPassed.end()) {
+                continue;
+            }
+
+            std::cout << "\n" << player->getName() << "'s turn to issue orders:\n";
+            std::cout << "  Reinforcement pool: " << player->getReinforcementPool() << "\n";
+            std::cout << "  Cards in hand: " << player->getHand()->size() << "\n";
+
+            // Player issues an order
+            bool issuedOrder = player->issueOrder();
+
+            if (issuedOrder) {
+                anyPlayerIssuedOrder = true;
+            } else {
+                // Player passed - no more orders this turn
+                playersWhoPassed.insert(player);
+                std::cout << "  " << player->getName() << " passes (no more orders this turn)\n";
+            }
+        }
+    }
+
+    std::cout << "\nAll players have finished issuing orders.\n";
 }
 
 void GameEngine::executeOrdersPhase() {
-    std::cout << "\nOrders Execution Phase\n";
+    std::cout << "\n--- ORDERS EXECUTION PHASE ---\n";
+    transitionState("execute orders");
 
     // First: Execute all deploy orders in round-robin fashion
     bool deploysLeft = true;
