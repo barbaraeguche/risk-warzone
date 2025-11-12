@@ -4,9 +4,36 @@ std::unique_ptr<std::vector<NegotiationRecord>> Order::negotiationRecords = std:
 
 // Base Order
 Order::Order():
+  Subject(),
   type{nullptr},
-  description{nullptr}
+  description{nullptr},
+  effect{new std::string("")}
   {}
+
+Order::Order(const Order& other) :
+  Subject(other),
+  type(other.type ? new std::string(*other.type) : nullptr),
+  description(other.description ? new std::string(*other.description) : nullptr),
+  effect(other.effect ? new std::string(*other.effect) : new std::string("")) {}
+
+Order& Order::operator=(const Order& other) {
+  if (this != &other) {
+    Subject::operator=(other);
+    delete type;
+    delete description;
+    delete effect;
+    type = other.type ? new std::string(*other.type) : nullptr;
+    description = other.description ? new std::string(*other.description) : nullptr;
+    effect = other.effect ? new std::string(*other.effect) : new std::string("");
+  }
+  return *this;
+}
+
+Order::~Order() {
+  delete type;
+  delete description;
+  delete effect;
+}
 
 std::ostream& operator<<(std::ostream& os, const Order& order) { 
   if (!order.type || !order.description) {
@@ -22,8 +49,27 @@ void Order::clearNegotiationRecords() {
   negotiationRecords->clear();
 }
 
+void Order::saveEffect(const std::string& effectDescription) {
+  if (!effect) {
+    effect = new std::string(effectDescription);
+  } else {
+    *effect = effectDescription;
+  }
+  notify();
+}
+
+std::string Order::getEffect() const {
+  return effect ? *effect : "";
+}
+
+std::string Order::stringToLog() const {
+  const std::string typeName = type ? *type : "<unknown>";
+  const std::string effectText = effect ? *effect : "<no effect>";
+  return "Order [" + typeName + "] effect: " + effectText;
+}
+
 //  OrderDeploy
-OrderDeploy::OrderDeploy(Player* player, Territory* target, int* soldiers) {
+OrderDeploy::OrderDeploy(Player* player, Territory* target, int* soldiers) : Order() {
   this->player = player;
   this->target = target;
   this->soldiers = soldiers;
@@ -31,7 +77,7 @@ OrderDeploy::OrderDeploy(Player* player, Territory* target, int* soldiers) {
   description = new std::string("Deploys armies to a specified territory you own.");
 }
 
-OrderDeploy::OrderDeploy(const OrderDeploy& other) {
+OrderDeploy::OrderDeploy(const OrderDeploy& other) : Order(other) {
   this->player = other.player;
   this->target = other.target;
   this->soldiers = other.soldiers;
@@ -50,6 +96,7 @@ OrderDeploy& OrderDeploy::operator=(const OrderDeploy& other) {
     delete description;
     type = new std::string(*(other.type));
     description = new std::string(*(other.description));
+    Order::operator=(other);
     this->player = other.player;
     this->target = other.target;
     this->soldiers = other.soldiers;
@@ -70,12 +117,14 @@ bool OrderDeploy::validate() {
 }
 
 void OrderDeploy::execute() {
-  if (this->validate())
-  {
-    std::cout << "Executing Deploy Order: Deploying " << *soldiers << " armies to " << target->getName() << ".\n";
-    target->setArmies(target->getArmies() + *soldiers);
-    player->setReinforcementPool(player->getReinforcementPool() - *soldiers);
+  if (!this->validate()) {
+    saveEffect("Deploy order invalid. Not executed.");
+    return;
   }
+
+  target->setArmies(target->getArmies() + *soldiers);
+  player->setReinforcementPool(player->getReinforcementPool() - *soldiers);
+  saveEffect("Deployed " + std::to_string(*soldiers) + " armies to " + target->getName() + ".");
 }
 
 Order* OrderDeploy::clone() const { 
@@ -84,7 +133,7 @@ Order* OrderDeploy::clone() const {
 
 
 //  OrderAdvance 
-OrderAdvance::OrderAdvance(Player* player, Territory* source, Territory* target, int* soldiers) {
+OrderAdvance::OrderAdvance(Player* player, Territory* source, Territory* target, int* soldiers) : Order() {
   this->player = player;
   this->source = source;
   this->target = target;
@@ -93,7 +142,7 @@ OrderAdvance::OrderAdvance(Player* player, Territory* source, Territory* target,
   description = new std::string("Moves armies from one territory to another, can also be used to attack enemy territories.");
 }
 
-OrderAdvance::OrderAdvance(const OrderAdvance& other) {
+OrderAdvance::OrderAdvance(const OrderAdvance& other) : Order(other) {
   this->player = other.player;
   this->source = other.source;
   this->target = other.target;
@@ -113,6 +162,7 @@ OrderAdvance& OrderAdvance::operator=(const OrderAdvance& other) {
     delete description;
     type = new std::string(*(other.type));
     description = new std::string(*(other.description));
+    Order::operator=(other);
     this->player = other.player;
     this->source = other.source;
     this->target = other.target;
@@ -134,61 +184,64 @@ bool OrderAdvance::validate() {
     }
     return true;
   }else{
+    saveEffect("Advance order invalid.");
     return false;
   }
 }
 
 void OrderAdvance::execute() {
-  if(this->validate()){
-    std::cout << "Executing Advance Order: Moving " << *soldiers << " armies from " << source->getName() << " to " << target->getName() << ".\n";
-    if (player->ownsTerritory(target)){
-      source->setArmies(source->getArmies() - *soldiers);
-      target->setArmies(target->getArmies() + *soldiers);
-    } else {
-      // Remove soldiers from source territory
-      source->setArmies(source->getArmies() - *soldiers);
+  if(!this->validate()){
+    saveEffect("Advance order invalid. Not executed.");
+    return;
+  }
+  std::cout << "Executing Advance Order: Moving " << *soldiers << " armies from " << source->getName() << " to " << target->getName() << ".\n";
+  if (player->ownsTerritory(target)){
+    source->setArmies(source->getArmies() - *soldiers);
+    target->setArmies(target->getArmies() + *soldiers);
+    saveEffect("Advanced armies to friendly territory " + target->getName() + ".");
+  } else {
+    // Remove soldiers from source territory
+    source->setArmies(source->getArmies() - *soldiers);
 
-      int attackers = *soldiers;
-      int defenders = target->getArmies();
+    int attackers = *soldiers;
+    int defenders = target->getArmies();
 
-      int attackSuccesses = 0;
-      int defenseSuccesses = 0;
+    int attackSuccesses = 0;
+    int defenseSuccesses = 0;
 
-      for (int i = 0; i < *soldiers; i++) {
-        if((rand() % 100) < 60) {
-          attackSuccesses++;
-        }
-      }
-
-      for (int i = 0; i < target->getArmies(); i++) {
-        if((rand() % 100) < 70) {
-          defenseSuccesses++;
-        }
-      }
-
-      attackers -= defenseSuccesses;
-      defenders -= attackSuccesses;
-
-      if(defenders <= 0){
-          player->setConqueredThisTurn(true);
-          player->addTerritory(target);
-          target->setOwner(player);
-          if(attackers < 0){
-            attackers = 1; // At least one army must occupy the conquered territory
-            // Rare edge case where all attackers die but defenders also die
-          }
-          target->setArmies(attackers);
-      } else {
-        target->setArmies(defenders);
-        if(attackers >= 0){
-          source->setArmies(source->getArmies() + attackers); // Return surviving attackers back to source
-        }
+    for (int i = 0; i < *soldiers; i++) {
+      if((rand() % 100) < 60) {
+        attackSuccesses++;
       }
     }
-  }else{
-    std::cout << "Advance Order validation failed. Order not executed.\n";
-  }
 
+    for (int i = 0; i < target->getArmies(); i++) {
+      if((rand() % 100) < 70) {
+        defenseSuccesses++;
+      }
+    }
+
+    attackers -= defenseSuccesses;
+    defenders -= attackSuccesses;
+
+    if(defenders <= 0){
+        player->setConqueredThisTurn(true);
+        player->addTerritory(target);
+        target->setOwner(player);
+        if(attackers < 0){
+          attackers = 1; // At least one army must occupy the conquered territory
+          // Rare edge case where all attackers die but defenders also die
+        }
+        target->setArmies(attackers);
+        saveEffect("Advance order succeeded and conquered " + target->getName() + ".");
+    } else {
+      target->setArmies(defenders);
+      if(attackers >= 0){
+        source->setArmies(source->getArmies() + attackers); // Return surviving attackers back to source
+      }
+      saveEffect("Advance order failed to conquer " + target->getName() + ".");
+    }
+  }
 }
 
 Order* OrderAdvance::clone() const { 
@@ -197,14 +250,14 @@ Order* OrderAdvance::clone() const {
 
 
 //  OrderBomb 
-OrderBomb::OrderBomb(Territory* target, Player* player) {
+OrderBomb::OrderBomb(Territory* target, Player* player) : Order() {
   this->target = target;
   this->player = player;
   type = new std::string("bomb");
   description = new std::string("Destroys half the armies on an enemy territory, can only be used once per game.");
 }
 
-OrderBomb::OrderBomb(const OrderBomb& other) {
+OrderBomb::OrderBomb(const OrderBomb& other) : Order(other) {
   this->target = other.target;
   this->player = other.player;
   type = new std::string(*(other.type));
@@ -222,6 +275,7 @@ OrderBomb& OrderBomb::operator=(const OrderBomb& other) {
     delete description;
     type = new std::string(*(other.type));
     description = new std::string(*(other.description));
+    Order::operator=(other);
     this->target = other.target;
     this->player = other.player;
   }
@@ -237,15 +291,20 @@ bool OrderBomb::validate() {
     }
     return false;
   }else {
+    saveEffect("Bomb order invalid.");
     return false;
   }
 }
 
 void OrderBomb::execute() {
-  if (this->validate())
+  if (!this->validate())
   {
-    target->setArmies(target->getArmies() / 2);
+    saveEffect("Bomb order invalid. Not executed.");
+    return;
   }
+
+  target->setArmies(target->getArmies() / 2);
+  saveEffect("Bombed " + target->getName() + "; armies halved.");
 }
 
 Order* OrderBomb::clone() const { 
@@ -254,7 +313,7 @@ Order* OrderBomb::clone() const {
 
 
 //  OrderBlockade 
-OrderBlockade::OrderBlockade(Player* nPlayer, Player* player, Territory* target) {
+OrderBlockade::OrderBlockade(Player* nPlayer, Player* player, Territory* target) : Order() {
   this->nPlayer = nPlayer;
   this->player = player;
   this->target = target;
@@ -262,7 +321,7 @@ OrderBlockade::OrderBlockade(Player* nPlayer, Player* player, Territory* target)
   description = new std::string("Triples the armies on one of your territories and makes it neutral, can only be used once per game.");
 }
 
-OrderBlockade::OrderBlockade(const OrderBlockade& other) {
+OrderBlockade::OrderBlockade(const OrderBlockade& other) : Order(other) {
   this->nPlayer = other.nPlayer;
   this->player = other.player;
   this->target = other.target;
@@ -277,10 +336,11 @@ OrderBlockade::~OrderBlockade() {
 
 OrderBlockade& OrderBlockade::operator=(const OrderBlockade& other) { 
   if (this != &other) {
-    delete type;
+     delete type;
     delete description;
     type = new std::string(*(other.type));
     description = new std::string(*(other.description));
+    Order::operator=(other);
     this->nPlayer = other.nPlayer;
     this->player = other.player;
     this->target = other.target;
@@ -292,18 +352,23 @@ bool OrderBlockade::validate() {
   if (target && player->ownsTerritory(target)) {
     return true;
   }else {
+    saveEffect("Blockade order invalid.");
     return false;
   }
 }
 
 void OrderBlockade::execute() {
-  if (this->validate())
+  if (!this->validate())
   {
-    target->setArmies(target->getArmies() * 2);
-    player->removeTerritory(target);
-    nPlayer->addTerritory(target);
-    target->setOwner(nPlayer);
+    saveEffect("Blockade order invalid. Not executed.");
+    return;
   }
+
+  target->setArmies(target->getArmies() * 2);
+  player->removeTerritory(target);
+  nPlayer->addTerritory(target);
+  target->setOwner(nPlayer);
+  saveEffect("Blockade executed on " + target->getName() + "; territory becomes neutral.");
 }
 
 Order* OrderBlockade::clone() const { 
@@ -312,7 +377,7 @@ Order* OrderBlockade::clone() const {
 
 
 //  OrderAirlift 
-OrderAirlift::OrderAirlift(Player* player, Territory* source, Territory* target, int* soldiers) {
+OrderAirlift::OrderAirlift(Player* player, Territory* source, Territory* target, int* soldiers) : Order() {
   this->player = player;
   this->source = source;
   this->target = target;
@@ -321,7 +386,7 @@ OrderAirlift::OrderAirlift(Player* player, Territory* source, Territory* target,
   description = new std::string("Moves any number of armies from one of your territories to another territory you own, can only be used once per game.");
 }
 
-OrderAirlift::OrderAirlift(const OrderAirlift& other) {
+OrderAirlift::OrderAirlift(const OrderAirlift& other) : Order(other) {
   this->player = other.player;
   this->source = other.source;
   this->target = other.target;
@@ -341,6 +406,7 @@ OrderAirlift& OrderAirlift::operator=(const OrderAirlift& other) {
     delete description;
     type = new std::string(*(other.type));
     description = new std::string(*(other.description));
+    Order::operator=(other);
     this->player = other.player;
     this->source = other.source;
     this->target = other.target;
@@ -353,15 +419,20 @@ bool OrderAirlift::validate() {
   if (source && target && player->ownsTerritory(source) && player->ownsTerritory(target) && *soldiers > 0 && source->getArmies() >= *soldiers ) {
     return true;
   }else{
+    saveEffect("Airlift order invalid.");
     return false;
   }
 }
 
 void OrderAirlift::execute() {
-  if(this->validate()){
-    source->setArmies(source->getArmies() - *soldiers);
-    target->setArmies(target->getArmies() + *soldiers);
+  if(!this->validate()){
+    saveEffect("Airlift order invalid. Not executed.");
+    return;
   }
+
+  source->setArmies(source->getArmies() - *soldiers);
+  target->setArmies(target->getArmies() + *soldiers);
+  saveEffect("Airlifted " + std::to_string(*soldiers) + " armies to " + target->getName() + ".");
 }
 
 Order* OrderAirlift::clone() const { 
@@ -370,14 +441,14 @@ Order* OrderAirlift::clone() const {
 
 
 //  OrderNegotiate 
-OrderNegotiate::OrderNegotiate(Player* player, Player* targetPlayer) {
+OrderNegotiate::OrderNegotiate(Player* player, Player* targetPlayer) : Order() {
   this->player = player;
   this->targetPlayer = targetPlayer;
   type = new std::string("negotiate");
   description = new std::string("Prevents attacks between you and another player until your next turn, can only be used once per game.");
 }
 
-OrderNegotiate::OrderNegotiate(const OrderNegotiate& other) {
+OrderNegotiate::OrderNegotiate(const OrderNegotiate& other) : Order(other) {
   this->player = other.player;
   this->targetPlayer = other.targetPlayer;
   type = new std::string(*(other.type));
@@ -395,6 +466,7 @@ OrderNegotiate& OrderNegotiate::operator=(const OrderNegotiate& other) {
     delete description;
     type = new std::string(*(other.type));
     description = new std::string(*(other.description));
+    Order::operator=(other);
     this->player = other.player;
     this->targetPlayer = other.targetPlayer;
   }
@@ -405,15 +477,20 @@ bool OrderNegotiate::validate() {
   if (targetPlayer && targetPlayer != player) {
     return true;
   }else {
+    saveEffect("Negotiate order invalid.");
     return false;
   }
 }
 
 void OrderNegotiate::execute() {
-  if (this->validate())
+  if (!this->validate())
   {
-    this->negotiationRecords->push_back(NegotiationRecord{player, targetPlayer});
+    saveEffect("Negotiate order invalid. Not executed.");
+    return;
   }
+
+  this->negotiationRecords->push_back(NegotiationRecord{player, targetPlayer});
+  saveEffect("Negotiation established between " + player->getName() + " and " + targetPlayer->getName() + ".");
 }
 
 Order* OrderNegotiate::clone() const { 
@@ -422,24 +499,26 @@ Order* OrderNegotiate::clone() const {
 
 
 //  OrdersList 
-OrdersList::OrdersList() {
-  orders = new std::vector<Order*>();
+OrdersList::OrdersList() : Subject(), orders(new std::vector<Order*>()), lastAddedOrder(nullptr) {
 }
 
-OrdersList::OrdersList(const OrdersList& other) {
+OrdersList::OrdersList(const OrdersList& other) : Subject(other) {
   orders = new std::vector<Order*>();
   for (const auto& order : *other.orders) {
     orders->push_back(order->clone());
   }
+  lastAddedOrder = orders->empty() ? nullptr : orders->back();
 }
 
 OrdersList& OrdersList::operator=(const OrdersList& other) {
   if (this != &other) {
+    Subject::operator=(other);
     delete orders;
     orders = new std::vector<Order*>();
     for (const auto& order : *other.orders) {
       orders->push_back(order->clone());
     }
+    lastAddedOrder = orders->empty() ? nullptr : orders->back();
   }
   return *this;
 }
@@ -458,6 +537,13 @@ bool OrdersList::validateIndex(int index) {
 
 void OrdersList::add(Order* order) {
   orders->push_back(order);
+  lastAddedOrder = order;
+  if (order) {
+    for (Observer* observer : *observers) {
+      order->attach(observer);
+    }
+  }
+  notify();
 }
 
 void OrdersList::remove(int index) {
@@ -487,5 +573,12 @@ OrdersList::~OrdersList() {
   }
 
   delete orders;
+}
+
+std::string OrdersList::stringToLog() const {
+  if (lastAddedOrder) {
+    return "OrdersList added order: " + lastAddedOrder->stringToLog();
+  }
+  return "OrdersList updated.";
 }
 

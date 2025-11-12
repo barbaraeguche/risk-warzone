@@ -5,10 +5,12 @@ void testPlayers();
 void testOrdersLists(); 
 void testOrderExecution(); 
 void testCards(); 
-void testGameStates(); 
-void testMainGameLoop();
-void testStartupPhase();
+void testGameStates();
 void testCommandProcessor();
+void testStartupPhase();
+void testLoggingObserver();
+void testMainGameLoop();
+
 
 /**
  * The Main driver function that calls all test functions for each part
@@ -52,15 +54,25 @@ int main() {
     std::cout << "PART 5: GAME ENGINE TESTING" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
     testGameStates();
-    
-    testStartupPhase();
 
     // Part 6: Command Processor Testing
     std::cout << "\n" << std::string(50, '=') << std::endl;
     std::cout << "PART 6: COMMAND PROCESSOR TESTING" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
     testCommandProcessor();
-    **/
+
+    // Part 7: startup phase Testing
+    std::cout << "\n" << std::string(50, '=') << std::endl;
+    std::cout << "PART 7: STARTUP PHASE TESTING" << std::endl;
+    std::cout << std::string(50, '=') << std::endl;
+    testStartupPhase();
+
+    // Part 8: logging observer Testing
+    std::cout << "\n" << std::string(50, '=') << std::endl;
+    std::cout << "PART 8: LOGGING OBSERVER TESTING" << std::endl;
+    std::cout << std::string(50, '=') << std::endl;
+    testLoggingObserver();
+
     // Additional: Main Game Loop Testing with GameEngine
     std::cout << "\n" << std::string(50, '=') << std::endl;
     std::cout << "ADDITIONAL: MAIN GAME LOOP TESTING" << std::endl;
