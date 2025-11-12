@@ -254,7 +254,6 @@ void Hand::addCard(Card* card) {
 
 void Hand::playCard(int index, Player* player, OrdersList* ordersList, Deck* deck) {
     if (index >= 0 && index < handCards->size()) {
-        std::cout << "Playing card at index " << index << " from hand.\n";
         Card* card = handCards->at(index);
         card->play(player, ordersList, deck);
         // Remove from hand (card is returned to deck in play() method)

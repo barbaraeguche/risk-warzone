@@ -6,6 +6,8 @@
 #include <iostream>
 #include <memory>
 
+#include "LoggingObserver.h"
+
 struct NegotiationRecord {
     Player* player1;
     Player* player2;
@@ -14,9 +16,11 @@ struct NegotiationRecord {
 /*
 Abstract base class for all order types.
 */
-class Order {
+class Order : public Subject, public ILoggable {
 public:
   Order();
+  Order(const Order& other);
+  Order& operator=(const Order& other);
 
   // validates an order is valid based on the current gamestate
   virtual bool validate() = 0;
@@ -26,13 +30,17 @@ public:
   virtual Order* clone() const = 0;
 
   //Make destructor virtual to avoid memory leaks
-  virtual ~Order() = default;
+  virtual ~Order();
 
   //stream insertion operator for printing orders
   friend std::ostream& operator<<(std::ostream& os, const Order& order);
 
   //static method to access negotiation records
   static void clearNegotiationRecords();
+
+  void saveEffect(const std::string& effectDescription);
+  std::string getEffect() const;
+  std::string stringToLog() const override;
 
 protected:
   // Needs to be cleared every turn in the game engine
@@ -41,6 +49,7 @@ protected:
   //order type and description
   std::string* type;
   std::string* description;
+  std::string* effect;
 
 };
 
@@ -134,7 +143,7 @@ public:
   Order* clone() const override;
 };
 
-class OrdersList {
+class OrdersList : public Subject, public ILoggable {
 public:
   std::vector<Order*>* orders;
 
@@ -158,4 +167,7 @@ private:
 
   //helper functions for validating indices
   bool validateIndex(int index);
+  Order* lastAddedOrder;
+public:
+  std::string stringToLog() const override;
 };

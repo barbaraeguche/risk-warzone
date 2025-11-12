@@ -13,10 +13,10 @@
      * "play", "assign reinforcement", "issue orders", "execute orders", "win"
      */
     void testMainGameLoop() {
-    GameEngine engine;
+        GameEngine engine;
     
-    engine.startupPhase();
-    engine.mainGameLoop();
+        engine.startupPhase();
+        engine.mainGameLoop();
     }
 
 /**

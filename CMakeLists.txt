@@ -16,6 +16,8 @@ add_executable(comp_345
 	src/CommandProcessingDriver.cpp
 	src/GameEngine.cpp
 	src/GameEngineDriver.cpp
+	src/LoggingObserver.cpp
+	src/LoggingObserverDriver.cpp
 	src/MainDriver.cpp
 	src/Map.cpp
 	src/MapDriver.cpp
@@ -31,5 +33,5 @@ target_include_directories(comp_345 PRIVATE src)
 # change compiler warning level
 target_compile_options(comp_345 PRIVATE
 	$<$<CXX_COMPILER_ID:MSVC>:/W3 /WX>
-	$<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Werror>
+	$<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Werror -Wno-sign-compare>
 )

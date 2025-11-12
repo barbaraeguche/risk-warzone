@@ -43,13 +43,14 @@ void testCommandProcessor() {
   engine->displayValidCommands();
   std::cout << std::endl;
 
-  // process commands until end state or empty command
-  while (engine->getCurrentStateName() != "end") {
+  // process commands until quit command
+  while (true) {
     // get the command from the processor
     Command* cmd = processor->getCommand();
 
     // check for empty command or quit
     if (cmd->getCommand().empty() || cmd->getCommand() == "quit") {
+      cmd->saveEffect("quit");
       std::cout << "Exiting command processor." << std::endl;
       break;
     }
@@ -63,13 +64,9 @@ void testCommandProcessor() {
     */
     if (isValid) {
       // process the command to get the effect
-      std::string oldState = engine->getCurrentStateName();
       engine->processCommand(cmd->getCommand());
-      std::string newState = engine->getCurrentStateName();
-
-      // save the effect of the transition
-      std::string effect = "Transitioned from '" + oldState + "' to '" + newState + "'";
-      cmd->saveEffect(effect);
+      std::string effect = engine->getCurrentStateName();
+      cmd->saveEffect(effect); // save the effect of the transition
     } else {
       std::string errorMsg = "Invalid command '" + cmd->getCommand() +
                              "' in state '" + engine->getCurrentStateName() + "'";
