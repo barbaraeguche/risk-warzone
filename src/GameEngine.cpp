@@ -429,11 +429,9 @@ void GameEngine::setDeck(Deck* deck) {
 void GameEngine::mainGameLoop() {
     bool gameOver = false;
     int turn = 1;
+    GameEngine engine;
+    std::string input;
 
-    for (Player* player : players_) {
-        player->setReinforcementPool(0);
-    }
-    
     std::cout << "\n=== Starting Main Game Loop ===" << std::endl;
 
     std::cout << "Type 'quit' to exit the test." << std::endl;
@@ -459,7 +457,7 @@ void GameEngine::mainGameLoop() {
             engine.displayStateHistory();
             continue;
         }
-        
+
         // Reinforcement Phase
         transitionState("assign reinforcement");
         reinforcementPhase();
