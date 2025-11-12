@@ -1,6 +1,23 @@
 #include "GameEngine.h"
+#include "Player.h"
+#include "Map.h"
+#include "Cards.h"
 #include <iostream>
 #include <string>
+#include <vector>
+
+
+    /**
+     * Main game loop integrated with GameEngine states
+     * Demonstrates turn-based gameplay using states:
+     * "play", "assign reinforcement", "issue orders", "execute orders", "win"
+     */
+    void testMainGameLoop() {
+        GameEngine engine;
+    
+        engine.startupPhase();
+        engine.mainGameLoop();
+    }
 
 /**
  * Driver function to test the GameEngine functionality
@@ -123,7 +140,8 @@ void testInvalidCommands() {
 
     std::cout << "\n=== End of Invalid Commands Test ===" << std::endl;
 }
-//function to test startupPhase() in gameEngine using console input
+
+//function to test startupPhase() in gameEngine
 void testStartupPhase() {
     std::cout << "\n=== testStartupPhase: loadmap + validatemap ===\n";
     GameEngine engine;

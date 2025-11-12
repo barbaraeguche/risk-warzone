@@ -268,3 +268,5 @@ private:
 
 // free function
 void testLoadMaps();
+
+Territory* chooseTerritory(const std::vector<Territory*>& territories);
