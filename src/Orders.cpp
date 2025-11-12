@@ -81,8 +81,6 @@ OrderDeploy::OrderDeploy(const OrderDeploy& other) : Order(other) {
   this->player = other.player;
   this->target = other.target;
   this->soldiers = other.soldiers;
-  type = new std::string(*(other.type));
-  description = new std::string(*(other.description));
 }
 
 OrderDeploy::~OrderDeploy() = default;
@@ -138,8 +136,6 @@ OrderAdvance::OrderAdvance(const OrderAdvance& other) : Order(other) {
   this->source = other.source;
   this->target = other.target;
   this->soldiers = other.soldiers;
-  type = new std::string(*(other.type));
-  description = new std::string(*(other.description));
 }
 
 OrderAdvance::~OrderAdvance() = default;
@@ -244,8 +240,6 @@ OrderBomb::OrderBomb(Territory* target, Player* player) : Order() {
 OrderBomb::OrderBomb(const OrderBomb& other) : Order(other) {
   this->target = other.target;
   this->player = other.player;
-  type = new std::string(*(other.type));
-  description = new std::string(*(other.description));
 }
 
 OrderBomb::~OrderBomb() = default;
@@ -302,8 +296,6 @@ OrderBlockade::OrderBlockade(const OrderBlockade& other) : Order(other) {
   this->nPlayer = other.nPlayer;
   this->player = other.player;
   this->target = other.target;
-  type = new std::string(*(other.type));
-  description = new std::string(*(other.description));
 }
 
 OrderBlockade::~OrderBlockade() = default;
@@ -361,8 +353,6 @@ OrderAirlift::OrderAirlift(const OrderAirlift& other) : Order(other) {
   this->source = other.source;
   this->target = other.target;
   this->soldiers = other.soldiers;
-  type = new std::string(*(other.type));
-  description = new std::string(*(other.description));
 }
 
 OrderAirlift::~OrderAirlift() = default;
@@ -414,8 +404,6 @@ OrderNegotiate::OrderNegotiate(Player* player, Player* targetPlayer) : Order() {
 OrderNegotiate::OrderNegotiate(const OrderNegotiate& other) : Order(other) {
   this->player = other.player;
   this->targetPlayer = other.targetPlayer;
-  type = new std::string(*(other.type));
-  description = new std::string(*(other.description));
 }
 
 OrderNegotiate::~OrderNegotiate() = default;
