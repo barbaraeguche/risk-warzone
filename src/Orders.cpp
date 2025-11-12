@@ -85,17 +85,10 @@ OrderDeploy::OrderDeploy(const OrderDeploy& other) : Order(other) {
   description = new std::string(*(other.description));
 }
 
-OrderDeploy::~OrderDeploy() {
-  delete type;
-  delete description;
-}
+OrderDeploy::~OrderDeploy() = default;
 
 OrderDeploy& OrderDeploy::operator=(const OrderDeploy& other) { 
   if (this != &other) {
-    delete type;
-    delete description;
-    type = new std::string(*(other.type));
-    description = new std::string(*(other.description));
     Order::operator=(other);
     this->player = other.player;
     this->target = other.target;
@@ -105,8 +98,6 @@ OrderDeploy& OrderDeploy::operator=(const OrderDeploy& other) {
 }
 
 bool OrderDeploy::validate() { 
-  std::cout << "Validating Deploy Order: Deploying " << *soldiers << " armies to " << target->getName() << ".\n";
-  std::cout << "Player Reinforcement Pool: " << player->getReinforcementPool() << " armies.\n";
   if (player == nullptr || target == nullptr || soldiers == nullptr) {
     return false;
   }else if (!player->ownsTerritory(target) || *soldiers <= 0) {
@@ -121,7 +112,7 @@ void OrderDeploy::execute() {
     saveEffect("Deploy order invalid. Not executed.");
     return;
   }
-
+  std::cout << "Executing Deploy Order: Deploying " << *soldiers << " armies to " << target->getName() << ".\n";
   target->setArmies(target->getArmies() + *soldiers);
   player->setReinforcementPool(player->getReinforcementPool() - *soldiers);
   saveEffect("Deployed " + std::to_string(*soldiers) + " armies to " + target->getName() + ".");
@@ -151,17 +142,10 @@ OrderAdvance::OrderAdvance(const OrderAdvance& other) : Order(other) {
   description = new std::string(*(other.description));
 }
 
-OrderAdvance::~OrderAdvance() {
-  delete type;
-  delete description;
-}
+OrderAdvance::~OrderAdvance() = default;
 
 OrderAdvance& OrderAdvance::operator=(const OrderAdvance& other) { 
   if (this != &other) {
-    delete type;
-    delete description;
-    type = new std::string(*(other.type));
-    description = new std::string(*(other.description));
     Order::operator=(other);
     this->player = other.player;
     this->source = other.source;
@@ -264,17 +248,10 @@ OrderBomb::OrderBomb(const OrderBomb& other) : Order(other) {
   description = new std::string(*(other.description));
 }
 
-OrderBomb::~OrderBomb() {
-  delete type;
-  delete description;
-}
+OrderBomb::~OrderBomb() = default;
 
 OrderBomb& OrderBomb::operator=(const OrderBomb& other) { 
   if (this != &other) {
-    delete type;
-    delete description;
-    type = new std::string(*(other.type));
-    description = new std::string(*(other.description));
     Order::operator=(other);
     this->target = other.target;
     this->player = other.player;
@@ -329,17 +306,10 @@ OrderBlockade::OrderBlockade(const OrderBlockade& other) : Order(other) {
   description = new std::string(*(other.description));
 }
 
-OrderBlockade::~OrderBlockade() {
-  delete type;
-  delete description;
-}
+OrderBlockade::~OrderBlockade() = default;
 
 OrderBlockade& OrderBlockade::operator=(const OrderBlockade& other) { 
   if (this != &other) {
-     delete type;
-    delete description;
-    type = new std::string(*(other.type));
-    description = new std::string(*(other.description));
     Order::operator=(other);
     this->nPlayer = other.nPlayer;
     this->player = other.player;
@@ -395,17 +365,10 @@ OrderAirlift::OrderAirlift(const OrderAirlift& other) : Order(other) {
   description = new std::string(*(other.description));
 }
 
-OrderAirlift::~OrderAirlift() {
-  delete type;
-  delete description;
-}
+OrderAirlift::~OrderAirlift() = default;
 
 OrderAirlift& OrderAirlift::operator=(const OrderAirlift& other) { 
   if (this != &other) {
-    delete type;
-    delete description;
-    type = new std::string(*(other.type));
-    description = new std::string(*(other.description));
     Order::operator=(other);
     this->player = other.player;
     this->source = other.source;
@@ -455,17 +418,10 @@ OrderNegotiate::OrderNegotiate(const OrderNegotiate& other) : Order(other) {
   description = new std::string(*(other.description));
 }
 
-OrderNegotiate::~OrderNegotiate() {
-  delete type;
-  delete description;
-}
+OrderNegotiate::~OrderNegotiate() = default;
 
 OrderNegotiate& OrderNegotiate::operator=(const OrderNegotiate& other) { 
   if (this != &other) {
-    delete type;
-    delete description;
-    type = new std::string(*(other.type));
-    description = new std::string(*(other.description));
     Order::operator=(other);
     this->player = other.player;
     this->targetPlayer = other.targetPlayer;

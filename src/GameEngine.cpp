@@ -449,6 +449,7 @@ void GameEngine::mainGameLoop() {
         // Handle special commands
         if (input == "quit") {
             std::cout << "Exiting Game Engine test." << std::endl;
+            gameOver = true;
             break;
         } else if (input == "help") {
             engine.displayValidCommands();
@@ -555,6 +556,7 @@ void GameEngine::executeOrdersPhase() {
     bool deploysLeft = true;
     while (deploysLeft) {
         deploysLeft = false;
+        
         for (Player* player : players_) {
             auto* orders = player->getOrders()->orders;
             if (!orders->empty()) {
@@ -562,8 +564,8 @@ void GameEngine::executeOrdersPhase() {
                 if (dynamic_cast<OrderDeploy*>(order)) {
                     order->execute();
                     std::cout << "Executed deploy order for " << player->getName() << "\n";
-                    delete order;
                     orders->erase(orders->begin());
+                    delete order;
                     deploysLeft = true;
                 }
             }
@@ -840,7 +842,7 @@ void GameEngine::startupPhase(CommandProcessor& cmdSrc) {
                 c->saveEffect("no-op");
             }
         }
-        if (cmd == "loadmap") {
+        else if (cmd == "loadmap") {
             std::string arg; std::getline(iss, arg); arg = trimCopy(arg);
             if (arg.empty()) {
                 std::cout << "Usage: loadmap <path-or-name>\n";
