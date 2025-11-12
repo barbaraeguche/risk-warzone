@@ -188,6 +188,7 @@ void GameEngine::initializeStates() {
     (*states)["map loaded"] = new State("map loaded");
     (*states)["map validated"] = new State("map validated");
     (*states)["players added"] = new State("players added");
+    (*states)["play"] = new State("play");
     (*states)["assign reinforcement"] = new State("assign reinforcement");
     (*states)["issue orders"] = new State("issue orders");
     (*states)["execute orders"] = new State("execute orders");
@@ -211,6 +212,7 @@ void GameEngine::initializeStates() {
     (*states)["players added"]->addTransition(new Transition("addplayer", "players added"));
     (*states)["players added"]->addTransition(new Transition("gamestart", "assign reinforcement"));
 
+    (*states)["play"]->addTransition(new Transition("play", "assign reinforcement"));
     // From assign reinforcement state
     (*states)["assign reinforcement"]->addTransition(new Transition("issueorder", "issue orders"));
 
