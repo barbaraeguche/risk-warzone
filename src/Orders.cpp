@@ -81,8 +81,6 @@ OrderDeploy::OrderDeploy(const OrderDeploy& other) : Order(other) {
   this->player = other.player;
   this->target = other.target;
   this->soldiers = other.soldiers;
-  type = new std::string(*(other.type));
-  description = new std::string(*(other.description));
 }
 
 OrderDeploy::~OrderDeploy() = default;
@@ -100,7 +98,7 @@ OrderDeploy& OrderDeploy::operator=(const OrderDeploy& other) {
 bool OrderDeploy::validate() { 
   if (player == nullptr || target == nullptr || soldiers == nullptr) {
     return false;
-  }else if (!player->ownsTerritory(target) || *soldiers <= 0 || *soldiers > player->getReinforcementPool()) {
+  }else if (!player->ownsTerritory(target) || *soldiers <= 0) {
     return false;
   } else {
     return true;
@@ -112,7 +110,7 @@ void OrderDeploy::execute() {
     saveEffect("Deploy order invalid. Not executed.");
     return;
   }
-
+  std::cout << "Executing Deploy Order: Deploying " << *soldiers << " armies to " << target->getName() << ".\n";
   target->setArmies(target->getArmies() + *soldiers);
   player->setReinforcementPool(player->getReinforcementPool() - *soldiers);
   saveEffect("Deployed " + std::to_string(*soldiers) + " armies to " + target->getName() + ".");
@@ -138,8 +136,6 @@ OrderAdvance::OrderAdvance(const OrderAdvance& other) : Order(other) {
   this->source = other.source;
   this->target = other.target;
   this->soldiers = other.soldiers;
-  type = new std::string(*(other.type));
-  description = new std::string(*(other.description));
 }
 
 OrderAdvance::~OrderAdvance() = default;
@@ -156,6 +152,7 @@ OrderAdvance& OrderAdvance::operator=(const OrderAdvance& other) {
 }
 
 bool OrderAdvance::validate() { 
+  std::cout << source->isAdjacentTo(target) << player->ownsTerritory(source) << (source->getArmies() - 1 >= *soldiers) << ".\n";
   if (source && target && source->isAdjacentTo(target) && player->ownsTerritory(source) && *soldiers > 0 && (source->getArmies() - 1 >= *soldiers) ) {
     Player* targetPlayer = target->getOwner();
     // Check for negotiation
@@ -243,8 +240,6 @@ OrderBomb::OrderBomb(Territory* target, Player* player) : Order() {
 OrderBomb::OrderBomb(const OrderBomb& other) : Order(other) {
   this->target = other.target;
   this->player = other.player;
-  type = new std::string(*(other.type));
-  description = new std::string(*(other.description));
 }
 
 OrderBomb::~OrderBomb() = default;
@@ -301,8 +296,6 @@ OrderBlockade::OrderBlockade(const OrderBlockade& other) : Order(other) {
   this->nPlayer = other.nPlayer;
   this->player = other.player;
   this->target = other.target;
-  type = new std::string(*(other.type));
-  description = new std::string(*(other.description));
 }
 
 OrderBlockade::~OrderBlockade() = default;
@@ -360,8 +353,6 @@ OrderAirlift::OrderAirlift(const OrderAirlift& other) : Order(other) {
   this->source = other.source;
   this->target = other.target;
   this->soldiers = other.soldiers;
-  type = new std::string(*(other.type));
-  description = new std::string(*(other.description));
 }
 
 OrderAirlift::~OrderAirlift() = default;
@@ -413,8 +404,6 @@ OrderNegotiate::OrderNegotiate(Player* player, Player* targetPlayer) : Order() {
 OrderNegotiate::OrderNegotiate(const OrderNegotiate& other) : Order(other) {
   this->player = other.player;
   this->targetPlayer = other.targetPlayer;
-  type = new std::string(*(other.type));
-  description = new std::string(*(other.description));
 }
 
 OrderNegotiate::~OrderNegotiate() = default;

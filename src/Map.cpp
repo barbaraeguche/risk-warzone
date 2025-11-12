@@ -117,7 +117,9 @@ void Territory::setContinent(Continent* mainContinent) {
 
 // --- MANAGEMENT ---
 bool Territory::isAdjacentTo(Territory* territory) const {
-  return std::ranges::find(*adjTerritories, territory) != adjTerritories->end();
+  return std::ranges::any_of(*adjTerritories, [&](Territory* t) {
+    return t->getName() == territory->getName();
+  });
 }
 
 void Territory::addAdjacentTerritory(Territory* territory) {
@@ -128,6 +130,24 @@ void Territory::addAdjacentTerritory(Territory* territory) {
 
 void Territory::removeAdjacentTerritory(Territory* territory) {
   std::erase(*adjTerritories, territory);
+}
+
+Territory* chooseTerritory(const std::vector<Territory*>& territories) {
+    if (territories.empty()) return nullptr;
+
+    std::cout << "Choose a territory:\n";
+    for (size_t i = 0; i < territories.size(); i++) {
+        std::cout << i << ": " << territories[i]->getName() 
+                  << " (Armies: " << territories[i]->getArmies() << ")\n";
+    }
+
+    int choice = -1;
+    while (choice < 0 || choice >= territories.size()) {
+        std::cout << "Enter the number of your choice: ";
+        std::cin >> choice;
+    }
+
+    return territories[choice];
 }
 
 // --- UTILITY ---
@@ -250,7 +270,9 @@ void Continent::setControlValue(int bonus) const {
 
 // --- MANAGEMENT ---
 bool Continent::containsTerritory(Territory* territory) const {
-  return std::ranges::find(*territories, territory) != territories->end();
+  return std::ranges::any_of(*territories, [&](Territory* t) {
+    return t->getName() == territory->getName(); // or use t->getId() if you have IDs
+  });
 }
 
 void Continent::addTerritory(Territory* territory) {

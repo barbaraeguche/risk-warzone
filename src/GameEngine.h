@@ -5,7 +5,8 @@
 #include <vector>
 #include <map>
 #include <memory>   
-
+#include "Player.h"
+#include "Map.h"
 #include "LoggingObserver.h"
 
 
@@ -16,17 +17,19 @@ class Map;
 class Player;      
 class Deck;
 class CommandProcessor;
+class Territory;
+class Order;
 
 class GameEngine : public Subject, public ILoggable {
 private:
     State* currentState;
     std::map<std::string, State*>* states;
     std::vector<std::string>* stateHistory;
-
-    //A2: startup phase state
-    std::unique_ptr<Map> map_;         //  add: holds the loaded/validated map using smart pointer
+    std::unique_ptr<Map> map_;         //  add: holds the loaded/validated map
     std::vector<Player*> players_;     // players created by addplayer
     Deck* deck_;
+    static Player* neutralPlayer_;
+    
 public:
     GameEngine();
     GameEngine(const GameEngine& other);
@@ -45,6 +48,19 @@ public:
 
     void startupPhase();
     void startupPhase(CommandProcessor&);
+
+    void mainGameLoop();
+    void reinforcementPhase();
+    void issueOrdersPhase();
+    void executeOrdersPhase();
+
+    void addPlayer(Player* player);
+    std::vector<Player*> getPlayers() const;
+    void setMap(Map* map);
+    void loadMap(const std::string& filename);
+    void setDeck(Deck* deck);
+
+    static Player* getNeutralPlayer();
 
 private:
     void initializeStates();
