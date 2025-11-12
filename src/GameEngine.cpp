@@ -585,8 +585,9 @@ void GameEngine::startupPhase(CommandProcessor& cmdSrc) {
         // Validate command against current state
         if (!cmdSrc.validate(line, this)) {
             std::istringstream tmp(line);
-            std::string base; tmp >> base;
-            std::cout << " Command '" << base << "' is invalid in state '"
+            std::string baseCmd;
+            tmp >> baseCmd;
+            std::cout << " Command '" << baseCmd << "' is invalid in state '"
                       << getCurrentStateName() << "'.\n";
             c->saveEffect("Invalid for current state");
             continue;
