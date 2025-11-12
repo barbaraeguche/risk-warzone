@@ -117,7 +117,9 @@ void Territory::setContinent(Continent* mainContinent) {
 
 // --- MANAGEMENT ---
 bool Territory::isAdjacentTo(Territory* territory) const {
-  return std::ranges::find(*adjTerritories, territory) != adjTerritories->end();
+  return std::ranges::any_of(*adjTerritories, [&](Territory* t) {
+    return t->getName() == territory->getName();
+  });
 }
 
 void Territory::addAdjacentTerritory(Territory* territory) {
@@ -268,7 +270,9 @@ void Continent::setControlValue(int bonus) const {
 
 // --- MANAGEMENT ---
 bool Continent::containsTerritory(Territory* territory) const {
-  return std::ranges::find(*territories, territory) != territories->end();
+  return std::ranges::any_of(*territories, [&](Territory* t) {
+    return t->getName() == territory->getName(); // or use t->getId() if you have IDs
+  });
 }
 
 void Continent::addTerritory(Territory* territory) {

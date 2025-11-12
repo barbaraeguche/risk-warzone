@@ -16,7 +16,8 @@ Player::Player() :
   territories(new std::vector<Territory*>()),
   hand(new Hand()),
   orders(new OrdersList()),
-  reinforcementPool(new int(0)) {}
+  reinforcementPool(new int(0)),
+  pendingReinforcements(new int(0)) {}
 
 /**
  * Parameterized constructor
@@ -28,7 +29,8 @@ Player::Player(const std::string& name) :
   territories(new std::vector<Territory*>()),
   hand(new Hand()),
   orders(new OrdersList()),
-  reinforcementPool(new int(0)) {}
+  reinforcementPool(new int(0)), 
+  pendingReinforcements(new int(0)){}
 
 /**
  * Copy constructor
@@ -40,7 +42,8 @@ Player::Player(const Player& other) :
   territories(new std::vector<Territory*>(*other.territories)),
   hand(new Hand(*other.hand)),
   orders(new OrdersList(*other.orders)),
-  reinforcementPool(new int(*other.reinforcementPool)) {}
+  reinforcementPool(new int(*other.reinforcementPool)), 
+  pendingReinforcements(new int(*other.pendingReinforcements)){}
 
 /**
  * Assignment operator
@@ -56,6 +59,7 @@ Player& Player::operator=(const Player& other) {
       delete hand;
       delete orders;
       delete reinforcementPool;
+      delete pendingReinforcements;
 
       // Copy from other player
       conqueredThisTurn = new bool(other.conqueredThisTurn); 
@@ -64,6 +68,7 @@ Player& Player::operator=(const Player& other) {
       hand = new Hand(*other.hand);
       orders = new OrdersList(*other.orders);
       reinforcementPool = new int(*other.reinforcementPool);
+      pendingReinforcements = new int(*other.pendingReinforcements);
   }
   return *this;
 }
@@ -78,6 +83,7 @@ Player::~Player() {
   delete hand;
   delete orders;
   delete reinforcementPool;
+  delete pendingReinforcements;
 }
 
 // ==================== Getters ====================
@@ -130,6 +136,10 @@ int Player::getReinforcementPool() const {
   return *reinforcementPool;
 }
 
+int Player::getPendingReinforcements() const {
+  return *pendingReinforcements;
+}
+
 // ==================== Setters ====================
 
 /**
@@ -154,6 +164,10 @@ void Player::setName(const std::string& name) {
  */
 void Player::setReinforcementPool(int armies) {
   *reinforcementPool = armies;
+}
+
+void Player::setPendingReinforcements(int armies) {
+  *pendingReinforcements = armies;
 }
 
 // ==================== Territory Management ====================
@@ -190,7 +204,8 @@ void Player::removeTerritory(Territory* territory) {
  */
 bool Player::ownsTerritory(Territory* territory) const {
   if (!territory) return false;
-  return std::find(territories->begin(), territories->end(), territory) != territories->end();
+  return std::any_of(territories->begin(), territories->end(),
+                   [&](Territory* t){ return t->getName() == territory->getName(); });
 }
 
 // ==================== Card Management ====================
@@ -264,14 +279,23 @@ void Player::issueOrder(bool deployPhase, bool& advanceIssued, Deck* deck_) {
                 break;
             }
         }
-        if (!canAdvance) return;
+        if (!canAdvance){
+            if (!hand->empty()) {
+              std::cout << "Player " << getName() << "'s cards:\n";
+              hand->printHand();
+
+              int cardIndex = -1;
+              std::cout << "Choose a card to play: (-1 for no cards) ";
+              std::cin >> cardIndex;
+              if(cardIndex != -1) return;
+              else if(cardIndex < 0 || cardIndex >= hand->size()) std::cout << "Invalid card index.\n";
+
+              playCard(cardIndex, deck_);
+            }  
+            return;
+        };
 
         std::cout << "\nPlayer " << getName() << " - Advance Phase\n";
-        std::cout << "Territories to attack:\n";
-        for (size_t i = 0; i < attackList.size(); i++) {
-            std::cout << i << ": " << attackList[i]->getName() 
-                      << " (Armies: " << attackList[i]->getArmies() << ")\n";
-        }
 
         std::cout << "Your own territories:\n";
         for (size_t i = 0; i < territories->size(); i++) {
@@ -287,30 +311,40 @@ void Player::issueOrder(bool deployPhase, bool& advanceIssued, Deck* deck_) {
 
         Territory* source = territories->at(sourceIndex);
 
-        int targetType;
-        int targetIndex;
-        std::cout << "Target type: 0 = defend (own), 1 = attack (enemy): ";
-        std::cin >> targetType;
+        int targetType = -1;
+        int targetIndex = -1;
+        
+        while(targetType != 0 && targetType != 1) {
+          std::cout << "Target type: 0 = defend (own), 1 = attack (enemy): ";
+          std::cin >> targetType;
+        }
 
         Territory* target = nullptr;
-        while (targetType != 0 && targetType != 1) {
-            std::cout << "Invalid target type. Enter 0 for defend (own) or 1 for attack (enemy). List must not be empty: ";
-            std::cin >> targetType;
+        const std::vector<Territory*>& adjTerritories = source->getAdjTerritories();
 
-            if (targetType == 1 && !attackList.empty()) {
-                while (targetIndex < 0 || targetIndex >= attackList.size()) {
-                  std::cout << "Choose enemy territory to attack (index): ";
-                  std::cin >> targetIndex;
-                }
-                target = attackList[targetIndex];
-            } else if (targetType == 0 && !defendList.empty()) {
-                while (targetIndex < 0 || targetIndex >= defendList.size()) {
-                  std::cout << "Choose own territory to reinforce (index): ";
-                  std::cin >> targetIndex;
-                }
-                target = defendList[targetIndex];
+        // Filter adjacent territories based on target type
+        std::vector<Territory*> validTargets;
+        for (Territory* adj : adjTerritories) {
+            if (!adj) continue;
+            if (targetType == 1 && !ownsTerritory(adj)) { // attack
+                validTargets.push_back(adj);
+            } else if (targetType == 0 && ownsTerritory(adj)) { // defend/reinforce
+                validTargets.push_back(adj);
             }
         }
+
+        // Display valid targets
+        for (size_t i = 0; i < validTargets.size(); ++i) {
+            std::cout << i << ": " << validTargets[i]->getName()
+                      << " (Armies: " << validTargets[i]->getArmies() << ")\n";
+        }
+
+        // Choose target
+        while (targetIndex < 0 || targetIndex >= validTargets.size()) {
+            std::cout << "Choose target territory (index): ";
+            std::cin >> targetIndex;
+        }
+        target = validTargets[targetIndex];
 
         int armies = -1;
         while (armies <= 0 || armies > source->getArmies() - 1) {
@@ -330,10 +364,12 @@ void Player::issueOrder(bool deployPhase, bool& advanceIssued, Deck* deck_) {
             hand->printHand();
 
             int cardIndex = -1;
-            while (cardIndex < 0 || cardIndex >= hand->size()) {
-                std::cout << "Choose a card to play: ";
-                std::cin >> cardIndex;
-            }
+    
+            std::cout << "Choose a card to play: (-1 for no cards) ";
+            std::cin >> cardIndex;
+
+            if(cardIndex != -1) return;
+            else if(cardIndex < 0 || cardIndex >= hand->size()) std::cout << "Invalid card index.\n";
 
             playCard(cardIndex, deck_);
         }

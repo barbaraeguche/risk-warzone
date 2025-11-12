@@ -744,6 +744,10 @@ void GameEngine::mainGameLoop() {
     bool gameOver = false;
     int turn = 1;
 
+    for (Player* player : players_) {
+        player->setReinforcementPool(0);
+    }
+    
     std::cout << "\n=== Starting Main Game Loop ===" << std::endl;
 
     while (!gameOver) {
@@ -803,7 +807,9 @@ void GameEngine::reinforcementPhase() {
             }
         }
 
-        player->setReinforcementPool(reinforcement);
+        int totalreinforcement = reinforcement + player->getPendingReinforcements();
+        player->setReinforcementPool(totalreinforcement);
+        player->setPendingReinforcements(0);
         std::cout << "Player " << player->getName() << " receives " << reinforcement << " reinforcement armies." << std::endl;
     }
 }

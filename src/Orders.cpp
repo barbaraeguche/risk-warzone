@@ -58,9 +58,11 @@ OrderDeploy& OrderDeploy::operator=(const OrderDeploy& other) {
 }
 
 bool OrderDeploy::validate() { 
+  std::cout << "Validating Deploy Order: Deploying " << *soldiers << " armies to " << target->getName() << ".\n";
+  std::cout << "Player Reinforcement Pool: " << player->getReinforcementPool() << " armies.\n";
   if (player == nullptr || target == nullptr || soldiers == nullptr) {
     return false;
-  }else if (!player->ownsTerritory(target) || *soldiers <= 0 || *soldiers > player->getReinforcementPool()) {
+  }else if (!player->ownsTerritory(target) || *soldiers <= 0) {
     return false;
   } else {
     return true;
@@ -70,6 +72,7 @@ bool OrderDeploy::validate() {
 void OrderDeploy::execute() {
   if (this->validate())
   {
+    std::cout << "Executing Deploy Order: Deploying " << *soldiers << " armies to " << target->getName() << ".\n";
     target->setArmies(target->getArmies() + *soldiers);
     player->setReinforcementPool(player->getReinforcementPool() - *soldiers);
   }
@@ -119,6 +122,7 @@ OrderAdvance& OrderAdvance::operator=(const OrderAdvance& other) {
 }
 
 bool OrderAdvance::validate() { 
+  std::cout << source->isAdjacentTo(target) << player->ownsTerritory(source) << (source->getArmies() - 1 >= *soldiers) << ".\n";
   if (source && target && source->isAdjacentTo(target) && player->ownsTerritory(source) && *soldiers > 0 && (source->getArmies() - 1 >= *soldiers) ) {
     Player* targetPlayer = target->getOwner();
     // Check for negotiation
