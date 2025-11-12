@@ -557,7 +557,7 @@ void GameEngine::startupPhase(CommandProcessor& cmdSrc) {
               << "  gamestart\n";
 
     // Show available map files under A1/mapFiles
-    const fs::path base = fs::current_path() / "A1" / "mapFiles";
+    const fs::path base = fs::current_path()  / "maps";
     const auto maps = listMapFiles(base.string());
     if (maps.empty()) {
         std::cout << "No .map files found under: " << base << "\n"
