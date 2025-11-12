@@ -29,11 +29,7 @@ private:
     std::vector<Player*> players_;     // players created by addplayer
     Deck* deck_;
     static Player* neutralPlayer_;
-
-    //A2: startup phase state
-    std::unique_ptr<Map> map_;         //  add: holds the loaded/validated map using smart pointer
-    std::vector<Player*> players_;     // players created by addplayer
-    Deck* deck_;
+    
 public:
     GameEngine();
     GameEngine(const GameEngine& other);
