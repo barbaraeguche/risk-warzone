@@ -4,20 +4,23 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <memory>
+#include <memory>   
 #include "Player.h"
 #include "Map.h"
+#include "LoggingObserver.h"
+
 
 class State;
 class Transition;
-class Map;
-class Player;
+class GameCommand;
+class Map;         
+class Player;      
 class Deck;
+class CommandProcessor;
 class Territory;
 class Order;
 
-
-class GameEngine {
+class GameEngine : public Subject, public ILoggable {
 private:
     State* currentState;
     std::map<std::string, State*>* states;
@@ -27,6 +30,10 @@ private:
     Deck* deck_;
     static Player* neutralPlayer_;
 
+    //A2: startup phase state
+    std::unique_ptr<Map> map_;         //  add: holds the loaded/validated map using smart pointer
+    std::vector<Player*> players_;     // players created by addplayer
+    Deck* deck_;
 public:
     GameEngine();
     GameEngine(const GameEngine& other);
@@ -37,12 +44,14 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const GameEngine& engine);
 
     void processCommand(const std::string& command);
-    void transitionTo(const std::string& stateName);
+    void transitionState(const std::string& stateName);
     std::string getCurrentStateName() const;
     void displayValidCommands() const;
     void displayStateHistory() const;
+    std::string stringToLog() const override;
 
     void startupPhase();
+    void startupPhase(CommandProcessor&);
 
     void mainGameLoop();
     void reinforcementPhase();
@@ -60,7 +69,7 @@ public:
 private:
     void initializeStates();
     void cleanupStates();
-    
+
 };
 
 
@@ -104,3 +113,24 @@ public:
     std::string getCommand() const;
     std::string getTargetState() const;
 };
+
+
+class GameCommand {
+private:
+    std::string* commandString;
+
+public:
+    GameCommand();
+    GameCommand(const std::string& command);
+    GameCommand(const GameCommand& other);
+    ~GameCommand();
+
+    GameCommand& operator=(const GameCommand& other);
+
+    friend std::ostream& operator<<(std::ostream& os, const GameCommand& command);
+
+    std::string getCommandString() const;
+    bool isValid() const;
+};
+
+void testGameStates();

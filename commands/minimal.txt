@@ -1,0 +1,11 @@
+start
+loadmap simplemap.map
+validatemap
+addplayer Player1
+addplayer Player2
+gamestart
+issueorder
+endissueorders
+execorder
+win
+quit

@@ -1,0 +1,32 @@
+start
+loadmap conquestmap.map
+validatemap
+addplayer Alice
+addplayer Bob
+addplayer Charlie
+gamestart
+issueorder
+issueorder
+issueorder
+endissueorders
+execorder
+execorder
+execorder
+endexecorders
+issueorder
+issueorder
+endissueorders
+execorder
+execorder
+win
+replay
+loadmap newmap.map
+validatemap
+addplayer Player1
+addplayer Player2
+gamestart
+issueorder
+endissueorders
+execorder
+win
+quit
