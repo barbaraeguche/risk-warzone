@@ -55,13 +55,13 @@ ReinforcementCard::~ReinforcementCard() {}
 
 std::string ReinforcementCard::getType() const { return "reinforcement"; }
 void ReinforcementCard::play(Player* player, OrdersList* ordersList, Deck* deck) {
-     if (!player) return;
+    if (!player) return;
 
     std::cout << player->getName() << " plays Reinforcement Card -> adds 5 reinforcements for next phase.\n";
 
     // Simply increase player's reinforcement pool for next reinforcement phase
     int bonus = 5; // example: could be any number
-    player->setReinforcementPool(player->getReinforcementPool() + bonus);
+    player->setPendingReinforcements(bonus);
 
     if (deck) {
         deck->returnCard(new ReinforcementCard());
@@ -254,6 +254,7 @@ void Hand::addCard(Card* card) {
 
 void Hand::playCard(int index, Player* player, OrdersList* ordersList, Deck* deck) {
     if (index >= 0 && index < handCards->size()) {
+        std::cout << "Playing card at index " << index << " from hand.\n";
         Card* card = handCards->at(index);
         card->play(player, ordersList, deck);
         // Remove from hand (card is returned to deck in play() method)

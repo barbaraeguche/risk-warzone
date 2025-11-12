@@ -27,6 +27,7 @@ private:
   Deck* deck;                                // Pointer to the deck (for drawing/returning cards)
   OrdersList* orders;                        // List of orders to execute
   int* reinforcementPool;                    // Number of armies available for deployment
+  int* pendingReinforcements;               // Number of armies pending deployment
 
 public:
   // Constructors
@@ -43,11 +44,13 @@ public:
   Hand* getHand() const;
   OrdersList* getOrders() const;
   int getReinforcementPool() const;
+  int getPendingReinforcements() const;
 
   // Setters
   void setConqueredThisTurn(bool conquered);
   void setName(const std::string& name);
   void setReinforcementPool(int armies);
+  void setPendingReinforcements(int armies);
 
   // Territory management
   void addTerritory(Territory* territory);
