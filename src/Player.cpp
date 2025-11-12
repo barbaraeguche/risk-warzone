@@ -373,9 +373,10 @@ void Player::issueOrder(bool deployPhase, bool& advanceIssued, Deck* deck_) {
           
             // Choose target
             int targetIndex = -1;
-            while (targetIndex < -1 || targetIndex >= validTargets.size()) {
+            while (targetIndex < 0 || targetIndex >= validTargets.size()) {
                 std::cout << "Choose target territory (index): -1 to reselect source: ";
                 std::cin >> targetIndex;
+                if (targetIndex == -1) break; // reselect source
             }
             if (targetIndex == -1) continue; // reselect source
             target = validTargets[targetIndex];

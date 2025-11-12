@@ -67,13 +67,13 @@ int main() {
     std::cout << "PART 7: STARTUP PHASE TESTING" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
     testStartupPhase();
-
+    
     // Part 8: Main Game Loop Testing with GameEngine
     std::cout << "\n" << std::string(50, '=') << std::endl;
     std::cout << "ADDITIONAL: MAIN GAME LOOP TESTING" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
     testMainGameLoop();
-
+    
     //Part 9: Testing order execution
     std::cout << "\n" << std::string(50, '=') << std::endl;
     std::cout << "PART 8: ORDER EXECUTION TESTING" << std::endl;
