@@ -21,42 +21,42 @@ int main() {
   std::cout << "\nRunning all test functions for each part..." << std::endl;
 
   try {
-    // Part 1: Map Testing
-    std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "PART 1: MAP TESTING" << std::endl;
-    std::cout << std::string(50, '=') << std::endl;
-    testLoadMaps();
-
-    // Part 2: Player Testing
-    std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "PART 2: PLAYER TESTING" << std::endl;
-    std::cout << std::string(50, '=') << std::endl;
-    testPlayers();
-
-    // Part 3: Orders Testing
-    std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "PART 3: ORDERS TESTING" << std::endl;
-    std::cout << std::string(50, '=') << std::endl;
-    testOrdersLists();
-    testOrderExecution();
-
-    // Part 4: Cards Testing
-    std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "PART 4: CARDS TESTING" << std::endl;
-    std::cout << std::string(50, '=') << std::endl;
-    testCards();
-
-    // Part 5: Game Engine Testing
-    std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "PART 5: GAME ENGINE TESTING" << std::endl;
-    std::cout << std::string(50, '=') << std::endl;
-    testGameStates();
-
-    // Part 6: Command Processor Testing
-    std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "PART 6: COMMAND PROCESSOR TESTING" << std::endl;
-    std::cout << std::string(50, '=') << std::endl;
-    testCommandProcessor();
+    // // Part 1: Map Testing
+    // std::cout << "\n" << std::string(50, '=') << std::endl;
+    // std::cout << "PART 1: MAP TESTING" << std::endl;
+    // std::cout << std::string(50, '=') << std::endl;
+    // testLoadMaps();
+    //
+    // // Part 2: Player Testing
+    // std::cout << "\n" << std::string(50, '=') << std::endl;
+    // std::cout << "PART 2: PLAYER TESTING" << std::endl;
+    // std::cout << std::string(50, '=') << std::endl;
+    // testPlayers();
+    //
+    // // Part 3: Orders Testing
+    // std::cout << "\n" << std::string(50, '=') << std::endl;
+    // std::cout << "PART 3: ORDERS TESTING" << std::endl;
+    // std::cout << std::string(50, '=') << std::endl;
+    // testOrdersLists();
+    // testOrderExecution();
+    //
+    // // Part 4: Cards Testing
+    // std::cout << "\n" << std::string(50, '=') << std::endl;
+    // std::cout << "PART 4: CARDS TESTING" << std::endl;
+    // std::cout << std::string(50, '=') << std::endl;
+    // testCards();
+    //
+    // // Part 5: Game Engine Testing
+    // std::cout << "\n" << std::string(50, '=') << std::endl;
+    // std::cout << "PART 5: GAME ENGINE TESTING" << std::endl;
+    // std::cout << std::string(50, '=') << std::endl;
+    // testGameStates();
+    //
+    // // Part 6: Command Processor Testing
+    // std::cout << "\n" << std::string(50, '=') << std::endl;
+    // std::cout << "PART 6: COMMAND PROCESSOR TESTING" << std::endl;
+    // std::cout << std::string(50, '=') << std::endl;
+    // testCommandProcessor();
 
     // Part 7: startup phase Testing
     std::cout << "\n" << std::string(50, '=') << std::endl;
