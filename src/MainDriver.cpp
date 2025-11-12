@@ -10,6 +10,7 @@ void testCommandProcessor();
 void testStartupPhase();
 void testLoggingObserver();
 void testMainGameLoop();
+void automatictestMainGameLoop();
 
 
 /**
@@ -72,7 +73,7 @@ int main() {
     std::cout << "\n" << std::string(50, '=') << std::endl;
     std::cout << "PART 8: MAIN GAME LOOP TESTING" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
-    testMainGameLoop();
+    automatictestMainGameLoop();
     
     //Part 9: Testing order execution
     std::cout << "\n" << std::string(50, '=') << std::endl;
