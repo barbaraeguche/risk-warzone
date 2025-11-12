@@ -4,20 +4,16 @@
 #include <string>
 #include <vector>
 
+#include "LoggingObserver.h"
 
 // forward declarations
 class GameEngine;
-
-class Command;
-class CommandProcessor;
-class FileLineReader;
-class FileCommandProcessorAdapter;
 
 /**
  * The Command class represents a game command with its associated effect.
  * It stores the command string and the effect of executing that command.
  */
-class Command {
+class Command : public Subject, public ILoggable {
 private:
   std::string* command; // the command string
   std::string* effect;  // the effect/result of the command
@@ -35,7 +31,8 @@ public:
   std::string getEffect() const;
 
   // utility
-  void saveEffect(const std::string& eff) const;
+  void saveEffect(const std::string& eff);
+  std::string stringToLog() const override;
 
   // stream insertion
   friend std::ostream& operator<<(std::ostream& os, const Command& cmd);
@@ -47,9 +44,10 @@ public:
  * The commands can be read from the console or overridden by subclasses.
  * Game components must get their commands from this processor.
  */
-class CommandProcessor {
+class CommandProcessor : public Subject, public ILoggable {
 private:
   std::vector<Command*>* commands; // a collection of command objects
+  Command* lastSavedCommand;
 
 public:
   CommandProcessor();
@@ -64,6 +62,7 @@ public:
   // utility
   void saveCommand(Command* cmd);
   bool validate(const std::string& cmd, const GameEngine* engine) const;
+  std::string stringToLog() const override;
 
   // stream insertion
   friend std::ostream& operator<<(std::ostream& os, const CommandProcessor& cp);
