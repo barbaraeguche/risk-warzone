@@ -381,6 +381,8 @@ void testInvalidCommands() {
 }
 
 //function to test startupPhase() in gameEngine
+
+//function to test startupPhase() in gameEngine
 void testStartupPhase() {
     std::cout << "\n=== testStartupPhase: loadmap + validatemap ===\n";
     GameEngine engine;
