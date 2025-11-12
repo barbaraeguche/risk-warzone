@@ -206,6 +206,7 @@ void OrderAdvance::execute() {
 
     if(defenders <= 0){
         player->setConqueredThisTurn(true);
+        target->getOwner()->removeTerritory(target);
         player->addTerritory(target);
         target->setOwner(player);
         if(attackers < 0){
