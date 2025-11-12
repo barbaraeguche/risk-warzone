@@ -7,20 +7,24 @@
 
 // ==================== Command Class Implementation ====================
 Command::Command() :
+  Subject(),
   command(new std::string("")),
   effect(new std::string("")) {}
 
 Command::Command(const std::string& cmd) :
+  Subject(),
   command(new std::string(cmd)),
   effect(new std::string("")) {}
 
 Command::Command(const Command& other) :
+  Subject(other),
   command(new std::string(*other.command)),
   effect(new std::string(*other.effect)) {}
 
 Command& Command::operator=(const Command& other) {
   if (this != &other) {
     // clear previous memory
+    Subject::operator=(other);
     delete command;
     delete effect;
 
@@ -47,8 +51,14 @@ std::string Command::getEffect() const {
 }
 
 // --- UTILITY ---
-void Command::saveEffect(const std::string& eff) const {
+void Command::saveEffect(const std::string& eff) {
   *effect = eff;
+  notify();
+}
+
+std::string Command::stringToLog() const {
+  return "Command: " + (command ? *command : "<Unknown>") +
+         " Effect: " + (effect ? *effect : "<None>");
 }
 
 // --- STREAM INSERTION ---
@@ -60,17 +70,27 @@ std::ostream& operator<<(std::ostream& os, const Command& cmd) {
 
 
 // ==================== CommandProcessor Class Implementation ====================
-CommandProcessor::CommandProcessor() : commands(new std::vector<Command*>()) {}
+CommandProcessor::CommandProcessor() :
+  Subject(),
+  commands(new std::vector<Command*>()),
+  lastSavedCommand(nullptr) {}
 
-CommandProcessor::CommandProcessor(const CommandProcessor& other) : commands(new std::vector<Command*>()) {
+CommandProcessor::CommandProcessor(const CommandProcessor& other) :
+  Subject(other),
+  commands(new std::vector<Command*>()),
+  lastSavedCommand(nullptr) {
   // deep copy commands
   for (const Command* cmd : *other.commands) {
     commands->push_back(new Command(*cmd));
+  }
+  if (!commands->empty()) {
+    lastSavedCommand = commands->back();
   }
 }
 
 CommandProcessor& CommandProcessor::operator=(const CommandProcessor& other) {
   if (this != &other) {
+    Subject::operator=(other);
     // delete old objects
     for (const Command* cmd : *commands) {
       delete cmd;
@@ -81,6 +101,7 @@ CommandProcessor& CommandProcessor::operator=(const CommandProcessor& other) {
     for (const Command* cmd : *other.commands) {
       commands->push_back(new Command(*cmd));
     }
+    lastSavedCommand = commands->empty() ? nullptr : commands->back();
   }
   return *this;
 }
@@ -91,6 +112,7 @@ CommandProcessor::~CommandProcessor() {
   }
   delete commands;
   commands = nullptr;
+  lastSavedCommand = nullptr;
 }
 
 // --- GETTERS ---
@@ -116,6 +138,16 @@ std::string CommandProcessor::readCommand() const {
 
 void CommandProcessor::saveCommand(Command* cmd) {
   commands->push_back(cmd);
+  lastSavedCommand = cmd;
+
+  // Propagate observers to newly saved command
+  if (cmd) {
+    for (Observer* observer : *observers) {
+      cmd->attach(observer);
+    }
+  }
+
+  notify();
 }
 
 bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine) const {
@@ -148,6 +180,13 @@ bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine
   if (baseCmd == "help") return true;
 
   return false;
+}
+
+std::string CommandProcessor::stringToLog() const {
+  if (lastSavedCommand) {
+    return "CommandProcessor saved: " + lastSavedCommand->getCommand();
+  }
+  return "CommandProcessor has no commands saved.";
 }
 
 // --- STREAM INSERTION ---
