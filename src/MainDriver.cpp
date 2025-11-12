@@ -60,12 +60,13 @@ int main() {
 
     // Part 7: startup phase Testing
     std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "PART 6: STARTUP PHASE TESTING" << std::endl;
+    std::cout << "PART 7: STARTUP PHASE TESTING" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
     testStartupPhase();
 
+    // Part 8: logging observer Testing
     std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "PART 7: LOGGING OBSERVER TESTING" << std::endl;
+    std::cout << "PART 8: LOGGING OBSERVER TESTING" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
     testLoggingObserver();
 

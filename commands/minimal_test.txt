@@ -1,6 +1,0 @@
-start
-loadmap map1.map
-validatemap
-addplayer Player1
-gamestart
-quit
