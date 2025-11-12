@@ -445,9 +445,6 @@ void GameEngine::mainGameLoop() {
     while (!gameOver) {
         std::cout << "\n=== Turn " << turn << " ===" << std::endl;
         
-        //std::cout << "\nEnter command: ";
-        //std::getline(std::cin, input);
-
          // Clear negotiation records at the start of each turn
         Order::clearNegotiationRecords();
 
@@ -455,19 +452,6 @@ void GameEngine::mainGameLoop() {
         for (Player* player : players_) {
             player->setConqueredThisTurn(false);
         }
-
-        // Handle special commands
-        /**if (input == "quit") {
-            std::cout << "Exiting Game Engine test." << std::endl;
-            gameOver = true;
-            break;
-        } else if (input == "help") {
-            engine.displayValidCommands();
-            continue;
-        } else if (input == "history") {
-            engine.displayStateHistory();
-            continue;
-        } */
 
         // Reinforcement Phase
         reinforcementPhase();
@@ -568,36 +552,6 @@ void GameEngine::reinforcementPhase() {
 void GameEngine::issueOrdersPhase() {
     std::cout << "\n--- ISSUING ORDERS PHASE ---\n";
     transitionState("issue orders");
-    /** 
-    std::cout << "Deploy phase\n";
-
-    bool deployRemaining = true;
-    bool dummy = false;
-
-    // Round-robin deploy until all players finished deploying
-    while (deployRemaining) {
-        deployRemaining = false;
-        for (Player* player : players_) {
-            if (player->getReinforcementPool() > 0) {
-                player->issueOrder(true, dummy, deck_);
-                deployRemaining = true;
-            }
-        }
-    }
-
-    std::cout << "\nAdvance phase\n";
-
-    // Each player can only issue ONE advance order
-    std::vector<char> advanceIssued(players_.size(), 0);
-
-    for (size_t i = 0; i < players_.size(); i++) {
-        bool flag = (advanceIssued[i] != 0);
-        players_[i]->issueOrder(false, flag, deck_);
-        advanceIssued[i] = flag;
-    }
-
-    std::cout << "Orders Issued\n";
-    */
 
     bool anyPlayerIssuedOrder = true;
     std::set<Player*> playersWhoPassed;
