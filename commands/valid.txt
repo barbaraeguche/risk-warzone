@@ -1,10 +1,9 @@
 start
-loadmap worldmap.map
+loadmap conquestmap.map
 validatemap
-addplayer Player1
-addplayer Player2
-addplayer Player3
-assigncountries
+addplayer Alice
+addplayer Bob
+addplayer Charlie
 gamestart
 issueorder
 issueorder
@@ -15,13 +14,19 @@ execorder
 execorder
 endexecorders
 issueorder
+issueorder
 endissueorders
 execorder
-endexecorders
+execorder
 win
 replay
 loadmap newmap.map
 validatemap
-addplayer NewPlayer1
+addplayer Player1
+addplayer Player2
 gamestart
+issueorder
+endissueorders
+execorder
+win
 quit
