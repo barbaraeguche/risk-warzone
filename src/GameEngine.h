@@ -6,6 +6,8 @@
 #include <map>
 #include <memory>   
 
+#include "LoggingObserver.h"
+
 
 class State;
 class Transition;
@@ -15,7 +17,7 @@ class Player;
 class Deck;
 class CommandProcessor;
 
-class GameEngine {
+class GameEngine : public Subject, public ILoggable {
 private:
     State* currentState;
     std::map<std::string, State*>* states;
@@ -35,10 +37,11 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const GameEngine& engine);
 
     void processCommand(const std::string& command);
-    void transitionTo(const std::string& stateName);
+    void transitionState(const std::string& stateName);
     std::string getCurrentStateName() const;
     void displayValidCommands() const;
     void displayStateHistory() const;
+    std::string stringToLog() const override;
 
     void startupPhase();
     void startupPhase(CommandProcessor&);
