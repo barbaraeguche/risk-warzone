@@ -472,7 +472,6 @@ void GameEngine::mainGameLoop() {
         turn++;
     }
 
-    transitionState("end");
     std::cout << "Game Over. Thanks for playing!" << std::endl;
 }
 

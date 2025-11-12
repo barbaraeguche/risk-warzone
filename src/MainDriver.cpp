@@ -54,6 +54,7 @@ int main() {
     std::cout << "PART 5: GAME ENGINE TESTING" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
     testGameStates();
+    */
 
     // Part 6: Command Processor Testing
     std::cout << "\n" << std::string(50, '=') << std::endl;
@@ -67,7 +68,13 @@ int main() {
     std::cout << std::string(50, '=') << std::endl;
     testStartupPhase();
 
-    // Part 8: logging observer Testing
+    //Part 8: Testing order execution
+    std::cout << "\n" << std::string(50, '=') << std::endl;
+    std::cout << "PART 8: ORDER EXECUTION TESTING" << std::endl;
+    std::cout << std::string(50, '=') << std::endl;
+    testOrderExecution();
+
+    // Part 9: logging observer Testing
     std::cout << "\n" << std::string(50, '=') << std::endl;
     std::cout << "PART 8: LOGGING OBSERVER TESTING" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
