@@ -3,12 +3,7 @@
 #include "Player.h"
 #include "Cards.h"
 #include "Orders.h"
-#include "Map.h"
-#include "Player.h"
-#include "Cards.h"
-#include "Orders.h"
 #include "CommandProcessing.h"
-
 
 #include <algorithm>
 #include <iostream>
@@ -18,7 +13,6 @@
 #include <cctype>
 #include <set>
 #include <map>
-
 
 
 
@@ -32,9 +26,6 @@ GameEngine::GameEngine() : Subject(), currentState(nullptr), states(new std::map
     initializeStates();
     currentState = (*states)["startup"];
     stateHistory->push_back("startup");
-    std::vector<Player*> players_;
-    map_ = nullptr;
-    deck_ = new Deck();
     std::vector<Player*> players_;
     map_ = nullptr;
     deck_ = new Deck();
@@ -74,26 +65,6 @@ GameEngine::GameEngine(const GameEngine& other) : Subject(other) {
     for (auto p : other.players_) {
         players_.push_back(new Player(*p)); 
     }
-
-    //Deep Copy Map
-    if (other.map_) {
-        map_ = std::make_unique<Map>(*other.map_);
-    } else {
-        map_ = nullptr;
-    }
-
-    //Deep Copy Deck
-    if (other.deck_ != nullptr) {
-        deck_ = new Deck(*other.deck_);
-    } else {
-        deck_ = nullptr;
-    }
-
-    //Deep Copy Players
-    players_.clear();
-    for (auto p : other.players_) {
-        players_.push_back(new Player(*p)); 
-    }
 }
 
 /**
@@ -106,10 +77,7 @@ GameEngine::~GameEngine() {
     delete stateHistory;
     delete deck_;
     for (auto p : players_) {
-    delete deck_;
-    for (auto p : players_) {
         delete p;
-    }
     }
     players_.clear();
 }
@@ -155,25 +123,6 @@ GameEngine& GameEngine::operator=(const GameEngine& other) {
         } else {
             deck_ = nullptr;
         }
-
-        if (other.map_)
-            map_ = std::make_unique<Map>(*other.map_);
-        else
-            map_.reset();
-
-        for (auto p : players_) {
-            delete p;
-        }
-        players_.clear();
-        for (auto p : other.players_) {
-            players_.push_back(new Player(*p)); 
-        }
-
-        if (other.deck_ != nullptr) {
-            deck_ = new Deck(*other.deck_);
-        } else {
-            deck_ = nullptr;
-        }
     }
     return *this;
 }
@@ -188,16 +137,6 @@ std::ostream& operator<<(std::ostream& os, const GameEngine& engine) {
     os << "GameEngine - Current State: " << engine.getCurrentStateName();
     return os;
 }
-
-Player* GameEngine::neutralPlayer_ = nullptr;
-
-Player* GameEngine::getNeutralPlayer() {
-    if (!neutralPlayer_) {
-        neutralPlayer_ = new Player("Neutral");
-    }
-    return neutralPlayer_;
-}
-
 
 Player* GameEngine::neutralPlayer_ = nullptr;
 
@@ -293,7 +232,7 @@ void GameEngine::displayStateHistory() const {
 }
 
 /**
- * Initialise all game states and their transitions
+ * Initialize all game states and their transitions
  */
 void GameEngine::initializeStates() {
     // Create all states based on the assignment state diagram
@@ -813,10 +752,6 @@ std::vector<Player*> GameEngine::getPlayers() const {
     return players_;
 }
 
-std::vector<Player*> GameEngine::getPlayers() const {
-    return players_;
-}
-
 /**
  * Get the target state of this transition
  * @return Target state name
@@ -991,7 +926,6 @@ void GameEngine::startupPhase(CommandProcessor& cmdSrc) {
             }
         }
         else if (cmd == "loadmap") {
-        else if (cmd == "loadmap") {
             std::string arg; std::getline(iss, arg); arg = trimCopy(arg);
             if (arg.empty()) {
                 std::cout << "Usage: loadmap <path-or-name>\n";
@@ -1131,7 +1065,7 @@ void GameEngine::startupPhase(CommandProcessor& cmdSrc) {
                 if (terr->getOwner() != newOwner) terr->setOwner(newOwner);
             }
 
-            // Randomise play order
+            // Randomize play order
             std::shuffle(players_.begin(), players_.end(), rng);
 
             // 50 armies each

@@ -25,7 +25,6 @@ int main() {
 
   try {
     /** 
-    /** 
     // Part 1: Map Testing
     std::cout << "\n" << std::string(50, '=') << std::endl;
     std::cout << "PART 1: MAP TESTING" << std::endl;
@@ -57,7 +56,6 @@ int main() {
     std::cout << std::string(50, '=') << std::endl;
     testGameStates();
     */
-    */
 
     // Part 6: Command Processor Testing
     std::cout << "\n" << std::string(50, '=') << std::endl;
@@ -85,7 +83,6 @@ int main() {
 
     // Part 10: logging observer Testing
     std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "PART 10: LOGGING OBSERVER TESTING" << std::endl;
     std::cout << "PART 10: LOGGING OBSERVER TESTING" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
     testLoggingObserver();
