@@ -18,8 +18,6 @@ Player::Player() :
   orders(new OrdersList()),
   reinforcementPool(new int(0)),
   pendingReinforcements(new int(0)) {}
-  reinforcementPool(new int(0)),
-  pendingReinforcements(new int(0)) {}
 
 /**
  * Parameterized constructor
@@ -33,8 +31,6 @@ Player::Player(const std::string& name) :
   orders(new OrdersList()),
   reinforcementPool(new int(0)), 
   pendingReinforcements(new int(0)){}
-  reinforcementPool(new int(0)), 
-  pendingReinforcements(new int(0)){}
 
 /**
  * Copy constructor
@@ -46,8 +42,6 @@ Player::Player(const Player& other) :
   territories(new std::vector<Territory*>(*other.territories)),
   hand(new Hand(*other.hand)),
   orders(new OrdersList(*other.orders)),
-  reinforcementPool(new int(*other.reinforcementPool)), 
-  pendingReinforcements(new int(*other.pendingReinforcements)){}
   reinforcementPool(new int(*other.reinforcementPool)), 
   pendingReinforcements(new int(*other.pendingReinforcements)){}
 
@@ -66,7 +60,6 @@ Player& Player::operator=(const Player& other) {
       delete orders;
       delete reinforcementPool;
       delete pendingReinforcements;
-      delete pendingReinforcements;
 
       // Copy from other player
       conqueredThisTurn = new bool(other.conqueredThisTurn); 
@@ -75,7 +68,6 @@ Player& Player::operator=(const Player& other) {
       hand = new Hand(*other.hand);
       orders = new OrdersList(*other.orders);
       reinforcementPool = new int(*other.reinforcementPool);
-      pendingReinforcements = new int(*other.pendingReinforcements);
       pendingReinforcements = new int(*other.pendingReinforcements);
   }
   return *this;
@@ -91,7 +83,6 @@ Player::~Player() {
   delete hand;
   delete orders;
   delete reinforcementPool;
-  delete pendingReinforcements;
   delete pendingReinforcements;
 }
 
@@ -149,10 +140,6 @@ int Player::getPendingReinforcements() const {
   return *pendingReinforcements;
 }
 
-int Player::getPendingReinforcements() const {
-  return *pendingReinforcements;
-}
-
 // ==================== Setters ====================
 
 /**
@@ -177,10 +164,6 @@ void Player::setName(const std::string& name) {
  */
 void Player::setReinforcementPool(int armies) {
   *reinforcementPool = armies;
-}
-
-void Player::setPendingReinforcements(int armies) {
-  *pendingReinforcements = armies;
 }
 
 void Player::setPendingReinforcements(int armies) {
@@ -221,8 +204,6 @@ void Player::removeTerritory(Territory* territory) {
  */
 bool Player::ownsTerritory(Territory* territory) const {
   if (!territory) return false;
-  return std::any_of(territories->begin(), territories->end(),
-                   [&](Territory* t){ return t->getName() == territory->getName(); });
   return std::any_of(territories->begin(), territories->end(),
                    [&](Territory* t){ return t->getName() == territory->getName(); });
 }
@@ -621,23 +602,6 @@ void Player::displayInfo() const {
           std::cout << "    - " << territory->getName() << " (Armies: " << territory->getArmies() << ")" << std::endl;
       }
   }
-}
-
-Player* Player::choosePlayer(const std::vector<Player*>& players) {
-    if (players.empty()) return nullptr;
-
-    std::cout << "Choose a player:\n";
-    for (size_t i = 0; i < players.size(); i++) {
-        std::cout << i << ": " << players[i]->getName() << "\n";
-    }
-
-    int choice = -1;
-    while (choice < 0 || choice >= players.size()) {
-        std::cout << "Enter the number of your choice: ";
-        std::cin >> choice;
-    }
-
-    return players[choice];
 }
 
 Player* Player::choosePlayer(const std::vector<Player*>& players) {

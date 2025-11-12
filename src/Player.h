@@ -25,10 +25,8 @@ private:
   std::vector<Territory*>* territories;      // Collection of owned territories
   Hand* hand;                                // Player's hand of cards
   Deck* deck;                                // Pointer to the deck (for drawing/returning cards)
-  Deck* deck;                                // Pointer to the deck (for drawing/returning cards)
   OrdersList* orders;                        // List of orders to execute
   int* reinforcementPool;                    // Number of armies available for deployment
-  int* pendingReinforcements;               // Number of armies pending deployment
   int* pendingReinforcements;               // Number of armies pending deployment
 
 public:
@@ -47,13 +45,11 @@ public:
   OrdersList* getOrders() const;
   int getReinforcementPool() const;
   int getPendingReinforcements() const;
-  int getPendingReinforcements() const;
 
   // Setters
   void setConqueredThisTurn(bool conquered);
   void setName(const std::string& name);
   void setReinforcementPool(int armies);
-  void setPendingReinforcements(int armies);
   void setPendingReinforcements(int armies);
 
   // Territory management
@@ -83,7 +79,6 @@ public:
   void displayInfo() const;
   int getTotalArmies() const;
   int getTerritoryCount() const;
-  Player* choosePlayer(const std::vector<Player*>& players);
   Player* choosePlayer(const std::vector<Player*>& players);
 
   // Stream insertion operator
