@@ -16,8 +16,7 @@ Player::Player() :
   territories(new std::vector<Territory*>()),
   hand(new Hand()),
   orders(new OrdersList()),
-  reinforcementPool(new int(0)),
-  pendingReinforcements(new int(0)) {}
+  reinforcementPool(new int(0)) {}
 
 /**
  * Parameterized constructor
@@ -29,8 +28,7 @@ Player::Player(const std::string& name) :
   territories(new std::vector<Territory*>()),
   hand(new Hand()),
   orders(new OrdersList()),
-  reinforcementPool(new int(0)), 
-  pendingReinforcements(new int(0)){}
+  reinforcementPool(new int(0)) {}
 
 /**
  * Copy constructor
@@ -42,8 +40,7 @@ Player::Player(const Player& other) :
   territories(new std::vector<Territory*>(*other.territories)),
   hand(new Hand(*other.hand)),
   orders(new OrdersList(*other.orders)),
-  reinforcementPool(new int(*other.reinforcementPool)), 
-  pendingReinforcements(new int(*other.pendingReinforcements)){}
+  reinforcementPool(new int(*other.reinforcementPool)) {}
 
 /**
  * Assignment operator
@@ -59,7 +56,6 @@ Player& Player::operator=(const Player& other) {
       delete hand;
       delete orders;
       delete reinforcementPool;
-      delete pendingReinforcements;
 
       // Copy from other player
       conqueredThisTurn = new bool(other.conqueredThisTurn); 
@@ -68,7 +64,6 @@ Player& Player::operator=(const Player& other) {
       hand = new Hand(*other.hand);
       orders = new OrdersList(*other.orders);
       reinforcementPool = new int(*other.reinforcementPool);
-      pendingReinforcements = new int(*other.pendingReinforcements);
   }
   return *this;
 }
@@ -83,7 +78,6 @@ Player::~Player() {
   delete hand;
   delete orders;
   delete reinforcementPool;
-  delete pendingReinforcements;
 }
 
 // ==================== Getters ====================
@@ -136,10 +130,6 @@ int Player::getReinforcementPool() const {
   return *reinforcementPool;
 }
 
-int Player::getPendingReinforcements() const {
-  return *pendingReinforcements;
-}
-
 // ==================== Setters ====================
 
 /**
@@ -164,10 +154,6 @@ void Player::setName(const std::string& name) {
  */
 void Player::setReinforcementPool(int armies) {
   *reinforcementPool = armies;
-}
-
-void Player::setPendingReinforcements(int armies) {
-  *pendingReinforcements = armies;
 }
 
 // ==================== Territory Management ====================
@@ -204,8 +190,7 @@ void Player::removeTerritory(Territory* territory) {
  */
 bool Player::ownsTerritory(Territory* territory) const {
   if (!territory) return false;
-  return std::any_of(territories->begin(), territories->end(),
-                   [&](Territory* t){ return t->getName() == territory->getName(); });
+  return std::find(territories->begin(), territories->end(), territory) != territories->end();
 }
 
 // ==================== Card Management ====================
@@ -237,184 +222,70 @@ void Player::playCard(int index, Deck* deck) {
  * Issue a generic order
  * @param order Pointer to the order to add
  */
-void Player::issueOrder(bool deployPhase, bool& advanceIssued, Deck* deck_) {
-    if (deployPhase) {
-        //Deploy phase
-        std::vector<Territory*> defendList = toDefend();
-        if (*reinforcementPool > 0 && !defendList.empty()) {
-            std::cout << "\nPlayer " << getName() << " - Reinforcement Pool: " << *reinforcementPool << " armies\n";
-            std::cout << "Territories to defend:\n";
-            for (size_t i = 0; i < defendList.size(); i++) {
-                std::cout << i << ": " << defendList[i]->getName() 
-                          << " (Current armies: " << defendList[i]->getArmies() << ")\n";
-            }
-
-            int choice = -1;
-            int armies = -1;
-            while (choice < 0 || choice >= defendList.size()) {
-                std::cout << "Choose territory to deploy to (index): ";
-                std::cin >> choice;
-            }
-
-            while (armies <= 0 || armies > *reinforcementPool) {
-              std::cout << "Enter number of armies to deploy (max " << *reinforcementPool << "): ";
-              std::cin >> armies;
-            }
-
-            this->issueDeployOrder(defendList[choice], armies);
-            *reinforcementPool -= armies;
-            std::cout << armies << " armies deployed to " << defendList[choice]->getName() << ".\n";
-        }
-    } else {
-        //Advance phase
-        if (advanceIssued) return; // Only one advance order per player
-
-        std::vector<Territory*> attackList = toAttack();
-        std::vector<Territory*> defendList = toDefend();
-
-        bool canAdvance = false;
-        for (Territory* t : *territories) {
-            if (t->getArmies() > 1) {
-                canAdvance = true;
-                break;
-            }
-        }
-        if (!canAdvance){
-            if (!hand->empty()) {
-              std::cout << "Player " << getName() << "'s cards:\n";
-              hand->printHand();
-
-              int cardIndex = -1;
-              std::cout << "Choose a card to play: (-1 for no cards) ";
-              std::cin >> cardIndex;
-              if(cardIndex == -1) return;
-              else if(cardIndex < 0 || cardIndex >= hand->size()) std::cout << "Invalid card index.\n";
-
-              playCard(cardIndex, deck_);
-            }  
-            return;
-        };
-
-        std::cout << "\nPlayer " << getName() << " - Advance Phase\n";
-
-        std::cout << "Your own territories:\n";
-        for (size_t i = 0; i < territories->size(); i++) {
-            std::cout << i << ": " << territories->at(i)->getName() 
-                      << " (Armies: " << territories->at(i)->getArmies() << ")\n";
-        }
-
-        std::vector<Territory*> territoriesWithEnemies;
-
-        for (Territory* t : *territories) { // all territories you own
-            if (!t) continue;
-            const std::vector<Territory*>& adj = t->getAdjTerritories();
-            for (Territory* a : adj) {
-                if (a && !ownsTerritory(a)) { // if adjacent to enemy
-                    territoriesWithEnemies.push_back(t);
-                    break; // only need one enemy to qualify
-                }
-            }
-        }
-
-        // Display
-        if (territoriesWithEnemies.empty()) {
-            std::cout << "No territories adjacent to enemies.\n";
-        } else {
-            std::cout << "Your territories adjacent to enemies:\n";
-            for (size_t i = 0; i < territoriesWithEnemies.size(); ++i) {
-                std::cout << i << ": " << territoriesWithEnemies[i]->getName()
-                          << " (Armies: " << territoriesWithEnemies[i]->getArmies() << ")\n";
-            }
-        }
-
-        int sourceIndex = -1;
-        Territory* source = nullptr;
-        Territory* target = nullptr;
-
-        while (true) { // loop until a valid source + target is chosen
-            // Choose source territory
-            sourceIndex = -1;
-            while (sourceIndex < 0 || sourceIndex >= territories->size() || territories->at(sourceIndex)->getArmies() <= 1) {
-                std::cout << "Choose source territory (index, must have >1 army): ";
-                std::cin >> sourceIndex;
-            }
-            source = territories->at(sourceIndex);
-          
-            // Choose target type
-            int targetType = -1;
-            while (targetType != 0 && targetType != 1) {
-                std::cout << "Target type: 0 = defend (own), 1 = attack (enemy): ";
-                std::cin >> targetType;
-            }
-          
-            // Filter adjacent territories based on target type
-            const std::vector<Territory*>& adjTerritories = source->getAdjTerritories();
-            std::vector<Territory*> validTargets;
-            for (Territory* adj : adjTerritories) {
-                if (!adj) continue;
-                if (targetType == 1 && !ownsTerritory(adj)) { // attack
-                    validTargets.push_back(adj);
-                } else if (targetType == 0 && ownsTerritory(adj)) { // defend/reinforce
-                    validTargets.push_back(adj);
-                }
-            }
-          
-            // If no valid targets, notify and restart loop
-            if (validTargets.empty()) {
-                std::cout << "No valid adjacent territories for this source. Choose another source.\n";
-                continue; // back to source selection
-            }
-          
-            // Display valid targets
-            for (size_t i = 0; i < validTargets.size(); ++i) {
-                std::cout << i << ": " << validTargets[i]->getName()
-                          << " (Armies: " << validTargets[i]->getArmies() << ")\n";
-            }
-          
-            // Choose target
-            int targetIndex = -1;
-            while (targetIndex < 0 || targetIndex >= validTargets.size()) {
-                std::cout << "Choose target territory (index): -1 to reselect source: ";
-                std::cin >> targetIndex;
-                if (targetIndex == -1) break; // reselect source
-            }
-            if (targetIndex == -1) continue; // reselect source
-            target = validTargets[targetIndex];
-          
-            // Choose number of armies to move
-            int armies = -1;
-            while (armies <= 0 || armies > source->getArmies() - 1) {
-                std::cout << "Enter number of armies to move (max " << source->getArmies() - 1 << "): ";
-                std::cin >> armies;
-            }
-          
-            // Issue order and exit loop
-            issueAdvanceOrder(source, target, armies);
-            std::cout << "Advance order issued from " << source->getName() 
-                      << " to " << target->getName() << " with " << armies << " armies.\n";
-          
-            advanceIssued = true;
-            std::cout << "Advance order issued.\n";
-            break; // exit the while(true) loop
-        }
-
-        if (!hand->empty()) {
-            std::cout << "Your cards:\n";
-            hand->printHand();
-
-            int cardIndex = -1;
-    
-            std::cout << "Choose a card to play: (-1 for no cards) ";
-            std::cin >> cardIndex;
-
-            if(cardIndex == -1) return;
-            else if(cardIndex < 0 || cardIndex >= hand->size()) std::cout << "Invalid card index.\n";
-
-            playCard(cardIndex, deck_);
-        }
-    }
+void Player::issueOrder(Order* order) {
+  if (order) {
+      orders->add(order);
+  }
 }
 
+/**
+ * Issue a deploy order
+ * @param target Territory to deploy armies to
+ * @param armies Number of armies to deploy
+ */
+void Player::issueDeployOrder(Territory* target, int armies) {
+  orders->add(new OrderDeploy(this, target, new int(armies)));
+}
+
+/**
+ * Issue an advance order
+ * @param source Source territory
+ * @param target Target territory
+ * @param armies Number of armies to advance
+ */
+void Player::issueAdvanceOrder(Territory* source, Territory* target, int armies) {
+  orders->add(new OrderAdvance(this, source, target, new int(armies)));
+}
+
+/**
+ * Issue a bomb order
+ * @param target Territory to bomb
+ */
+void Player::issueBombOrder(Territory* target) {
+  orders->add(new OrderBomb(target, this));
+}
+
+/**
+ * Issue a blockade order
+ * @param target Territory to blockade
+ */
+void Player::issueBlockadeOrder(Player* nPlayer, Territory* target) {
+  orders->add(new OrderBlockade(nPlayer, this, target));
+}
+
+/**
+ * Issue an airlift order
+ * @param source Source territory
+ * @param target Target territory
+ * @param armies Number of armies to airlift
+ */
+void Player::issueAirliftOrder(Territory* source, Territory* target, int armies) {
+  orders->add(new OrderAirlift(this, source, target, new int(armies)));
+}
+
+/**
+ * Issue a negotiate order
+ * @param targetPlayer Player to negotiate with
+ */
+void Player::issueNegotiateOrder(Player* targetPlayer) {
+  orders->add(new OrderNegotiate(this, targetPlayer));
+}
+
+/**
+ * Issue orders based on player strategy (Part 3 implementation)
+ * This method implements the order issuing logic for the main game loop
+ * @return true if an order was issued, false if player passes
+ */
 bool Player::issueOrder() {
   // Priority 1: Deploy armies if we have any in reinforcement pool
   if (*reinforcementPool > 0) {
@@ -486,59 +357,6 @@ bool Player::issueOrder() {
   return false;
 }
 
-/**
- * Issue a deploy order
- * @param target Territory to deploy armies to
- * @param armies Number of armies to deploy
- */
-void Player::issueDeployOrder(Territory* target, int armies) {
-  orders->add(new OrderDeploy(this, target, new int(armies)));
-}
-
-/**
- * Issue an advance order
- * @param source Source territory
- * @param target Target territory
- * @param armies Number of armies to advance
- */
-void Player::issueAdvanceOrder(Territory* source, Territory* target, int armies) {
-  orders->add(new OrderAdvance(this, source, target, new int(armies)));
-}
-
-/**
- * Issue a bomb order
- * @param target Territory to bomb
- */
-void Player::issueBombOrder(Territory* target) {
-  orders->add(new OrderBomb(target, this));
-}
-
-/**
- * Issue a blockade order
- * @param target Territory to blockade
- */
-void Player::issueBlockadeOrder(Player* nPlayer, Territory* target) {
-  orders->add(new OrderBlockade(nPlayer, this, target));
-}
-
-/**
- * Issue an airlift order
- * @param source Source territory
- * @param target Target territory
- * @param armies Number of armies to airlift
- */
-void Player::issueAirliftOrder(Territory* source, Territory* target, int armies) {
-  orders->add(new OrderAirlift(this, source, target, new int(armies)));
-}
-
-/**
- * Issue a negotiate order
- * @param targetPlayer Player to negotiate with
- */
-void Player::issueNegotiateOrder(Player* targetPlayer) {
-  orders->add(new OrderNegotiate(this, targetPlayer));
-}
-
 // ==================== Strategy Methods ====================
 
 /**
@@ -602,23 +420,6 @@ void Player::displayInfo() const {
           std::cout << "    - " << territory->getName() << " (Armies: " << territory->getArmies() << ")" << std::endl;
       }
   }
-}
-
-Player* Player::choosePlayer(const std::vector<Player*>& players) {
-    if (players.empty()) return nullptr;
-
-    std::cout << "Choose a player:\n";
-    for (size_t i = 0; i < players.size(); i++) {
-        std::cout << i << ": " << players[i]->getName() << "\n";
-    }
-
-    int choice = -1;
-    while (choice < 0 || choice >= players.size()) {
-        std::cout << "Enter the number of your choice: ";
-        std::cin >> choice;
-    }
-
-    return players[choice];
 }
 
 /**

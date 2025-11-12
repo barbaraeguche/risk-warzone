@@ -24,10 +24,8 @@ private:
   std::string* playerName;                    // Player's name
   std::vector<Territory*>* territories;      // Collection of owned territories
   Hand* hand;                                // Player's hand of cards
-  Deck* deck;                                // Pointer to the deck (for drawing/returning cards)
   OrdersList* orders;                        // List of orders to execute
   int* reinforcementPool;                    // Number of armies available for deployment
-  int* pendingReinforcements;               // Number of armies pending deployment
 
 public:
   // Constructors
@@ -44,13 +42,11 @@ public:
   Hand* getHand() const;
   OrdersList* getOrders() const;
   int getReinforcementPool() const;
-  int getPendingReinforcements() const;
 
   // Setters
   void setConqueredThisTurn(bool conquered);
   void setName(const std::string& name);
   void setReinforcementPool(int armies);
-  void setPendingReinforcements(int armies);
 
   // Territory management
   void addTerritory(Territory* territory);
@@ -62,8 +58,8 @@ public:
   void playCard(int index, Deck* deck);
 
   // Order management
-  void issueOrder(bool deployPhase, bool& advanceIssued, Deck* deck_);
-  bool issueOrder();
+  void issueOrder(Order* order);
+  bool issueOrder(); // Part 3: Decision-making order issuing
   void issueDeployOrder(Territory* target, int armies);
   void issueAdvanceOrder(Territory* source, Territory* target, int armies);
   void issueBombOrder(Territory* target);
@@ -79,7 +75,6 @@ public:
   void displayInfo() const;
   int getTotalArmies() const;
   int getTerritoryCount() const;
-  Player* choosePlayer(const std::vector<Player*>& players);
 
   // Stream insertion operator
   friend std::ostream& operator<<(std::ostream& os, const Player& player);
