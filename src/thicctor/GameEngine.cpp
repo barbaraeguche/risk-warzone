@@ -931,7 +931,11 @@ void GameEngine::reinforcementPhase() {
 
     for (Player* player : players_) {
         int reinforcements = player->getTerritoryCount() / 3; // Base reinforcement
-
+        // Minimum of 3 reinforcements
+        if (reinforcements < 3) {
+            reinforcements = 3;
+        }
+        
         // Add continent bonuses
         std::map<Continent*, bool> continentOwnership;
         const auto& continents = map_->getContinents();
@@ -962,11 +966,6 @@ void GameEngine::reinforcementPhase() {
         }
 
         reinforcements += continentBonus;
-
-        // Minimum of 3 reinforcements
-        if (reinforcements < 3) {
-            reinforcements = 3;
-        }
 
         // Add to player's reinforcement pool
         player->setReinforcementPool(player->getReinforcementPool() + reinforcements);

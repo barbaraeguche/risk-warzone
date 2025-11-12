@@ -156,7 +156,6 @@ OrderAdvance& OrderAdvance::operator=(const OrderAdvance& other) {
 }
 
 bool OrderAdvance::validate() { 
-  std::cout << source->isAdjacentTo(target) << player->ownsTerritory(source) << (source->getArmies() - 1 >= *soldiers) << ".\n";
   if (source && target && source->isAdjacentTo(target) && player->ownsTerritory(source) && *soldiers > 0 && (source->getArmies() - 1 >= *soldiers) ) {
     Player* targetPlayer = target->getOwner();
     // Check for negotiation

@@ -415,6 +415,77 @@ void Player::issueOrder(bool deployPhase, bool& advanceIssued, Deck* deck_) {
     }
 }
 
+bool Player::issueOrder() {
+  // Priority 1: Deploy armies if we have any in reinforcement pool
+  if (*reinforcementPool > 0) {
+      std::vector<Territory*> defendList = toDefend();
+      
+      if (!defendList.empty()) {
+          // Deploy to first territory in defend list
+          Territory* target = defendList[0];
+          int armiesToDeploy = std::min(*reinforcementPool, 3); // Deploy up to 3 at a time
+          
+          std::cout << "  Issuing Deploy order: " << armiesToDeploy << " armies to " << target->getName() << "\n";
+          issueDeployOrder(target, armiesToDeploy);
+          return true;
+      }
+  }
+  
+  // Priority 2: Issue advance orders (defend or attack)
+  std::vector<Territory*> defendList = toDefend();
+  std::vector<Territory*> attackList = toAttack();
+  
+  // Try to move armies to defend territories
+  if (!defendList.empty() && territories->size() > 1) {
+      // Find a territory with armies to move
+      for (Territory* source : *territories) {
+          if (source->getArmies() > 1) {
+              // Try to find adjacent friendly territory to reinforce
+              for (Territory* adjacent : source->getAdjTerritories()) {
+                  if (ownsTerritory(adjacent)) {
+                      int armiesToMove = source->getArmies() / 2;
+                      if (armiesToMove > 0) {
+                          std::cout << "  Issuing Advance order (defense): " << armiesToMove 
+                                    << " armies from " << source->getName() 
+                                    << " to " << adjacent->getName() << "\n";
+                          issueAdvanceOrder(source, adjacent, armiesToMove);
+                          return true;
+                      }
+                  }
+              }
+          }
+      }
+  }
+  
+  // Try to attack enemy territories
+  if (!attackList.empty()) {
+      for (Territory* target : attackList) {
+          // Find a friendly territory adjacent to this enemy territory
+          for (Territory* source : *territories) {
+              if (source->isAdjacentTo(target) && source->getArmies() > 1) {
+                  int armiesToAttack = source->getArmies() - 1; // Leave 1 army behind
+                  std::cout << "  Issuing Advance order (attack): " << armiesToAttack 
+                            << " armies from " << source->getName() 
+                            << " to " << target->getName() << "\n";
+                  issueAdvanceOrder(source, target, armiesToAttack);
+                  return true;
+              }
+          }
+      }
+  }
+  
+  // Priority 3: Play cards if we have any
+  if (hand->size() > 0) {
+      std::cout << "  Playing a card from hand\n";
+      // For now, just note that card is played but don't actually play
+      // In a full implementation, this would create orders from cards
+      // For simplicity in this demo, we'll skip actual card playing
+  }
+  
+  // No more orders to issue
+  return false;
+}
+
 /**
  * Issue a deploy order
  * @param target Territory to deploy armies to
