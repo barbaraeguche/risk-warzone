@@ -1,6 +1,5 @@
 #pragma once
 
-#include "PlayerStrategies.h"
 #include <string>
 #include <vector>
 #include <iostream>
@@ -12,6 +11,7 @@ class Hand;
 class Order;
 class OrdersList;
 class Deck;
+class PlayerStrategy;
 
 /**
  * Player class representing a Warzone player
@@ -30,6 +30,8 @@ private:
   OrdersList* orders;                        // List of orders to execute
   int* reinforcementPool;                    // Number of armies available for deployment
   int* pendingReinforcements;               // Number of armies pending deployment
+  bool* canIssueOrderFlag;               // Flag indicating if the player can issue orders
+  bool* gotAttackedThisTurn;              // Flag indicating if the player got attacked this turn
 
 public:
   // Constructors
@@ -48,6 +50,8 @@ public:
   OrdersList* getOrders() const;
   int getReinforcementPool() const;
   int getPendingReinforcements() const;
+  bool* getGotAttackedThisTurn() const;
+  PlayerStrategy* getPlayerStrategy() const;
 
   // Setters
   void setConqueredThisTurn(bool conquered);
@@ -55,6 +59,7 @@ public:
   void setReinforcementPool(int armies);
   void setPendingReinforcements(int armies);
   void setStrategy(PlayerStrategy* strategy);
+  void setGotAttackedThisTurn(bool attacked);
 
   // Territory management
   void addTerritory(Territory* territory);
@@ -69,6 +74,8 @@ public:
   void issueOrder(bool deployPhase, bool& advanceIssued, Deck* deck_);
   //bool issueOrder();
   void issueOrder();
+  bool* getCanIssueOrderFlag() const;
+  void setCanIssueOrderFlag(bool canIssue);
   void issueDeployOrder(Territory* target, int armies);
   void issueAdvanceOrder(Territory* source, Territory* target, int armies);
   void issueBombOrder(Territory* target);
