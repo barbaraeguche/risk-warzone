@@ -112,7 +112,6 @@ void OrderDeploy::execute() {
   }
   std::cout << "Executing Deploy Order: Deploying " << *soldiers << " armies to " << target->getName() << ".\n";
   target->setArmies(target->getArmies() + *soldiers);
-  player->setReinforcementPool(player->getReinforcementPool() - *soldiers);
   saveEffect("Deployed " + std::to_string(*soldiers) + " armies to " + target->getName() + ".");
 }
 
@@ -439,6 +438,57 @@ void OrderNegotiate::execute() {
 
 Order* OrderNegotiate::clone() const { 
   return new OrderNegotiate(*this); 
+}
+
+// OrderCheat
+
+OrderCheat::OrderCheat(Player* player) : Order() {
+  this->player = player;
+  type = new std::string("cheat");
+  description = new std::string("Conquers all adjacent territories of the player, once per turn.");
+}
+
+OrderCheat::OrderCheat(const OrderCheat& other) : Order(other) {
+  this->player = other.player;
+}
+
+OrderCheat::~OrderCheat() = default;
+
+OrderCheat& OrderCheat::operator=(const OrderCheat& other) { 
+  if (this != &other) {
+    Order::operator=(other);
+    this->player = other.player;
+  }
+  return *this;
+}
+
+bool OrderCheat::validate() { 
+  if (player) {
+    return true;
+  }else {
+    saveEffect("Cheat order invalid.");
+    return false;
+  }
+}
+
+void OrderCheat::execute() {
+  if (!this->validate())
+  {
+    saveEffect("Cheat order invalid. Not executed.");
+    return;
+  }
+
+  for (auto& territory : player->toAttack()) {
+    Player* originalOwner = territory->getOwner();
+    originalOwner->removeTerritory(territory);
+    player->addTerritory(territory);
+    territory->setOwner(player);
+  }
+  saveEffect("Cheat executed; all armies on player's territories doubled.");
+}
+
+Order* OrderCheat::clone() const { 
+  return new OrderCheat(*this); 
 }
 
 

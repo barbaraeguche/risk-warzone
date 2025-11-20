@@ -70,9 +70,10 @@ void automatictestMainGameLoop() {
     testMap->addAdjacency("Territory6", "Territory1");
     
     // Create players
-    Player* player1 = new Player("Alice");
-    Player* player2 = new Player("Bob");
-    Player* player3 = new Player("Charlie");
+    Deck* deck = new Deck();
+    Player* player1 = new Player("Alice", deck);
+    Player* player2 = new Player("Bob", deck);
+    Player* player3 = new Player("Charlie", deck);
     
     // Distribute territories
     t1->setOwner(player1);
@@ -91,7 +92,6 @@ void automatictestMainGameLoop() {
     t6->setArmies(1);
     
     // Create deck and give players some cards
-    Deck* deck = new Deck();
     player1->addCard(deck->draw());
     player1->addCard(deck->draw());
     player2->addCard(deck->draw());

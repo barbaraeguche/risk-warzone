@@ -142,7 +142,7 @@ Player* GameEngine::neutralPlayer_ = nullptr;
 
 Player* GameEngine::getNeutralPlayer() {
     if (!neutralPlayer_) {
-        neutralPlayer_ = new Player("Neutral");
+        neutralPlayer_ = new Player("Neutral", nullptr);
     }
     return neutralPlayer_;
 }
@@ -1015,7 +1015,7 @@ void GameEngine::startupPhase(CommandProcessor& cmdSrc) {
                 continue;
             }
 
-            auto* np = new Player(name);
+            auto* np = new Player(name, nullptr);
             players_.push_back(np);
             transitionState("players added");
 

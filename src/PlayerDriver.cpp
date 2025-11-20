@@ -17,8 +17,9 @@ void testPlayers() {
     std::cout << "\n--- Test 1: Basic Player Creation ---" << std::endl;
     
     // Create players using different constructors
-    Player* player1 = new Player("Alice");
-    Player* player2 = new Player("Bob");
+    Deck* deck = new Deck();
+    Player* player1 = new Player("Alice", deck);
+    Player* player2 = new Player("Bob", deck);
     Player* player3 = new Player(); // Default constructor
     
     std::cout << "Created players:" << std::endl;
@@ -61,7 +62,7 @@ void testPlayers() {
     std::cout << "\n--- Test 3: Card Management ---" << std::endl;
     
     // Create a deck and draw cards for players
-    Deck* deck = new Deck();
+
     
     // Draw some cards for each player
     for (int i = 0; i < 3; i++) {
@@ -168,7 +169,7 @@ void testPlayers() {
     std::cout << "Copied Player 1: " << *player1Copy << std::endl;
     
     // Test assignment operator
-    Player* player2Assigned = new Player("Temp");
+    Player* player2Assigned = new Player("Temp", deck);
     *player2Assigned = *player2;
     std::cout << "Original Player 2: " << *player2 << std::endl;
     std::cout << "Assigned Player 2: " << *player2Assigned << std::endl;
