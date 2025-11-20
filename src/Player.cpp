@@ -3,7 +3,6 @@
 #include "Cards.h"
 #include "Orders.h"
 #include <algorithm>
-#include <random>
 
 // ==================== Player Class Implementation ====================
 
@@ -23,14 +22,16 @@ Player::Player() :
  * Parameterized constructor
  * @param name The name of the player
  */
-Player::Player(const std::string& name) :
+Player::Player(const std::string& name, Deck* deck) :
   conqueredThisTurn(new bool(false)),
   playerName(new std::string(name)),
   territories(new std::vector<Territory*>()),
   hand(new Hand()),
   orders(new OrdersList()),
   reinforcementPool(new int(0)), 
-  pendingReinforcements(new int(0)){}
+  pendingReinforcements(new int(0)),
+  deck(deck)
+  {}
 
 /**
  * Copy constructor
@@ -118,6 +119,14 @@ const std::vector<Territory*>& Player::getTerritories() const {
  */
 Hand* Player::getHand() const {
   return hand;
+}
+
+/**
+ * Get the player's deck
+ * @return Pointer to the deck
+ */
+Deck* Player::getDeck() const {
+  return deck;
 }
 
 /**
@@ -415,75 +424,83 @@ void Player::issueOrder(bool deployPhase, bool& advanceIssued, Deck* deck_) {
     }
 }
 
-bool Player::issueOrder() {
-  // Priority 1: Deploy armies if we have any in reinforcement pool
-  if (*reinforcementPool > 0) {
-      std::vector<Territory*> defendList = toDefend();
+// bool Player::issueOrder() {
+//   // Priority 1: Deploy armies if we have any in reinforcement pool
+//   if (*reinforcementPool > 0) {
+//       std::vector<Territory*> defendList = toDefend();
       
-      if (!defendList.empty()) {
-          // Deploy to first territory in defend list
-          Territory* target = defendList[0];
-          int armiesToDeploy = std::min(*reinforcementPool, 3); // Deploy up to 3 at a time
+//       if (!defendList.empty()) {
+//           // Deploy to first territory in defend list
+//           Territory* target = defendList[0];
+//           int armiesToDeploy = std::min(*reinforcementPool, 3); // Deploy up to 3 at a time
           
-          std::cout << "  Issuing Deploy order: " << armiesToDeploy << " armies to " << target->getName() << "\n";
-          issueDeployOrder(target, armiesToDeploy);
-          return true;
-      }
-  }
+//           std::cout << "  Issuing Deploy order: " << armiesToDeploy << " armies to " << target->getName() << "\n";
+//           issueDeployOrder(target, armiesToDeploy);
+//           return true;
+//       }
+//   }
   
-  // Priority 2: Issue advance orders (defend or attack)
-  std::vector<Territory*> defendList = toDefend();
-  std::vector<Territory*> attackList = toAttack();
+//   // Priority 2: Issue advance orders (defend or attack)
+//   std::vector<Territory*> defendList = toDefend();
+//   std::vector<Territory*> attackList = toAttack();
   
-  // Try to move armies to defend territories
-  if (!defendList.empty() && territories->size() > 1) {
-      // Find a territory with armies to move
-      for (Territory* source : *territories) {
-          if (source->getArmies() > 1) {
-              // Try to find adjacent friendly territory to reinforce
-              for (Territory* adjacent : source->getAdjTerritories()) {
-                  if (ownsTerritory(adjacent)) {
-                      int armiesToMove = source->getArmies() / 2;
-                      if (armiesToMove > 0) {
-                          std::cout << "  Issuing Advance order (defense): " << armiesToMove 
-                                    << " armies from " << source->getName() 
-                                    << " to " << adjacent->getName() << "\n";
-                          issueAdvanceOrder(source, adjacent, armiesToMove);
-                          return true;
-                      }
-                  }
-              }
-          }
-      }
-  }
+//   // Try to move armies to defend territories
+//   if (!defendList.empty() && territories->size() > 1) {
+//       // Find a territory with armies to move
+//       for (Territory* source : *territories) {
+//           if (source->getArmies() > 1) {
+//               // Try to find adjacent friendly territory to reinforce
+//               for (Territory* adjacent : source->getAdjTerritories()) {
+//                   if (ownsTerritory(adjacent)) {
+//                       int armiesToMove = source->getArmies() / 2;
+//                       if (armiesToMove > 0) {
+//                           std::cout << "  Issuing Advance order (defense): " << armiesToMove 
+//                                     << " armies from " << source->getName() 
+//                                     << " to " << adjacent->getName() << "\n";
+//                           issueAdvanceOrder(source, adjacent, armiesToMove);
+//                           return true;
+//                       }
+//                   }
+//               }
+//           }
+//       }
+//   }
   
-  // Try to attack enemy territories
-  if (!attackList.empty()) {
-      for (Territory* target : attackList) {
-          // Find a friendly territory adjacent to this enemy territory
-          for (Territory* source : *territories) {
-              if (source->isAdjacentTo(target) && source->getArmies() > 1) {
-                  int armiesToAttack = source->getArmies() - 1; // Leave 1 army behind
-                  std::cout << "  Issuing Advance order (attack): " << armiesToAttack 
-                            << " armies from " << source->getName() 
-                            << " to " << target->getName() << "\n";
-                  issueAdvanceOrder(source, target, armiesToAttack);
-                  return true;
-              }
-          }
-      }
-  }
+//   // Try to attack enemy territories
+//   if (!attackList.empty()) {
+//       for (Territory* target : attackList) {
+//           // Find a friendly territory adjacent to this enemy territory
+//           for (Territory* source : *territories) {
+//               if (source->isAdjacentTo(target) && source->getArmies() > 1) {
+//                   int armiesToAttack = source->getArmies() - 1; // Leave 1 army behind
+//                   std::cout << "  Issuing Advance order (attack): " << armiesToAttack 
+//                             << " armies from " << source->getName() 
+//                             << " to " << target->getName() << "\n";
+//                   issueAdvanceOrder(source, target, armiesToAttack);
+//                   return true;
+//               }
+//           }
+//       }
+//   }
   
-  // Priority 3: Play cards if we have any
-  if (hand->size() > 0) {
-      std::cout << "  Playing a card from hand\n";
-      // For now, just note that card is played but don't actually play
-      // In a full implementation, this would create orders from cards
-      // For simplicity in this demo, we'll skip actual card playing
-  }
+//   // Priority 3: Play cards if we have any
+//   if (hand->size() > 0) {
+//       std::cout << "  Playing a card from hand\n";
+//       // For now, just note that card is played but don't actually play
+//       // In a full implementation, this would create orders from cards
+//       // For simplicity in this demo, we'll skip actual card playing
+//   }
   
-  // No more orders to issue
-  return false;
+//   // No more orders to issue
+//   return false;
+// }
+
+void Player::issueOrder() {
+  if (strategy) this->strategy->issueOrder();
+}
+
+void Player::setStrategy(PlayerStrategy* strategy) {
+  this->strategy = strategy;
 }
 
 /**
@@ -539,6 +556,10 @@ void Player::issueNegotiateOrder(Player* targetPlayer) {
   orders->add(new OrderNegotiate(this, targetPlayer));
 }
 
+void Player::issueCheatOrder() {
+    orders->add(new OrderCheat(this));
+}
+
 // ==================== Strategy Methods ====================
 
 /**
@@ -546,16 +567,9 @@ void Player::issueNegotiateOrder(Player* targetPlayer) {
  * @return Vector of territories to defend
  */
 std::vector<Territory*> Player::toDefend() const {
-  std::vector<Territory*> defendList;
-  
-  // For now, return all owned territories as arbitrary defense list
-  for (Territory* territory : *territories) {
-      if (territory) {
-          defendList.push_back(territory);
-      }
-  }
-  
-  return defendList;
+  if (strategy) return this->strategy->toDefend();
+  else
+    return std::vector<Territory*>();
 }
 
 /**
@@ -563,24 +577,9 @@ std::vector<Territory*> Player::toDefend() const {
  * @return Vector of territories to attack
  */
 std::vector<Territory*> Player::toAttack() const {
-  std::vector<Territory*> attackList;
-  
-  // For now, return adjacent territories of owned territories as arbitrary attack list
-  for (Territory* territory : *territories) {
-      if (territory) {
-          const std::vector<Territory*>& adjTerritories = territory->getAdjTerritories();
-          for (Territory* adjTerritory : adjTerritories) {
-              if (adjTerritory && !ownsTerritory(adjTerritory)) {
-                  // Check if already in attack list to avoid duplicates
-                  if (std::find(attackList.begin(), attackList.end(), adjTerritory) == attackList.end()) {
-                      attackList.push_back(adjTerritory);
-                  }
-              }
-          }
-      }
-  }
-  
-  return attackList;
+  if (strategy) return this->strategy->toAttack();
+  else
+    return std::vector<Territory*>();
 }
 
 // ==================== Utility Methods ====================

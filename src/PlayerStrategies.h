@@ -1,14 +1,13 @@
 #pragma once
+#include "Map.h"
 
 #include <string>
 #include <iostream>
 #include <vector>
-
-class Player;
-class Territory;
+#include "Player.h"
 
 class PlayerStrategy {
-private:
+protected:
     Player* player;
     std::string* strategyDescription;
 public:
@@ -21,6 +20,7 @@ public:
     virtual std::vector<Territory*> toDefend() = 0;
     virtual std::vector<Territory*> toAttack() = 0;
 
+    std::string* getStrategyDescription() const;
     friend std::ostream& operator<<(std::ostream& os, const PlayerStrategy& playerStrategy);
 };
 

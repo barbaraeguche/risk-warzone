@@ -23,7 +23,7 @@ BombCard::BombCard(const BombCard& other) {}
 BombCard& BombCard::operator=(const BombCard& other) { return *this; }
 BombCard::~BombCard() {}
 
-std::string BombCard::getType() const { return "bomb"; }
+std::string BombCard::getType() const { return CARD_TYPES::BOMB; }
 void BombCard::play(Player* player, OrdersList* ordersList, Deck* deck) {
     if (!player || !ordersList) return;
 
@@ -53,7 +53,7 @@ ReinforcementCard::ReinforcementCard(const ReinforcementCard& other) {}
 ReinforcementCard& ReinforcementCard::operator=(const ReinforcementCard& other) { return *this; }
 ReinforcementCard::~ReinforcementCard() {}
 
-std::string ReinforcementCard::getType() const { return "reinforcement"; }
+std::string ReinforcementCard::getType() const { return CARD_TYPES::REINFORCEMENT; }
 void ReinforcementCard::play(Player* player, OrdersList* ordersList, Deck* deck) {
     if (!player) return;
 
@@ -74,7 +74,7 @@ BlockadeCard::BlockadeCard(const BlockadeCard& other) {}
 BlockadeCard& BlockadeCard::operator=(const BlockadeCard& other) { return *this; }
 BlockadeCard::~BlockadeCard() {}
 
-std::string BlockadeCard::getType() const { return "blockade"; }
+std::string BlockadeCard::getType() const { return CARD_TYPES::BLOCKADE; }
 void BlockadeCard::play(Player* player, OrdersList* ordersList, Deck* deck) {
     if (!player || !ordersList) return;
 
@@ -95,7 +95,7 @@ AirliftCard::AirliftCard(const AirliftCard& other) {}
 AirliftCard& AirliftCard::operator=(const AirliftCard& other) { return *this; }
 AirliftCard::~AirliftCard() {}
 
-std::string AirliftCard::getType() const { return "airlift"; }
+std::string AirliftCard::getType() const { return CARD_TYPES::AIRLIFT; }
 void AirliftCard::play(Player* player, OrdersList* ordersList, Deck* deck) {
     if (!player || !ordersList) return;
 
@@ -121,7 +121,7 @@ DiplomacyCard::DiplomacyCard(const DiplomacyCard& other) {}
 DiplomacyCard& DiplomacyCard::operator=(const DiplomacyCard& other) { return *this; }
 DiplomacyCard::~DiplomacyCard() {}
 
-std::string DiplomacyCard::getType() const { return "diplomacy"; }
+std::string DiplomacyCard::getType() const { return CARD_TYPES::DIPLOMACY; }
 void DiplomacyCard::play(Player* player, OrdersList* ordersList, Deck* deck) {
     if (!player || !ordersList) return;
 
