@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "PlayerStrategies.h"
 #include "Map.h"
 #include "Cards.h"
 #include "Orders.h"
@@ -16,7 +17,10 @@ Player::Player() :
   hand(new Hand()),
   orders(new OrdersList()),
   reinforcementPool(new int(0)),
-  pendingReinforcements(new int(0)) {}
+  pendingReinforcements(new int(0)),
+  deck(nullptr),
+  canIssueOrderFlag(new bool(true)),
+  gotAttackedThisTurn(new bool(false)) {}
 
 /**
  * Parameterized constructor
@@ -30,7 +34,9 @@ Player::Player(const std::string& name, Deck* deck) :
   orders(new OrdersList()),
   reinforcementPool(new int(0)), 
   pendingReinforcements(new int(0)),
-  deck(deck)
+  deck(deck),
+  canIssueOrderFlag(new bool(true)),
+  gotAttackedThisTurn(new bool(false))
   {}
 
 /**
@@ -44,7 +50,10 @@ Player::Player(const Player& other) :
   hand(new Hand(*other.hand)),
   orders(new OrdersList(*other.orders)),
   reinforcementPool(new int(*other.reinforcementPool)), 
-  pendingReinforcements(new int(*other.pendingReinforcements)){}
+  pendingReinforcements(new int(*other.pendingReinforcements)),
+  canIssueOrderFlag(new bool(*other.canIssueOrderFlag)),
+  gotAttackedThisTurn(new bool(*other.gotAttackedThisTurn))
+  {}
 
 /**
  * Assignment operator
@@ -61,6 +70,8 @@ Player& Player::operator=(const Player& other) {
       delete orders;
       delete reinforcementPool;
       delete pendingReinforcements;
+      delete canIssueOrderFlag;
+      delete gotAttackedThisTurn;
 
       // Copy from other player
       conqueredThisTurn = new bool(other.conqueredThisTurn); 
@@ -70,6 +81,8 @@ Player& Player::operator=(const Player& other) {
       orders = new OrdersList(*other.orders);
       reinforcementPool = new int(*other.reinforcementPool);
       pendingReinforcements = new int(*other.pendingReinforcements);
+      canIssueOrderFlag = new bool(*other.canIssueOrderFlag);
+      gotAttackedThisTurn = new bool(*other.gotAttackedThisTurn);
   }
   return *this;
 }
@@ -85,9 +98,31 @@ Player::~Player() {
   delete orders;
   delete reinforcementPool;
   delete pendingReinforcements;
+  delete canIssueOrderFlag;
+  delete gotAttackedThisTurn;
 }
 
 // ==================== Getters ====================
+
+bool* Player::getCanIssueOrderFlag() const {
+    return canIssueOrderFlag;
+}
+
+void Player::setCanIssueOrderFlag(bool value) {
+    *canIssueOrderFlag = value;
+}
+
+bool* Player::getGotAttackedThisTurn() const {
+    return gotAttackedThisTurn;
+}
+
+void Player::setGotAttackedThisTurn(bool attacked) {
+    *gotAttackedThisTurn = attacked;
+}
+
+PlayerStrategy* Player::getPlayerStrategy() const {
+    return strategy;
+}
 
 /**
  * Get whether the player conquered a territory this turn

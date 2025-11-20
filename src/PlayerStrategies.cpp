@@ -140,6 +140,7 @@ void HumanPlayerStrategy::issueOrder() {
         }
     }
 
+    this->player->setCanIssueOrderFlag(false); // End turn after issuing orders
 }
 
 std::vector<Territory*> HumanPlayerStrategy::toDefend() {
@@ -219,6 +220,7 @@ void AggressivePlayerStrategy::issueOrder() {
     }
     }
 
+    this->player->setCanIssueOrderFlag(false); // End turn after issuing 
 }
 
 std::vector<Territory*> AggressivePlayerStrategy::toDefend() {
@@ -313,6 +315,8 @@ void BenevolentPlayerStrategy::issueOrder() {
         }
     }
     }
+
+    this->player->setCanIssueOrderFlag(false); // End turn after issuing 
 }
 
 std::vector<Territory*> BenevolentPlayerStrategy::toDefend() {
@@ -358,9 +362,11 @@ void NeutralPlayerStrategy::issueOrder() {
         // No territories to defend, set reinforcement pool to 0
         this->player->setReinforcementPool(0);
     }
+    return;
   }
 
   // Neutral player does not attack or play any cards
+    this->player->setCanIssueOrderFlag(false); // End turn after issuing 
 }
 
 std::vector<Territory*> NeutralPlayerStrategy::toDefend() {
@@ -399,11 +405,16 @@ void CheaterPlayerStrategy::issueOrder() {
         // No territories to defend, set reinforcement pool to 0
         this->player->setReinforcementPool(0);
     }
+    return;
   }
+
+
 
   // Issue cheat order
     std::vector<Territory*> attackList = this->toAttack();
     this->player->issueCheatOrder();
+
+    this->player->setCanIssueOrderFlag(false); // End turn after issuing 
 }
 
 std::vector<Territory*> CheaterPlayerStrategy::toDefend() {

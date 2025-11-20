@@ -178,6 +178,7 @@ void OrderAdvance::execute() {
     target->setArmies(target->getArmies() + *soldiers);
     saveEffect("Advanced armies to friendly territory " + target->getName() + ".");
   } else {
+    target->getOwner()->setGotAttackedThisTurn(true);
     // Remove soldiers from source territory
     source->setArmies(source->getArmies() - *soldiers);
 
