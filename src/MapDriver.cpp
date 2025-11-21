@@ -84,7 +84,7 @@ void testLoadMaps() {
 
     std::cout << "Map loaded successfully" << std::endl;
     std::cout << "\n--- MAP INFORMATION ---" << std::endl;
-    std::cout << "Map Name: " << map->getMapName() << std::endl;
+    std::cout << "Map Name: " << map->getName() << std::endl;
     std::cout << "Number of Territories: " << map->getNumberOfTerritories() << std::endl;
     std::cout << "Number of Continents: " << map->getNumberOfContinents() << std::endl;
 
