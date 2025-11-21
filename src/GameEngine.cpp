@@ -551,9 +551,9 @@ void GameEngine::reinforcementPhase() {
         int continentBonus = 0;
         for (const auto& pair : continentOwnership) {
             if (pair.second) {
-                continentBonus += pair.first->getControlValue();
+                continentBonus += pair.first->getBonus();
                 std::cout << "  " << player->getName() << " controls all of " 
-                          << pair.first->getName() << " (+" << pair.first->getControlValue() << " bonus)\n";
+                          << pair.first->getName() << " (+" << pair.first->getBonus() << " bonus)\n";
             }
         }
 

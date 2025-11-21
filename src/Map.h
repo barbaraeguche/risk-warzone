@@ -18,18 +18,18 @@ class Territory {
 private:
   std::string* name;
   int* id;
-  Player* owner;                            // player who owns this territory
-  int* armies;                              // armies owned by the player
+  Player* owner;                           // player who owns this territory
+  int* armies;                             // armies owned by the player
   std::vector<Territory*>* adjTerritories;
-  Continent* continent;                     // the continent which the territory belongs to
+  Continent* continent;                    // the continent which the territory belongs to
 
 public:
   // constructors
   Territory();
   Territory(const std::string& name, int id);
-  Territory(const Territory& other);             // copy constructor
-  Territory& operator=(const Territory& other);  // assignment operator
-  ~Territory();                                  // destructor
+  Territory(const Territory& other);            // copy constructor
+  Territory& operator=(const Territory& other); // assignment operator
+  ~Territory();                                 // destructor
 
   // getters
   std::string getName() const;
@@ -65,50 +65,40 @@ public:
  */
 class Continent {
 private:
-  std::string* continentName;
-  int* continentId;
-  int* controlValue;
+  std::string* name;
+  int* id;
+  int* bonus;
   std::vector<Territory *>* territories; // territories continents in this continent
 
 public:
   // constructors
   Continent();
-
   Continent(const std::string& name, int id, int bonus);
-
   Continent(const Continent& other); // copy constructor
   Continent& operator=(const Continent& other); // assignment operator
   ~Continent(); // destructor
 
   // getters
   std::string getName() const;
-
   int getId() const;
-
-  int getControlValue() const;
-
-  const std::vector<Territory *>& getTerritories() const;
+  int getBonus() const;
+  const std::vector<Territory*>& getTerritories() const;
 
   // setters
-  void setName(const std::string& name) const;
-
-  void setId(int id) const;
-
-  void setControlValue(int bonus) const;
+  void setName(const std::string& newName) const;
+  void setId(int newId) const;
+  void setControlValue(int newBonus) const;
 
   // territory management
-  bool containsTerritory(Territory* territory) const;
-
-  void addTerritory(Territory* territory);
-
-  void removeTerritory(Territory* territory);
+  bool containsTerritory(const Territory* terr) const;
+  void addTerritory(Territory* terr);
+  void removeTerritory(Territory* terr);
 
   // validation
   bool isConnected() const;
 
   // utility
   void displayInfo() const;
-
   bool operator==(const Continent& other) const;
 
   // stream insertion operator

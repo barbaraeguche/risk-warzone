@@ -200,34 +200,35 @@ std::ostream& operator<<(std::ostream& os, const Territory& terr) {
 
 // ==================== Continent Class Implementation ====================
 
-Continent::Continent() : continentName(new std::string("")),
-                         continentId(new int(0)),
-                         controlValue(new int(0)),
-                         territories(new std::vector<Territory *>()) {}
+Continent::Continent() :
+  name(new std::string("")),
+  id(new int(0)),
+  bonus(new int(0)),
+  territories(new std::vector<Territory*>()) {}
 
-Continent::Continent(const std::string& name, int id, int bonus) : continentName(new std::string(name)),
-                                                        continentId(new int(id)),
-                                                        controlValue(new int(bonus)),
-                                                        territories(new std::vector<Territory *>()) {}
+Continent::Continent(const std::string& name, int id, int bonus) :
+  name(new std::string(name)),
+  id(new int(id)),
+  bonus(new int(bonus)),
+  territories(new std::vector<Territory*>()) {}
 
-// don't copy `territories` (map will rebuild)
-Continent::Continent(const Continent& other) : continentName(new std::string(*other.continentName)),
-                                               continentId(new int(*other.continentId)),
-                                               controlValue(new int(*other.controlValue)),
-                                               territories(new std::vector<Territory *>()) {}
+Continent::Continent(const Continent& other) :
+  name(new std::string(*other.name)),
+  id(new int(*other.id)),
+  bonus(new int(*other.bonus)),
+  territories(new std::vector<Territory*>()) {}
 
 Continent& Continent::operator=(const Continent& other) {
   if (this != &other) {
-    // clean up old resources
-    delete continentName;
-    delete continentId;
-    delete controlValue;
+    delete name;
+    delete id;
+    delete bonus;
     delete territories;
 
     // deep copy primitives
-    continentName = new std::string(*other.continentName);
-    continentId = new int(*other.continentId);
-    controlValue = new int(*other.controlValue);
+    name = new std::string(*other.name);
+    id = new int(*other.id);
+    bonus = new int(*other.bonus);
 
     // deep copy vector (shallow copy of pointers)
     territories = new std::vector<Territory*>(*other.territories);
@@ -236,60 +237,60 @@ Continent& Continent::operator=(const Continent& other) {
 }
 
 Continent::~Continent() {
-  delete continentName;
-  delete continentId;
-  delete controlValue;
+  delete name;
+  delete id;
+  delete bonus;
   delete territories;
 }
 
 // --- GETTERS ---
 std::string Continent::getName() const {
-  return *continentName;
+  return *name;
 }
 
 int Continent::getId() const {
-  return *continentId;
+  return *id;
 }
 
-int Continent::getControlValue() const {
-  return *controlValue;
+int Continent::getBonus() const {
+  return *bonus;
 }
 
-const std::vector<Territory *>& Continent::getTerritories() const {
+const std::vector<Territory*>& Continent::getTerritories() const {
   return *territories;
 }
 
 // --- SETTERS ---
-void Continent::setName(const std::string& name) const {
-  *continentName = name;
+void Continent::setName(const std::string& newName) const {
+  *name = newName;
 }
 
-void Continent::setId(int id) const {
-  *continentId = id;
+void Continent::setId(int newId) const {
+  *id = newId;
 }
 
-void Continent::setControlValue(int bonus) const {
-  *controlValue = bonus;
+void Continent::setControlValue(int newBonus) const {
+  *bonus = newBonus;
 }
 
 // --- MANAGEMENT ---
-bool Continent::containsTerritory(Territory* territory) const {
-  return std::ranges::any_of(*territories, [&](Territory* t) {
-    return t->getName() == territory->getName(); // or use t->getId() if you have IDs
+bool Continent::containsTerritory(const Territory* terr) const {
+  return std::ranges::any_of(*territories, [terr](const Territory* t) {
+    return t == terr;
   });
 }
 
-void Continent::addTerritory(Territory* territory) {
-  if (territory && !containsTerritory(territory)) {
-    territories->push_back(territory);
-    territory->setContinent(this); // assign the territory to the current continent
-  }
+void Continent::addTerritory(Territory* terr) {
+  if (!terr || containsTerritory(terr)) return;
+
+  territories->push_back(terr);
+  terr->setContinent(this); // assign the territory to the current continent
 }
 
-void Continent::removeTerritory(Territory* territory) {
-  std::erase(*territories, territory);
-  if (territory) {
-    territory->setContinent(nullptr);
+void Continent::removeTerritory(Territory* terr) {
+  std::erase(*territories, terr);
+  if (terr) {
+    terr->setContinent(nullptr);
   }
 }
 
@@ -300,18 +301,16 @@ bool Continent::isConnected() const {
   }
 
   // use bfs to check if all territories in a continent are connected
-  std::unordered_set<Territory *> visited;
-  std::queue<Territory *> queue;
-
+  std::unordered_set<Territory*> visited{(*territories)[0]};
+  std::queue<Territory*> queue;
   queue.push((*territories)[0]);
-  visited.insert((*territories)[0]);
 
   while (!queue.empty()) {
-    Territory* current = queue.front();
+    const auto terr = queue.front();
     queue.pop();
 
-    for (Territory* adj : current->getAdjTerritories()) {
-      // only check territories that belong to the current continent and haven't previously traversed
+    // only check territories that belong to the current continent and haven't previously traversed
+    for (Territory* adj : terr->getAdjTerritories()) {
       if (adj->getContinent() == this && !visited.contains(adj)) {
         visited.insert(adj);
         queue.push(adj);
@@ -324,11 +323,9 @@ bool Continent::isConnected() const {
 
 // --- UTILITY ---
 void Continent::displayInfo() const {
-  std::cout << "Continent: "
-      << (continentName ? *continentName : "None")
-      << " (ID: " << (continentId ? *continentId : -1)
-      << ", Bonus: " << (controlValue ? *controlValue : 0) << ")"
-      << std::endl;
+  std::cout << "Continent: " << (name ? *name : "<Unnamed>")
+            << " (ID: " << (id ? *id : -1)
+            << ", Bonus: " << (bonus ? *bonus : 0) << ")" << std::endl;
 
   std::cout << "  Territories (" << territories->size() << "): ";
   if (territories->empty()) {
@@ -346,15 +343,14 @@ void Continent::displayInfo() const {
 }
 
 bool Continent::operator==(const Continent& other) const {
-  return continentId == other.continentId && continentName == other.continentName;
+  return id == other.id && name == other.name;
 }
 
 // --- STREAM INSERTION ---
 std::ostream& operator<<(std::ostream& os, const Continent& continent) {
-  os << "Continent["
-      << (continent.continentName ? *continent.continentName : "<Unnamed>")
-      << " (ID:" << (continent.continentId ? *continent.continentId : -1) << "), "
-      << "Territories:" << continent.territories->size() << "]";
+  os << "Continent[" << (continent.name ? *continent.name : "<Unnamed>")
+     << " (ID:" << (continent.id ? *continent.id : -1) << "),"
+     << " Territories:" << continent.territories->size() << "]";
   return os;
 }
 
