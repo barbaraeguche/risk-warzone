@@ -67,13 +67,13 @@ int main() {
     // std::cout << "PART 7: STARTUP PHASE TESTING" << std::endl;
     // std::cout << std::string(50, '=') << std::endl;
     // testStartupPhase();
-    
+
     // // Part 8: Main Game Loop Testing with GameEngine
     // std::cout << "\n" << std::string(50, '=') << std::endl;
     // std::cout << "PART 8: MAIN GAME LOOP TESTING" << std::endl;
     // std::cout << std::string(50, '=') << std::endl;
     // automatictestMainGameLoop();
-    
+
     // //Part 9: Testing order execution
     // std::cout << "\n" << std::string(50, '=') << std::endl;
     // std::cout << "PART 9: ORDER EXECUTION TESTING" << std::endl;
@@ -86,11 +86,11 @@ int main() {
     // std::cout << std::string(50, '=') << std::endl;
     // testLoggingObserver();
 
-    // Part 11: Player Strategy Testing
-    std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "PART 11: PLAYER STRATEGY TESTING" << std::endl;
-    std::cout << std::string(50, '=') << std::endl;
-    testPlayerStrategies();
+    // // Part 11: Player Strategy Testing
+    // std::cout << "\n" << std::string(50, '=') << std::endl;
+    // std::cout << "PART 11: PLAYER STRATEGY TESTING" << std::endl;
+    // std::cout << std::string(50, '=') << std::endl;
+    // testPlayerStrategies();
 
     std::cout << "\n" << std::string(50, '=') << std::endl;
     std::cout << "ALL TESTS COMPLETED SUCCESSFULLY" << std::endl;

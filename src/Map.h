@@ -1,135 +1,108 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#include <memory>
 
 
 // forward declarations
 class Player;
-class Territory;
 class Continent;
-class Map;
-class MapLoader;
 
 /**
- * Territory class representing a node in the map graph
+ * The Territory class represents a node in the map graph.
  */
 class Territory {
 private:
-  std::string* territoryName;
-  int* territoryId;
-  Player* ownerPlayer; // territory owned by player
-  int* armies; // armies owned by player
-  std::vector<Territory *>* adjTerritories;
-  Continent* continent; // pointer to continent
+  std::string* name;
+  int* id;
+  Player* owner;                           // player who owns this territory
+  int* armies;                             // armies owned by the player
+  std::vector<Territory*>* adjTerritories;
+  Continent* continent;                    // the continent which the territory belongs to
 
 public:
   // constructors
   Territory();
-
   Territory(const std::string& name, int id);
-
   Territory(const Territory& other); // copy constructor
   Territory& operator=(const Territory& other); // assignment operator
   ~Territory(); // destructor
 
   // getters
   std::string getName() const;
-
   int getId() const;
-
   Player* getOwner() const;
-
   int getArmies() const;
-
-  const std::vector<Territory *>& getAdjTerritories() const;
-
+  const std::vector<Territory*>& getAdjTerritories() const;
   Continent* getContinent() const;
 
   // setters
-  void setName(const std::string& name) const;
-
-  void setId(int id) const;
-
-  void setOwner(Player* owner);
-
-  void setArmies(int armyCount) const;
-
-  void setContinent(Continent* mainContinent);
+  void setName(const std::string& newName);
+  void setId(int newId);
+  void setOwner(Player* newOwner);
+  void setArmies(int newArmies);
+  void setContinent(Continent* newContinent);
 
   // management
-  bool isAdjacentTo(Territory* territory) const;
-
-  void addAdjacentTerritory(Territory* territory);
-
-  void removeAdjacentTerritory(Territory* territory);
+  bool isAdjacentTo(const Territory* terr) const;
+  void addAdjTerritory(Territory* terr);
+  void removeAdjTerritory(Territory* terr);
 
   // utility
   void displayInfo() const;
-
   bool operator==(const Territory& other) const; // equality operator
 
   // stream insertion operator
-  friend std::ostream& operator<<(std::ostream& os, const Territory& territory);
+  friend std::ostream& operator<<(std::ostream& os, const Territory& terr);
 };
 
 
 /**
- * Continent class representing a connected subgraph of territories
+ * The Continent class represents a connected subgraph of territories
  */
 class Continent {
 private:
-  std::string* continentName;
-  int* continentId;
-  int* controlValue;
+  std::string* name;
+  int* id;
+  int* bonus;
   std::vector<Territory *>* territories; // territories continents in this continent
 
 public:
   // constructors
   Continent();
-
   Continent(const std::string& name, int id, int bonus);
-
   Continent(const Continent& other); // copy constructor
   Continent& operator=(const Continent& other); // assignment operator
   ~Continent(); // destructor
 
   // getters
   std::string getName() const;
-
   int getId() const;
-
-  int getControlValue() const;
-
-  const std::vector<Territory *>& getTerritories() const;
+  int getBonus() const;
+  const std::vector<Territory*>& getTerritories() const;
 
   // setters
-  void setName(const std::string& name) const;
-
-  void setId(int id) const;
-
-  void setControlValue(int bonus) const;
+  void setName(const std::string& newName) const;
+  void setId(int newId) const;
+  void setControlValue(int newBonus) const;
 
   // territory management
-  bool containsTerritory(Territory* territory) const;
-
-  void addTerritory(Territory* territory);
-
-  void removeTerritory(Territory* territory);
+  bool containsTerritory(const Territory* terr) const;
+  void addTerritory(Territory* terr);
+  void removeTerritory(Territory* terr);
 
   // validation
   bool isConnected() const;
 
   // utility
   void displayInfo() const;
-
   bool operator==(const Continent& other) const;
 
   // stream insertion operator
-  friend std::ostream& operator<<(std::ostream& os, const Continent& continent);
+  friend std::ostream& operator<<(std::ostream& os, const Continent& cont);
 };
 
 
@@ -138,70 +111,54 @@ public:
  */
 class Map {
 private:
-  std::string* mapName;
-  std::vector<std::unique_ptr<Territory> >* territories;
-  std::vector<std::unique_ptr<Continent> >* continents;
-  std::unordered_map<std::string, Territory *>* territoryNameMap;
+  std::string* name;
+  std::vector<std::unique_ptr<Territory>>* territories;
+  std::vector<std::unique_ptr<Continent>>* continents;
+  std::unordered_map<std::string, Territory*>* territoryNameMap;
   std::unordered_map<int, Territory *>* territoryIdMap;
   std::unordered_map<std::string, Continent *>* continentNameMap;
 
 public:
   // constructors
   Map();
-
   Map(const std::string& name);
-
   Map(const Map& other); // copy constructor
   Map& operator=(const Map& other); // assignment operator
   ~Map(); // destructor
 
   // getters
-  std::string getMapName() const;
-
-  const std::vector<std::unique_ptr<Territory> >& getTerritories() const;
-
-  const std::vector<std::unique_ptr<Continent> >& getContinents() const;
+  std::string getName() const;
+  const std::vector<std::unique_ptr<Territory>>& getTerritories() const;
+  const std::vector<std::unique_ptr<Continent>>& getContinents() const;
 
   // setters
-  void setMapName(const std::string& name) const;
+  void setName(const std::string& newName) const;
 
   // territory management
-  Territory* addTerritory(const std::string& name, int id);
-
-  Territory* getTerritory(const std::string& name) const;
-
+  Territory* addTerritory(const std::string& terrName, int id);
+  Territory* getTerritory(const std::string& terrName) const;
   Territory* getTerritory(int id) const;
-
-  bool removeTerritory(const std::string& name);
+  bool removeTerritory(const std::string& terrName);
 
   // continent management
-  Continent* addContinent(const std::string& name, int id, int bonus);
-
-  Continent* getContinent(const std::string& name) const;
-
-  bool removeContinent(const std::string& name);
+  Continent* addContinent(const std::string& contName, int id, int bonus);
+  Continent* getContinent(const std::string& contName) const;
+  bool removeContinent(const std::string& contName);
 
   // graph operations
-  void addAdjacency(const std::string& territory1, const std::string& territory2);
-
-  static void addAdjacency(Territory* territory1, Territory* territory2);
+  void addAdjacency(const std::string& terr1, const std::string& terr2);
+  static void addAdjacency(Territory* terr1, Territory* terr2);
 
   // validation
   bool validate() const;
-
   bool isConnectedGraph() const;
-
   bool areContinentsConnected() const;
-
   bool eachTerritoryBelongsToOneContinent() const;
 
   // utility
   void displayMap() const;
-
   void clear();
-
   int getNumberOfTerritories() const;
-
   int getNumberOfContinents() const;
 
   // stream insertion operator
@@ -209,8 +166,7 @@ public:
 
 private:
   // helpers
-  static void dfsVisit(Territory* territory, std::unordered_set<Territory *>& visited);
-
+  static void dfsVisit(Territory* territory, std::unordered_set<Territory*>& visited);
   void rebuildMaps();
 };
 
@@ -269,4 +225,5 @@ private:
 // free function
 void testLoadMaps();
 
+// utility functions
 Territory* chooseTerritory(const std::vector<Territory*>& territories);

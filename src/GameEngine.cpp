@@ -551,9 +551,9 @@ void GameEngine::reinforcementPhase() {
         int continentBonus = 0;
         for (const auto& pair : continentOwnership) {
             if (pair.second) {
-                continentBonus += pair.first->getControlValue();
+                continentBonus += pair.first->getBonus();
                 std::cout << "  " << player->getName() << " controls all of " 
-                          << pair.first->getName() << " (+" << pair.first->getControlValue() << " bonus)\n";
+                          << pair.first->getName() << " (+" << pair.first->getBonus() << " bonus)\n";
             }
         }
 
@@ -911,7 +911,7 @@ void GameEngine::startupPhase(CommandProcessor& cmdSrc) {
             hasLoaded = true;
             isValid = false;
 
-            std::cout << "Success: map loaded: " << map_->getMapName() << "\n";
+            std::cout << "Success: map loaded: " << map_->getName() << "\n";
             transitionState("map loaded");
             std::cout << "Next: type 'validatemap'\n";
             c->saveEffect("Map loaded; state -> map loaded");
@@ -944,7 +944,7 @@ void GameEngine::startupPhase(CommandProcessor& cmdSrc) {
 
                 // summary
                 std::cout << "\nMap Summary:\n";
-                std::cout << "Map Name: " << map_->getMapName() << "\n";
+                std::cout << "Map Name: " << map_->getName() << "\n";
                 std::cout << "Number of Territories: " << map_->getNumberOfTerritories() << "\n";
                 std::cout << "Number of Continents: " << map_->getNumberOfContinents() << "\n";
 
