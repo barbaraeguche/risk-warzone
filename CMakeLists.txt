@@ -27,6 +27,7 @@ add_executable(comp_345
 	src/PlayerDriver.cpp
 	src/PlayerStrategies.cpp
 	src/PlayerStrategyDriver.cpp
+	src/TournamentDriver.cpp
 )
 
 # include headers
