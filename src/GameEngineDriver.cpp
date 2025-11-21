@@ -97,7 +97,7 @@ void automatictestMainGameLoop() {
     player2->addCard(deck->draw());
     
     std::cout << "=== TEST SETUP COMPLETE ===\n";
-    std::cout << "Map: " << testMap->getMapName() << "\n";
+    std::cout << "Map: " << testMap->getName() << "\n";
     std::cout << "Territories: " << testMap->getNumberOfTerritories() << "\n";
     std::cout << "Players: 3\n";
     std::cout << "  - Alice owns: Territory1 (5 armies), Territory2 (3 armies)\n";

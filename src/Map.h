@@ -27,9 +27,9 @@ public:
   // constructors
   Territory();
   Territory(const std::string& name, int id);
-  Territory(const Territory& other);            // copy constructor
+  Territory(const Territory& other); // copy constructor
   Territory& operator=(const Territory& other); // assignment operator
-  ~Territory();                                 // destructor
+  ~Territory(); // destructor
 
   // getters
   std::string getName() const;
@@ -102,7 +102,7 @@ public:
   bool operator==(const Continent& other) const;
 
   // stream insertion operator
-  friend std::ostream& operator<<(std::ostream& os, const Continent& continent);
+  friend std::ostream& operator<<(std::ostream& os, const Continent& cont);
 };
 
 
@@ -111,70 +111,54 @@ public:
  */
 class Map {
 private:
-  std::string* mapName;
-  std::vector<std::unique_ptr<Territory> >* territories;
-  std::vector<std::unique_ptr<Continent> >* continents;
-  std::unordered_map<std::string, Territory *>* territoryNameMap;
+  std::string* name;
+  std::vector<std::unique_ptr<Territory>>* territories;
+  std::vector<std::unique_ptr<Continent>>* continents;
+  std::unordered_map<std::string, Territory*>* territoryNameMap;
   std::unordered_map<int, Territory *>* territoryIdMap;
   std::unordered_map<std::string, Continent *>* continentNameMap;
 
 public:
   // constructors
   Map();
-
   Map(const std::string& name);
-
   Map(const Map& other); // copy constructor
   Map& operator=(const Map& other); // assignment operator
   ~Map(); // destructor
 
   // getters
-  std::string getMapName() const;
-
-  const std::vector<std::unique_ptr<Territory> >& getTerritories() const;
-
-  const std::vector<std::unique_ptr<Continent> >& getContinents() const;
+  std::string getName() const;
+  const std::vector<std::unique_ptr<Territory>>& getTerritories() const;
+  const std::vector<std::unique_ptr<Continent>>& getContinents() const;
 
   // setters
-  void setMapName(const std::string& name) const;
+  void setName(const std::string& newName) const;
 
   // territory management
-  Territory* addTerritory(const std::string& name, int id);
-
-  Territory* getTerritory(const std::string& name) const;
-
+  Territory* addTerritory(const std::string& terrName, int id);
+  Territory* getTerritory(const std::string& terrName) const;
   Territory* getTerritory(int id) const;
-
-  bool removeTerritory(const std::string& name);
+  bool removeTerritory(const std::string& terrName);
 
   // continent management
-  Continent* addContinent(const std::string& name, int id, int bonus);
-
-  Continent* getContinent(const std::string& name) const;
-
-  bool removeContinent(const std::string& name);
+  Continent* addContinent(const std::string& contName, int id, int bonus);
+  Continent* getContinent(const std::string& contName) const;
+  bool removeContinent(const std::string& contName);
 
   // graph operations
-  void addAdjacency(const std::string& territory1, const std::string& territory2);
-
-  static void addAdjacency(Territory* territory1, Territory* territory2);
+  void addAdjacency(const std::string& terr1, const std::string& terr2);
+  static void addAdjacency(Territory* terr1, Territory* terr2);
 
   // validation
   bool validate() const;
-
   bool isConnectedGraph() const;
-
   bool areContinentsConnected() const;
-
   bool eachTerritoryBelongsToOneContinent() const;
 
   // utility
   void displayMap() const;
-
   void clear();
-
   int getNumberOfTerritories() const;
-
   int getNumberOfContinents() const;
 
   // stream insertion operator
@@ -182,8 +166,7 @@ public:
 
 private:
   // helpers
-  static void dfsVisit(Territory* territory, std::unordered_set<Territory *>& visited);
-
+  static void dfsVisit(Territory* territory, std::unordered_set<Territory*>& visited);
   void rebuildMaps();
 };
 
