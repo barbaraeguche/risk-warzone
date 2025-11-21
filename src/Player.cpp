@@ -15,10 +15,10 @@ Player::Player() :
   playerName(new std::string("Unknown Player")),
   territories(new std::vector<Territory*>()),
   hand(new Hand()),
+  deck(nullptr),
   orders(new OrdersList()),
   reinforcementPool(new int(0)),
   pendingReinforcements(new int(0)),
-  deck(nullptr),
   canIssueOrderFlag(new bool(true)),
   gotAttackedThisTurn(new bool(false)) {}
 
@@ -31,10 +31,10 @@ Player::Player(const std::string& name, Deck* deck) :
   playerName(new std::string(name)),
   territories(new std::vector<Territory*>()),
   hand(new Hand()),
+  deck(deck),
   orders(new OrdersList()),
   reinforcementPool(new int(0)), 
   pendingReinforcements(new int(0)),
-  deck(deck),
   canIssueOrderFlag(new bool(true)),
   gotAttackedThisTurn(new bool(false))
   {}
