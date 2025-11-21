@@ -1,4 +1,5 @@
 #include <iostream>
+#include "Cards.h"
 #include "Orders.h"
 
 void testOrdersLists() {
@@ -50,9 +51,10 @@ void testOrdersLists() {
 }
 
 void testOrderExecution() {
-  Player* player1 = new Player("Player1");
-  Player* player2 = new Player("Player2");
-  Player* nPlayer = new Player("Neutral player");
+  Deck* deck = new Deck();
+  Player* player1 = new Player("Player1", deck);
+  Player* player2 = new Player("Player2", deck);
+  Player* nPlayer = new Player("Neutral player", deck);
 
   Territory* territoryA = new Territory("TerritoryA", 1);
   territoryA->setArmies(20);

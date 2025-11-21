@@ -143,6 +143,19 @@ public:
   Order* clone() const override;
 };
 
+class OrderCheat : public Order {
+private:
+  Player* player;
+public:
+  OrderCheat(Player* player);
+  OrderCheat(const OrderCheat& other);
+  ~OrderCheat() override;
+  bool validate() override;
+  void execute() override;
+  OrderCheat& operator=(const OrderCheat& other);
+  Order* clone() const override;
+};
+
 class OrdersList : public Subject, public ILoggable {
 public:
   std::vector<Order*>* orders;
