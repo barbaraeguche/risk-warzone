@@ -74,8 +74,8 @@ void testOrderExecution() {
   player2->addTerritory(territoryB);
   territoryB->setOwner(player2);
 
-  territoryA->addAdjacentTerritory(territoryB);
-  territoryB->addAdjacentTerritory(territoryA);
+  territoryA->addAdjTerritory(territoryB);
+  territoryB->addAdjTerritory(territoryA);
 
   player1->addTerritory(territoryC);
   territoryC->setOwner(player1);
@@ -83,8 +83,8 @@ void testOrderExecution() {
   player2->addTerritory(territoryD);
   territoryD->setOwner(player2);
 
-  territoryC->addAdjacentTerritory(territoryD);
-  territoryD->addAdjacentTerritory(territoryC);
+  territoryC->addAdjTerritory(territoryD);
+  territoryD->addAdjTerritory(territoryC);
 
 
   // (1) each order is validated before being executed according to the above descriptions; 

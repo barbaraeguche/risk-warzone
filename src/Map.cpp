@@ -11,74 +11,75 @@
 
 // ==================== Territory Class Implementation ====================
 
-Territory::Territory() : territoryName(new std::string("")),
-                         territoryId(new int(0)),
-                         ownerPlayer(nullptr),
-                         armies(new int(0)),
-                         adjTerritories(new std::vector<Territory *>()),
-                         continent(nullptr) {}
+Territory::Territory() :
+  name(new std::string("")),
+  id(new int(0)),
+  owner(nullptr),
+  armies(new int(0)),
+  adjTerritories(new std::vector<Territory*>()),
+  continent(nullptr) {}
 
-Territory::Territory(const std::string& name, int id) : territoryName(new std::string(name)),
-                                                        territoryId(new int(id)),
-                                                        ownerPlayer(nullptr),
-                                                        armies(new int(0)),
-                                                        adjTerritories(new std::vector<Territory *>()),
-                                                        continent(nullptr) {}
+Territory::Territory(const std::string& name, int id) :
+  name(new std::string(name)),
+  id(new int(id)),
+  owner(nullptr),
+  armies(new int(0)),
+  adjTerritories(new std::vector<Territory*>()),
+  continent(nullptr) {}
 
-// don't copy `adjTerritories` (map will rebuild), don't copy continent pointer
-Territory::Territory(const Territory& other) : territoryName(new std::string(*other.territoryName)),
-                                               territoryId(new int(*other.territoryId)),
-                                               ownerPlayer(nullptr),
-                                               armies(new int(*other.armies)),
-                                               adjTerritories(new std::vector<Territory *>()),
-                                               continent(nullptr) {}
+Territory::Territory(const Territory& other) :
+  name(new std::string(*other.name)),
+  id(new int(*other.id)),
+  owner(nullptr),
+  armies(new int(*other.armies)),
+  adjTerritories(new std::vector<Territory*>()),
+  continent(nullptr) {}
 
 Territory& Territory::operator=(const Territory& other) {
   if (this != &other) {
-    // clean up existing
-    delete territoryName;
-    delete territoryId;
+    delete name;
+    delete id;
     delete armies;
     delete adjTerritories;
 
     // deep copy of primitives and containers
-    territoryName = new std::string(*other.territoryName);
-    territoryId = new int(*other.territoryId);
+    name = new std::string(*other.name);
+    id = new int(*other.id);
     armies = new int(*other.armies);
     adjTerritories = new std::vector<Territory*>(*other.adjTerritories);
 
     // shallow copy for shared references
-    ownerPlayer = other.ownerPlayer;
+    owner = other.owner;
     continent = other.continent;
   }
   return *this;
 }
 
 Territory::~Territory() {
-  delete territoryName;
-  delete territoryId;
+  delete name;
+  delete id;
   delete armies;
   delete adjTerritories;
 }
 
 // --- GETTERS ---
 std::string Territory::getName() const {
-  return *territoryName;
+  return *name;
 }
 
 int Territory::getId() const {
-  return *territoryId;
+  return *id;
 }
 
 Player* Territory::getOwner() const {
-  return ownerPlayer;
+  return owner;
 }
 
 int Territory::getArmies() const {
   return *armies;
 }
 
-const std::vector<Territory *>& Territory::getAdjTerritories() const {
+const std::vector<Territory*>& Territory::getAdjTerritories() const {
   return *adjTerritories;
 }
 
@@ -87,77 +88,80 @@ Continent* Territory::getContinent() const {
 }
 
 // --- SETTERS ---
-void Territory::setName(const std::string& name) const {
-  *territoryName = name;
+void Territory::setName(const std::string& newName) {
+  *name = newName;
 }
 
-void Territory::setId(int id) const {
-  *territoryId = id;
+void Territory::setId(int newId) {
+  *id = newId;
 }
 
-void Territory::setOwner(Player* owner) {
-  if (!owner || ownerPlayer == owner) return;
+void Territory::setOwner(Player* newOwner) {
+  if (!newOwner || owner == newOwner) return;
 
-  Player* oldOwner = ownerPlayer;
-  ownerPlayer = owner;
+  Player* oldOwner = owner;
+  owner = newOwner;
 
-  owner->addTerritory(this);
+  // handle territory change
+  newOwner->addTerritory(this);
   if (oldOwner) {
     oldOwner->removeTerritory(this);
   }
 }
 
-void Territory::setArmies(int armyCount) const {
-  *armies = armyCount;
+void Territory::setArmies(int newArmies) {
+  *armies = newArmies;
 }
 
-void Territory::setContinent(Continent* mainContinent) {
-  continent = mainContinent;
+void Territory::setContinent(Continent* newContinent) {
+  continent = newContinent;
 }
 
 // --- MANAGEMENT ---
-bool Territory::isAdjacentTo(Territory* territory) const {
-  return std::ranges::any_of(*adjTerritories, [&](Territory* t) {
-    return t->getName() == territory->getName();
+bool Territory::isAdjacentTo(const Territory* terr) const {
+  return std::ranges::any_of(*adjTerritories, [terr](const Territory* t) {
+    return t == terr;
   });
 }
 
-void Territory::addAdjacentTerritory(Territory* territory) {
-  if (territory && territory != this && !isAdjacentTo(territory)) {
-    adjTerritories->push_back(territory);
+void Territory::addAdjTerritory(Territory* terr) {
+  if (!terr || terr == this) return;
+
+  // no duplicates
+  if (!isAdjacentTo(terr)) {
+    adjTerritories->push_back(terr);
   }
 }
 
-void Territory::removeAdjacentTerritory(Territory* territory) {
-  std::erase(*adjTerritories, territory);
-}
-
-Territory* chooseTerritory(const std::vector<Territory*>& territories) {
-    if (territories.empty()) return nullptr;
-
-    std::cout << "Choose a territory:\n";
-    for (size_t i = 0; i < territories.size(); i++) {
-        std::cout << i << ": " << territories[i]->getName() 
-                  << " (Armies: " << territories[i]->getArmies() << ")\n";
-    }
-
-    int choice = -1;
-    while (choice < 0 || choice >= territories.size()) {
-        std::cout << "Enter the number of your choice: ";
-        std::cin >> choice;
-    }
-
-    return territories[choice];
+void Territory::removeAdjTerritory(Territory* terr) {
+  std::erase(*adjTerritories, terr);
 }
 
 // --- UTILITY ---
+Territory* chooseTerritory(const std::vector<Territory*>& territories) {
+  if (territories.empty()) return nullptr;
+
+  std::cout << "Choose a territory:\n";
+  for (size_t i = 0; i < territories.size(); i++) {
+    std::cout << i << ": " << territories[i]->getName()
+              << " (Armies: " << territories[i]->getArmies() << ")\n";
+  }
+
+  int choice = -1;
+  while (choice < 0 || choice >= territories.size()) {
+    std::cout << "Enter the number of your choice: ";
+    std::cin >> choice;
+  }
+
+  return territories[choice];
+}
+
 void Territory::displayInfo() const {
-  std::cout << "Territory: " << (territoryName ? *territoryName : "None")
-      << " (ID: " << (territoryId ? *territoryId : -1) << ")" << std::endl;
+  std::cout << "Territory: " << (name ? *name : "<Unnamed>")
+            << " (ID: " << (id ? *id : -1) << ")" << std::endl;
 
-  std::cout << "  Owner: " << (ownerPlayer ? ownerPlayer->getName() : "None")
-      << ", Armies: " << (armies ? *armies : 0) << std::endl;
-
+  std::cout << "  Owner: " << (owner ? owner->getName() : "None")
+            << ", Armies: " << (armies ? *armies : 0) << std::endl;
   std::cout << "  Continent: " << (continent ? continent->getName() : "None") << std::endl;
 
   std::cout << "  Adjacent to: ";
@@ -176,20 +180,20 @@ void Territory::displayInfo() const {
 }
 
 bool Territory::operator==(const Territory& other) const {
-  return territoryId == other.territoryId && territoryName == other.territoryName;
+  return id == other.id && name == other.name;
 }
 
 // --- STREAM INSERTION ---
-std::ostream& operator<<(std::ostream& os, const Territory& territory) {
+std::ostream& operator<<(std::ostream& os, const Territory& terr) {
   os << "Territory["
-      << (territory.territoryName ? *territory.territoryName : "<Unnamed>")
-      << " (ID:" << (territory.territoryId ? *territory.territoryId : -1) << "), ";
+     << (terr.name ? *terr.name : "<Unnamed>")
+     << " (ID:" << (terr.id ? *terr.id : -1) << "), ";
 
-  os << "Owner:" << (territory.ownerPlayer ? territory.ownerPlayer->getName() : "None") << ", ";
-  os << "Armies:" << (territory.armies ? *territory.armies : 0) << ", ";
+  os << "Owner:" << (terr.owner ? terr.owner->getName() : "None") << ", ";
+  os << "Armies:" << (terr.armies ? *terr.armies : 0) << ", ";
 
-  os << "Continent:" << (territory.continent ? territory.continent->getName() : "None") << ", ";
-  os << "Adjacent:" << territory.adjTerritories->size() << "]";
+  os << "Continent:" << (terr.continent ? terr.continent->getName() : "None") << ", ";
+  os << "Adjacent:" << terr.adjTerritories->size() << "]";
   return os;
 }
 
@@ -407,7 +411,7 @@ Map::Map(const Map& other) : mapName(new std::string(*other.mapName)),
     for (const Territory* oldAdj : oldTerritory->getAdjTerritories()) {
       Territory* newAdj = (*territoryNameMap)[oldAdj->getName()];
       if (newAdj && !newTerritory->isAdjacentTo(newAdj)) {
-        newTerritory->addAdjacentTerritory(newAdj);
+        newTerritory->addAdjTerritory(newAdj);
       }
     }
   }
@@ -502,7 +506,7 @@ bool Map::removeTerritory(const std::string& name) {
 
   // remove adjacencies
   for (Territory* adj : territory->getAdjTerritories()) {
-    adj->removeAdjacentTerritory(territory);
+    adj->removeAdjTerritory(territory);
   }
 
   // remove from maps
@@ -565,15 +569,15 @@ void Map::addAdjacency(const std::string& territory1, const std::string& territo
   Territory* t2 = getTerritory(territory2);
 
   if (t1 && t2) {
-    t1->addAdjacentTerritory(t2);
-    t2->addAdjacentTerritory(t1);
+    t1->addAdjTerritory(t2);
+    t2->addAdjTerritory(t1);
   }
 }
 
 void Map::addAdjacency(Territory* territory1, Territory* territory2) {
   if (territory1 && territory2) {
-    territory1->addAdjacentTerritory(territory2);
-    territory2->addAdjacentTerritory(territory1);
+    territory1->addAdjTerritory(territory2);
+    territory2->addAdjTerritory(territory1);
   }
 }
 
@@ -917,7 +921,7 @@ void MapLoader::linkTerritoryAdjacencies(const Map* map, Territory* territory,
                                          const std::vector<std::string>& adjacentNames) {
   for (const std::string& adjacentName : adjacentNames) {
     if (Territory* adj = map->getTerritory(adjacentName)) {
-      territory->addAdjacentTerritory(adj);
+      territory->addAdjTerritory(adj);
     } else {
       std::cout << "Warning: Adjacent territory '" << adjacentName
           << "' not found for territory '" << territory->getName() << "'" << std::endl;

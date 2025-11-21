@@ -40,8 +40,8 @@ void testLoggingObserver() {
   Territory territoryAlpha("Alpha", 1);
   Territory territoryBeta("Beta", 2);
 
-  territoryAlpha.addAdjacentTerritory(&territoryBeta);
-  territoryBeta.addAdjacentTerritory(&territoryAlpha);
+  territoryAlpha.addAdjTerritory(&territoryBeta);
+  territoryBeta.addAdjTerritory(&territoryAlpha);
 
   playerOne.addTerritory(&territoryAlpha);
   territoryAlpha.setOwner(&playerOne);

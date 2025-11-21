@@ -1,84 +1,67 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#include <memory>
 
 
 // forward declarations
 class Player;
-class Territory;
 class Continent;
-class Map;
-class MapLoader;
 
 /**
- * Territory class representing a node in the map graph
+ * The Territory class represents a node in the map graph.
  */
 class Territory {
 private:
-  std::string* territoryName;
-  int* territoryId;
-  Player* ownerPlayer; // territory owned by player
-  int* armies; // armies owned by player
-  std::vector<Territory *>* adjTerritories;
-  Continent* continent; // pointer to continent
+  std::string* name;
+  int* id;
+  Player* owner;                            // player who owns this territory
+  int* armies;                              // armies owned by the player
+  std::vector<Territory*>* adjTerritories;
+  Continent* continent;                     // the continent which the territory belongs to
 
 public:
   // constructors
   Territory();
-
   Territory(const std::string& name, int id);
-
-  Territory(const Territory& other); // copy constructor
-  Territory& operator=(const Territory& other); // assignment operator
-  ~Territory(); // destructor
+  Territory(const Territory& other);             // copy constructor
+  Territory& operator=(const Territory& other);  // assignment operator
+  ~Territory();                                  // destructor
 
   // getters
   std::string getName() const;
-
   int getId() const;
-
   Player* getOwner() const;
-
   int getArmies() const;
-
-  const std::vector<Territory *>& getAdjTerritories() const;
-
+  const std::vector<Territory*>& getAdjTerritories() const;
   Continent* getContinent() const;
 
   // setters
-  void setName(const std::string& name) const;
-
-  void setId(int id) const;
-
-  void setOwner(Player* owner);
-
-  void setArmies(int armyCount) const;
-
-  void setContinent(Continent* mainContinent);
+  void setName(const std::string& newName);
+  void setId(int newId);
+  void setOwner(Player* newOwner);
+  void setArmies(int newArmies);
+  void setContinent(Continent* newContinent);
 
   // management
-  bool isAdjacentTo(Territory* territory) const;
-
-  void addAdjacentTerritory(Territory* territory);
-
-  void removeAdjacentTerritory(Territory* territory);
+  bool isAdjacentTo(const Territory* terr) const;
+  void addAdjTerritory(Territory* terr);
+  void removeAdjTerritory(Territory* terr);
 
   // utility
   void displayInfo() const;
-
   bool operator==(const Territory& other) const; // equality operator
 
   // stream insertion operator
-  friend std::ostream& operator<<(std::ostream& os, const Territory& territory);
+  friend std::ostream& operator<<(std::ostream& os, const Territory& terr);
 };
 
 
 /**
- * Continent class representing a connected subgraph of territories
+ * The Continent class represents a connected subgraph of territories
  */
 class Continent {
 private:
@@ -269,4 +252,5 @@ private:
 // free function
 void testLoadMaps();
 
+// utility functions
 Territory* chooseTerritory(const std::vector<Territory*>& territories);
