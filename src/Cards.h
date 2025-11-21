@@ -5,6 +5,14 @@
 #include <cstdlib>
 #include <ctime>
 
+namespace CARD_TYPES {
+    constexpr const char* BOMB = "bomb";
+    constexpr const char* REINFORCEMENT = "reinforcement";
+    constexpr const char* BLOCKADE = "blockade";
+    constexpr const char* AIRLIFT = "airlift";
+    constexpr const char* DIPLOMACY = "diplomacy";
+}
+
 class Player;
 class OrdersList;
 class Deck; // Forward declaration

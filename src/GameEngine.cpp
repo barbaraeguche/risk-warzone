@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Cards.h"
 #include "Orders.h"
+#include "PlayerStrategies.h"
 #include "CommandProcessing.h"
 
 #include <algorithm>
@@ -142,7 +143,7 @@ Player* GameEngine::neutralPlayer_ = nullptr;
 
 Player* GameEngine::getNeutralPlayer() {
     if (!neutralPlayer_) {
-        neutralPlayer_ = new Player("Neutral");
+        neutralPlayer_ = new Player("Neutral", nullptr);
     }
     return neutralPlayer_;
 }
@@ -565,66 +566,28 @@ void GameEngine::reinforcementPhase() {
     }
 }
 
+
+// TODO : Refactor completely
 void GameEngine::issueOrdersPhase() {
     std::cout << "\n--- ISSUING ORDERS PHASE ---\n";
     transitionState("issue orders");
-    /** 
-    std::cout << "Deploy phase\n";
 
-    bool deployRemaining = true;
-    bool dummy = false;
 
-    // Round-robin deploy until all players finished deploying
-    while (deployRemaining) {
-        deployRemaining = false;
+    bool allDone = false;
+    while (!allDone) {
+        allDone = true;
         for (Player* player : players_) {
-            if (player->getReinforcementPool() > 0) {
-                player->issueOrder(true, dummy, deck_);
-                deployRemaining = true;
+            if (*(player->getCanIssueOrderFlag())) {
+                player->issueOrder();
+                allDone = false;
             }
         }
     }
+    for (Player* player : players_) {
+        player->setCanIssueOrderFlag(true);
+        if (player->getGotAttackedThisTurn() && *(player->getPlayerStrategy()->getStrategyDescription()) == "Neutral Player Strategy") {
+            player->setStrategy(new AggressivePlayerStrategy(player));
 
-    std::cout << "\nAdvance phase\n";
-
-    // Each player can only issue ONE advance order
-    std::vector<char> advanceIssued(players_.size(), 0);
-
-    for (size_t i = 0; i < players_.size(); i++) {
-        bool flag = (advanceIssued[i] != 0);
-        players_[i]->issueOrder(false, flag, deck_);
-        advanceIssued[i] = flag;
-    }
-
-    std::cout << "Orders Issued\n";
-    */
-
-    bool anyPlayerIssuedOrder = true;
-    std::set<Player*> playersWhoPassed;
-
-    while (anyPlayerIssuedOrder && playersWhoPassed.size() < players_.size()) {
-        anyPlayerIssuedOrder = false;
-
-        for (Player* player : players_) {
-            // Skip players who have already passed
-            if (playersWhoPassed.find(player) != playersWhoPassed.end()) {
-                continue;
-            }
-
-            std::cout << "\n" << player->getName() << "'s turn to issue orders:\n";
-            std::cout << "  Reinforcement pool: " << player->getReinforcementPool() << "\n";
-            std::cout << "  Cards in hand: " << player->getHand()->size() << "\n";
-
-            // Player issues an order
-            bool issuedOrder = player->issueOrder();
-
-            if (issuedOrder) {
-                anyPlayerIssuedOrder = true;
-            } else {
-                // Player passed - no more orders this turn
-                playersWhoPassed.insert(player);
-                std::cout << "  " << player->getName() << " passes (no more orders this turn)\n";
-            }
         }
     }
 
@@ -1015,7 +978,7 @@ void GameEngine::startupPhase(CommandProcessor& cmdSrc) {
                 continue;
             }
 
-            auto* np = new Player(name);
+            auto* np = new Player(name, nullptr);
             players_.push_back(np);
             transitionState("players added");
 

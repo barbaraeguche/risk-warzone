@@ -25,6 +25,8 @@ add_executable(comp_345
 	src/OrdersDriver.cpp
 	src/Player.cpp
 	src/PlayerDriver.cpp
+	src/PlayerStrategies.cpp
+	src/PlayerStrategyDriver.cpp
 )
 
 # include headers

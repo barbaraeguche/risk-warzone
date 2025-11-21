@@ -4,6 +4,7 @@
 #include "GameEngine.h"
 #include "Player.h"
 #include "Map.h"
+#include "Cards.h"
 
 #include <fstream>
 #include <iostream>
@@ -33,8 +34,9 @@ void testLoggingObserver() {
   OrdersList ordersList;
   ordersList.attach(&logger);
 
-  Player playerOne("Alice");
-  Player playerTwo("Bob");
+  Deck* deck = new Deck();
+  Player playerOne("Alice", deck);
+  Player playerTwo("Bob", deck);
   Territory territoryAlpha("Alpha", 1);
   Territory territoryBeta("Beta", 2);
 
