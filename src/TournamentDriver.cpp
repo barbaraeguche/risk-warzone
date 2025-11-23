@@ -1,8 +1,11 @@
 #include "GameEngine.h"
 #include "CommandProcessing.h"
 #include <iostream>
+#include <limits>
 
 // tournament -M Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map -P Aggressive, Benevolent, Neutral, Cheater -G 4 -D 30
+// tournament -M Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map -P Aggressive, Benevolent, Neutral -G 4 -D 30
+
 
 /**
  * Test driver for Tournament Mode
@@ -15,6 +18,10 @@ void testTournament() {
     std::cout << "\n" << std::string(60, '=') << "\n";
     std::cout << "TOURNAMENT MODE TEST DRIVER\n";
     std::cout << std::string(60, '=') << "\n\n";
+
+    // Clear any leftover input buffer state from previous tests
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     // Select input mode
     std::cout << "Select input mode: " << std::endl;

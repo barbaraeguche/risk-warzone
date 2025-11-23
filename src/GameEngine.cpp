@@ -145,12 +145,21 @@ std::ostream& operator<<(std::ostream& os, const GameEngine& engine) {
 }
 
 Player* GameEngine::neutralPlayer_ = nullptr;
+bool GameEngine::isAutomaticMode_ = false;
 
 Player* GameEngine::getNeutralPlayer() {
     if (!neutralPlayer_) {
         neutralPlayer_ = new Player("Neutral", nullptr);
     }
     return neutralPlayer_;
+}
+
+void GameEngine::setAutomaticMode(bool mode) {
+    isAutomaticMode_ = mode;
+}
+
+bool GameEngine::isAutomaticMode() {
+    return isAutomaticMode_;
 }
 
 
@@ -1207,6 +1216,9 @@ void GameEngine::executeTournament(const std::string& command) {
  * @return Winner's strategy name or "Draw"
  */
 std::string GameEngine::playTournamentGame(const std::string& mapPath, const std::vector<std::string>& strategies, int maxTurns) {
+    // Enable automatic mode for tournament
+    setAutomaticMode(true);
+
     // Load map
     MapLoader loader;
 
@@ -1307,6 +1319,9 @@ std::string GameEngine::playTournamentGame(const std::string& mapPath, const std
 
     // Play the game using mainGameLoop with turn limit
     std::string winner = mainGameLoop(maxTurns);
+
+    // Disable automatic mode after tournament game
+    setAutomaticMode(false);
 
     return winner;
 }

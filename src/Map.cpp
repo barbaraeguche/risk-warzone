@@ -1,5 +1,6 @@
 #include "Map.h"
 #include "Player.h"
+#include "GameEngine.h"
 
 #include <algorithm>
 #include <fstream>
@@ -7,6 +8,7 @@
 #include <queue>
 #include <sstream>
 #include <unordered_set>
+#include <random>
 
 
 // ==================== Territory Class Implementation ====================
@@ -141,6 +143,17 @@ void Territory::removeAdjTerritory(Territory* terr) {
 Territory* chooseTerritory(const std::vector<Territory*>& territories) {
   if (territories.empty()) return nullptr;
 
+  // In automatic/tournament mode, automatically select a territory
+  if (GameEngine::isAutomaticMode()) {
+    // Randomly select a territory for variety
+    static std::mt19937 rng(std::random_device{}());
+    std::uniform_int_distribution<size_t> dist(0, territories.size() - 1);
+    size_t choice = dist(rng);
+    std::cout << "Auto-selected territory: " << territories[choice]->getName() << "\n";
+    return territories[choice];
+  }
+
+  // Manual mode: prompt user for input
   std::cout << "Choose a territory:\n";
   for (size_t i = 0; i < territories.size(); i++) {
     std::cout << i << ": " << territories[i]->getName()

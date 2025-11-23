@@ -29,6 +29,7 @@ private:
     std::vector<Player*> players_;     // players created by addplayer
     Deck* deck_;
     static Player* neutralPlayer_;
+    static bool isAutomaticMode_;      // flag to indicate if game is in automatic/tournament mode
     
 public:
     GameEngine();
@@ -61,6 +62,8 @@ public:
     void setDeck(Deck* deck);
 
     static Player* getNeutralPlayer();
+    static void setAutomaticMode(bool mode);
+    static bool isAutomaticMode();
 
     // Tournament mode methods
     void executeTournament(const std::string& command);
