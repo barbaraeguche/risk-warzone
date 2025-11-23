@@ -16,50 +16,14 @@ TOURNAMENT RESULTS
 
 Tournament mode:
 M: Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map
-P: Aggressive, Benevolent, Neutral, Cheater
+P: Aggressive, Benevolent, Neutral
 G: 4
 D: 30
 
 Results:
         Game 1    Game 2    Game 3    Game 4    
-Canada/Canada.map    Cheater    Cheater    Cheater    Cheater    
-Alberta/Alberta.map    Cheater    Cheater    Cheater    Cheater    
-Palmerica/Palmerica.map    Cheater    Cheater    Cheater    Cheater    
-
-========================================
-
-========================================
-TOURNAMENT RESULTS
-========================================
-
-Tournament mode:
-M: Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map
-P: Aggressive, Benevolent, Neutral, Cheater
-G: 4
-D: 30
-
-Results:
-        Game 1    Game 2    Game 3    Game 4    
-Canada/Canada.map    Cheater    Cheater    Cheater    Cheater    
-Alberta/Alberta.map    Cheater    Cheater    Cheater    Cheater    
-Palmerica/Palmerica.map    Cheater    Cheater    Cheater    Cheater    
-
-========================================
-
-========================================
-TOURNAMENT RESULTS
-========================================
-
-Tournament mode:
-M: Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map
-P: Aggressive, Benevolent, Neutral, Cheater
-G: 4
-D: 30
-
-Results:
-        Game 1    Game 2    Game 3    Game 4    
-Canada/Canada.map    Cheater    Cheater    Cheater    Cheater    
-Alberta/Alberta.map    Cheater    Cheater    Cheater    Cheater    
-Palmerica/Palmerica.map    Cheater    Cheater    Cheater    Cheater    
+Canada/Canada.map    Draw    Draw    Draw    Draw    
+Alberta/Alberta.map    Draw    Draw    Draw    Draw    
+Palmerica/Palmerica.map    Draw    Draw    Draw    Draw    
 
 ========================================

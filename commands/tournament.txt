@@ -1,0 +1,1 @@
+tournament -M Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map -P Aggressive, Benevolent, Neutral -G 4 -D 30

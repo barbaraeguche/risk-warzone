@@ -91,11 +91,11 @@ int main() {
     // testLoggingObserver();
 
 
-    // // Part 11: Player Strategy Testing
-    // std::cout << "\n" << std::string(50, '=') << std::endl;
-    // std::cout << "PART 11: PLAYER STRATEGY TESTING" << std::endl;
-    // std::cout << std::string(50, '=') << std::endl;
-    // testPlayerStrategies();
+    // Part 11: Player Strategy Testing
+    std::cout << "\n" << std::string(50, '=') << std::endl;
+    std::cout << "PART 11: PLAYER STRATEGY TESTING" << std::endl;
+    std::cout << std::string(50, '=') << std::endl;
+    testPlayerStrategies();
 
     // Part 12: Tournament Mode Testing
     std::cout << "\n" << std::string(50, '=') << std::endl;
