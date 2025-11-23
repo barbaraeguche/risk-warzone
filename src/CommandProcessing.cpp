@@ -165,6 +165,120 @@ bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine
     baseCmd = cmd.substr(0, spacePos);
   }
 
+  if (baseCmd == "tournament") {
+    if (currState != "start") {
+      std::cout << "Tournament command can only be used in 'start' state.\n";
+      return false;
+    }
+
+    std::size_t mPos = cmd.find("-M ");
+    std::size_t pPos = cmd.find("-P ");
+    std::size_t gPos = cmd.find("-G ");
+    std::size_t dPos = cmd.find("-D ");
+
+    if (mPos == std::string::npos || pPos == std::string::npos ||
+      gPos == std::string::npos || dPos == std::string::npos) {
+      std::cout << "Incorrect format. Must follow: tournament -M <listofmapfiles> -P "
+                   "<listofplayerstrategies> -G <numberofgames> -D <maxnumberofturns>\n";
+      return false;
+    }
+
+    // Ensure flags are in correct order
+    if (!(mPos < pPos && pPos < gPos && gPos < dPos)) {
+      std::cout << "Flags must be in order: -M, -P, -G, -D\n";
+      return false;
+    }
+
+    // Extract parameter strings
+    std::string mapsStr = cmd.substr(mPos + 3, pPos - mPos - 3);
+    std::string playersStr = cmd.substr(pPos + 3, gPos - pPos - 3);
+    std::string gamesStr = cmd.substr(gPos + 3, dPos - gPos - 3);
+    std::string turnsStr = cmd.substr(dPos + 3);
+
+    // Helper lambda to trim whitespace
+    auto trim = [](std::string& s) {
+      // Trim leading whitespace
+      size_t start = s.find_first_not_of(" \t\n\r");
+      if (start == std::string::npos) {
+        s = "";
+        return;
+      }
+      // Trim trailing whitespace
+      size_t end = s.find_last_not_of(" \t\n\r");
+      s = s.substr(start, end - start + 1);
+    };
+
+    trim(mapsStr);
+    trim(playersStr);
+    trim(gamesStr);
+    trim(turnsStr);
+
+    // Validate maps: count comma-separated items (1-5 maps)
+    if (mapsStr.empty()) {
+      std::cout << "No map files specified.\n";
+      return false;
+    }
+    int mapCount = 1;
+    for (char c : mapsStr) {
+      if (c == ',') mapCount++;
+    }
+    if (mapCount < 1 || mapCount > 5) {
+      std::cout << "Invalid number of maps. Must be between 1 and 5.\n";
+      return false;
+    }
+
+    // Validate players: count comma-separated items (2-4 strategies)
+    if (playersStr.empty()) {
+      std::cout << "No player strategies specified.\n";
+      return false;
+    }
+    int playerCount = 1;
+    for (char c : playersStr) {
+      if (c == ',') playerCount++;
+    }
+    if (playerCount < 2 || playerCount > 4) {
+      std::cout << "Invalid number of player strategies. Must be between 2 and 4.\n";
+      return false;
+    }
+
+    // Validate number of games (1-5)
+    if (gamesStr.empty()) {
+      std::cout << "No number of games specified.\n";
+      return false;
+    }
+    int numGames;
+    try {
+      numGames = std::stoi(gamesStr);
+    } catch (...) {
+      std::cout << "Invalid number of games. Must be an integer.\n";
+      return false;
+    }
+    if (numGames < 1 || numGames > 5) {
+      std::cout << "Invalid number of games. Must be between 1 and 5.\n";
+      return false;
+    }
+
+    // Validate max turns (10-50)
+    if (turnsStr.empty()) {
+      std::cout << "No max number of turns specified.\n";
+      return false;
+    }
+    int maxTurns;
+    try {
+      maxTurns = std::stoi(turnsStr);
+    } catch (...) {
+      std::cout << "Invalid max number of turns. Must be an integer.\n";
+      return false;
+    }
+    if (maxTurns < 10 || maxTurns > 50) {
+      std::cout << "Invalid max number of turns. Must be between 10 and 50.\n";
+      return false;
+    }
+
+    // all validations passed
+    return true;
+  }
+
   // validate based on current state according to assignment state diagram
   if (currState == "startup" && baseCmd == "start") return true;
   if (currState == "start" && baseCmd == "loadmap") return true;

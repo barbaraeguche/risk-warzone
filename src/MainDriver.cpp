@@ -22,7 +22,7 @@ void testTournament();
  * This demonstrates the execution of all parts of the assignment
  */
 int main() {
-  std::cout << "=== COMP 345 - Assignment 1 - Team Project ===" << std::endl;
+  std::cout << "=== COMP 345 - Assignment (1-3) - Team Project ===" << std::endl;
   std::cout << "Advanced Program Design with C++" << std::endl;
   std::cout << "Warzone Game Implementation" << std::endl;
   std::cout << "\nRunning all test functions for each part..." << std::endl;
@@ -76,9 +76,9 @@ int main() {
     // std::cout << "\n" << std::string(50, '=') << std::endl;
     // std::cout << "PART 8: MAIN GAME LOOP TESTING" << std::endl;
     // std::cout << std::string(50, '=') << std::endl;
-    // automatictestMainGameLoop();
+    // automaticTestMainGameLoop();
     //
-    // //Part 9: Testing order execution
+    // // Part 9: Testing order execution
     // std::cout << "\n" << std::string(50, '=') << std::endl;
     // std::cout << "PART 9: ORDER EXECUTION TESTING" << std::endl;
     // std::cout << std::string(50, '=') << std::endl;
@@ -91,11 +91,11 @@ int main() {
     // testLoggingObserver();
 
 
-    // Part 11: Player Strategy Testing
-    std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "PART 11: PLAYER STRATEGY TESTING" << std::endl;
-    std::cout << std::string(50, '=') << std::endl;
-    testPlayerStrategies();
+    // // Part 11: Player Strategy Testing
+    // std::cout << "\n" << std::string(50, '=') << std::endl;
+    // std::cout << "PART 11: PLAYER STRATEGY TESTING" << std::endl;
+    // std::cout << std::string(50, '=') << std::endl;
+    // testPlayerStrategies();
 
     // Part 12: Tournament Mode Testing
     std::cout << "\n" << std::string(50, '=') << std::endl;

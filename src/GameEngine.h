@@ -49,7 +49,7 @@ public:
     void startupPhase();
     void startupPhase(CommandProcessor&);
 
-    void mainGameLoop();
+    std::string mainGameLoop(int maxTurns);
     void reinforcementPhase();
     void issueOrdersPhase();
     void executeOrdersPhase();
@@ -61,6 +61,11 @@ public:
     void setDeck(Deck* deck);
 
     static Player* getNeutralPlayer();
+
+    // Tournament mode methods
+    void executeTournament(const std::string& command);
+    std::string playTournamentGame(const std::string& mapPath, const std::vector<std::string>& strategies, int maxTurns);
+    void logTournamentResults(const std::vector<std::string>& maps, const std::vector<std::string>& strategies, int numGames, int maxTurns, const std::vector<std::vector<std::string>>& results);
 
 private:
     void initializeStates();

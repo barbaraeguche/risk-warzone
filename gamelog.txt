@@ -9,3 +9,57 @@ Order [advance] effect: Advance order succeeded and conquered Beta.
 GameEngine state changed to: start
 GameEngine state changed to: map loaded
 GameEngine state changed to: map validated
+
+========================================
+TOURNAMENT RESULTS
+========================================
+
+Tournament mode:
+M: Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map
+P: Aggressive, Benevolent, Neutral, Cheater
+G: 4
+D: 30
+
+Results:
+        Game 1    Game 2    Game 3    Game 4    
+Canada/Canada.map    Cheater    Cheater    Cheater    Cheater    
+Alberta/Alberta.map    Cheater    Cheater    Cheater    Cheater    
+Palmerica/Palmerica.map    Cheater    Cheater    Cheater    Cheater    
+
+========================================
+
+========================================
+TOURNAMENT RESULTS
+========================================
+
+Tournament mode:
+M: Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map
+P: Aggressive, Benevolent, Neutral, Cheater
+G: 4
+D: 30
+
+Results:
+        Game 1    Game 2    Game 3    Game 4    
+Canada/Canada.map    Cheater    Cheater    Cheater    Cheater    
+Alberta/Alberta.map    Cheater    Cheater    Cheater    Cheater    
+Palmerica/Palmerica.map    Cheater    Cheater    Cheater    Cheater    
+
+========================================
+
+========================================
+TOURNAMENT RESULTS
+========================================
+
+Tournament mode:
+M: Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map
+P: Aggressive, Benevolent, Neutral, Cheater
+G: 4
+D: 30
+
+Results:
+        Game 1    Game 2    Game 3    Game 4    
+Canada/Canada.map    Cheater    Cheater    Cheater    Cheater    
+Alberta/Alberta.map    Cheater    Cheater    Cheater    Cheater    
+Palmerica/Palmerica.map    Cheater    Cheater    Cheater    Cheater    
+
+========================================

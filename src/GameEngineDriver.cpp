@@ -17,7 +17,7 @@
         GameEngine engine;
     
         engine.startupPhase();
-        engine.mainGameLoop();
+        engine.mainGameLoop(-1);
     }
 
     /**
