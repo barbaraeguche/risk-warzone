@@ -4,7 +4,7 @@
 #include <limits>
 
 // tournament -M Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map -P Aggressive, Benevolent, Neutral, Cheater -G 4 -D 30
-// tournament -M Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map -P Aggressive, Benevolent, Neutral -G 4 -D 30
+// tournament -M Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map -P Aggressive, Aggressive, Neutral -G 1 -D 180
 
 
 /**

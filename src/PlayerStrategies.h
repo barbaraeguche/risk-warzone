@@ -38,6 +38,8 @@ public:
     void issueOrder() override;
     std::vector<Territory*> toDefend() override;
     std::vector<Territory*> toAttack() override;
+private:
+    Territory* strongestTerritory();
 };
 
 class BenevolentPlayerStrategy : public PlayerStrategy {
