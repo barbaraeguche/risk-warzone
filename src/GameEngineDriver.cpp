@@ -17,7 +17,7 @@
         GameEngine engine;
     
         engine.startupPhase();
-        engine.mainGameLoop();
+        engine.mainGameLoop(-1);
     }
 
     /**
@@ -30,7 +30,7 @@
     * 5. Players with no territories are removed
     * 6. Game ends when one player controls all territories
     */
-void automatictestMainGameLoop() {
+void automaticTestMainGameLoop() {
     std::cout << "\n======================================\n";
     std::cout << "TESTING MAIN GAME LOOP (Part 3)\n";
     std::cout << "======================================\n\n";

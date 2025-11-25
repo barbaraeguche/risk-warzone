@@ -174,7 +174,7 @@ void AggressivePlayerStrategy::issueOrder() {
         if (!defendList.empty()) {
             Territory* target = defendList[0];
             int armiesToDeploy = this->player->getReinforcementPool(); // Deploy all available armies
-            std::cout << "  Issuing Deploy order: " << armiesToDeploy << " armies to " << target->getName() << "\n";
+            std::cout << this->player->getName() << "  Issuing Deploy order: " << armiesToDeploy << " armies to " << target->getName() << "\n";
             this->player->issueDeployOrder(target, armiesToDeploy);
             this->player->setReinforcementPool(0);
         } else {
@@ -198,7 +198,7 @@ void AggressivePlayerStrategy::issueOrder() {
     for (auto adj : this->player->toAttack()) {
             int armiesToAttack = strongest->getArmies() - 1; // Leave 1 army behind
             if (armiesToAttack > 0) {
-                std::cout << "  Issuing Advance order (attack): " << armiesToAttack 
+                std::cout << this->player->getName() << "  Issuing Advance order (attack): " << armiesToAttack 
                           << " armies from " << strongest->getName() 
                           << " to " << adj->getName() << "\n";
                 this->player->issueAdvanceOrder(strongest, adj, armiesToAttack);
@@ -224,38 +224,53 @@ void AggressivePlayerStrategy::issueOrder() {
 }
 
 std::vector<Territory*> AggressivePlayerStrategy::toDefend() {
-    // Implementation for aggressive player determining territories to defend
     std::vector<Territory*> defendList;
-    Territory* strongest = nullptr;
-    for (auto t : player->getTerritories()) {
-        if (strongest == nullptr || t->getArmies() > strongest->getArmies()) {
-            strongest = t;
-        }
-    }
-    if (strongest != nullptr) {
+
+    Territory* strongest = strongestTerritory();
+    if (strongest) {
         defendList.push_back(strongest);
     }
+
     return defendList;
 }
 
 std::vector<Territory*> AggressivePlayerStrategy::toAttack() {
-    // All adjacent territories of the territory with the most armies
     std::vector<Territory*> attackList;
-    Territory* strongest = nullptr;
-    for (auto t : player->getTerritories()) {
-        if (strongest == nullptr || t->getArmies() > strongest->getArmies()) {
-            strongest = t;
+
+    Territory* strongest = strongestTerritory();
+    if (!strongest) return attackList;
+
+    for (auto* adj : strongest->getAdjTerritories()) {
+        if (adj->getOwner() != player) {
+            attackList.push_back(adj);
         }
     }
-    if (strongest != nullptr) {
-        std::vector<Territory*> adjacent = strongest->getAdjTerritories();
-        for (auto adj : adjacent) {
+
+    return attackList;
+}
+
+Territory* AggressivePlayerStrategy::strongestTerritory() {
+    // Get all territories owned by the player
+    const auto& territories = player->getTerritories();
+
+    // Sort by number of armies descending
+    std::vector<Territory*> sorted = territories;
+    std::sort(sorted.begin(), sorted.end(),
+              [](Territory* a, Territory* b) {
+                  return a->getArmies() > b->getArmies();
+              });
+
+    // Find first strongest territory that has at least one enemy neighbour
+    for (auto* t : sorted) {
+        for (auto* adj : t->getAdjTerritories()) {
             if (adj->getOwner() != player) {
-                attackList.push_back(adj);
+                return t;
             }
         }
     }
-    return attackList;
+
+    // If none found, fallback: return the absolute strongest
+    return sorted.empty() ? nullptr : sorted.front();
 }
 
 BenevolentPlayerStrategy::BenevolentPlayerStrategy(Player* p) : PlayerStrategy(p, new std::string("Benevolent Player Strategy")) {}
@@ -271,7 +286,7 @@ void BenevolentPlayerStrategy::issueOrder() {
             // Deploy to weakest territory
             Territory* target = defendList[0];
             int armiesToDeploy = this->player->getReinforcementPool(); // Deploy all available armies
-            std::cout << "  Issuing Deploy order: " << armiesToDeploy << " armies to " << target->getName() << "\n";
+            std::cout << this->player->getName() << "  Issuing Deploy order: " << armiesToDeploy << " armies to " << target->getName() << "\n";
             this->player->issueDeployOrder(target, armiesToDeploy);
             this->player->setReinforcementPool(0);
         } else {
@@ -281,26 +296,55 @@ void BenevolentPlayerStrategy::issueOrder() {
         return;
     }
 
-      // Try to move armies to defend territories
-  if (!defendList.empty() && territories.size() > 1) {
-      // Find a territory with armies to move
-      for (Territory* source : territories) {
-          if (source->getArmies() > 1) {
-              // Try to find adjacent friendly territory to reinforce
-              for (Territory* adjacent : source->getAdjTerritories()) {
-                  if (this->player->ownsTerritory(adjacent)) {
-                      int armiesToMove = source->getArmies() / 2;
-                      if (armiesToMove > 0) {
-                          std::cout << "  Issuing Advance order (defense): " << armiesToMove 
-                                    << " armies from " << source->getName() 
-                                    << " to " << adjacent->getName() << "\n";
-                          this->player->issueAdvanceOrder(source, adjacent, armiesToMove);
-                      }
-                  }
-              }
-          }
-       }
+const int MAX_ADVANCES = 5;
+int advancesIssued = 0;
+
+std::unordered_set<Territory*> usedSources;
+
+if (!defendList.empty() && territories.size() > 1) {
+
+    for (Territory* target : defendList) {
+        if (advancesIssued >= MAX_ADVANCES)
+            break;
+
+        Territory* bestSource = nullptr;
+
+        for (Territory* source : territories) {
+            if (usedSources.count(source)) continue; 
+            if (source->getArmies() <= 1) continue;
+
+            bool adjacent = false;
+            for (Territory* adj : source->getAdjTerritories()) {
+                if (adj == target) {
+                    adjacent = true;
+                    break;
+                }
+            }
+            if (!adjacent) continue;
+
+            if (!bestSource || source->getArmies() > bestSource->getArmies()) {
+                bestSource = source;
+            }
+        }
+
+        if (bestSource) {
+            int armiesToMove = bestSource->getArmies() / 2;
+
+            if (armiesToMove > 0) {
+                std::cout << player->getName()
+                          << " issuing Advance (controlled): moving "
+                          << armiesToMove << " from "
+                          << bestSource->getName()
+                          << " to " << target->getName() << "\n";
+
+                player->issueAdvanceOrder(bestSource, target, armiesToMove);
+
+                usedSources.insert(bestSource);
+                advancesIssued++;
+            }
+        }
     }
+}
 
     // Benevolent player only plays cards that don't involve attacking
   // Priority 3: Play cards if we have any
@@ -355,7 +399,7 @@ void NeutralPlayerStrategy::issueOrder() {
         // Deploy to first territory in defend list
         Territory* target = defendList[0];
         int armiesToDeploy = this->player->getReinforcementPool(); // Deploy up to 3 at a time
-        std::cout << "  Issuing Deploy order: " << armiesToDeploy << " armies to " << target->getName() << "\n";
+        std::cout << this->player->getName() << "  Issuing Deploy order: " << armiesToDeploy << " armies to " << target->getName() << "\n";
         this->player->issueDeployOrder(target, armiesToDeploy);
         this->player->setReinforcementPool(0);
     }else {
@@ -398,7 +442,7 @@ void CheaterPlayerStrategy::issueOrder() {
         // Deploy to first territory in defend list
         Territory* target = defendList[0];
         int armiesToDeploy = this->player->getReinforcementPool(); // Deploy up to 3 at a time
-        std::cout << "  Issuing Deploy order: " << armiesToDeploy << " armies to " << target->getName() << "\n";
+        std::cout << this->player->getName() << "  Issuing Deploy order: " << armiesToDeploy << " armies to " << target->getName() << "\n";
         this->player->issueDeployOrder(target, armiesToDeploy);
         this->player->setReinforcementPool(0);
     }else {

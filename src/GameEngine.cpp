@@ -14,6 +14,7 @@
 #include <cctype>
 #include <set>
 #include <map>
+#include <fstream>
 
 
 
@@ -23,13 +24,17 @@
  * Default constructor for GameEngine
  * Initializes the game engine with startup state (before start)
  */
-GameEngine::GameEngine() : Subject(), currentState(nullptr), states(new std::map<std::string, State*>()), stateHistory(new std::vector<std::string>()), map_(nullptr), deck_(new Deck()) {
+GameEngine::GameEngine() :
+    Subject(),
+    currentState(nullptr),
+    states(new std::map<std::string, State*>()),
+    stateHistory(new std::vector<std::string>()),
+    map_(nullptr),
+    deck_(new Deck()) {
+
     initializeStates();
     currentState = (*states)["startup"];
     stateHistory->push_back("startup");
-    std::vector<Player*> players_;
-    map_ = nullptr;
-    deck_ = new Deck();
 }
 
 /**
@@ -140,12 +145,21 @@ std::ostream& operator<<(std::ostream& os, const GameEngine& engine) {
 }
 
 Player* GameEngine::neutralPlayer_ = nullptr;
+bool GameEngine::isAutomaticMode_ = false;
 
 Player* GameEngine::getNeutralPlayer() {
     if (!neutralPlayer_) {
         neutralPlayer_ = new Player("Neutral", nullptr);
     }
     return neutralPlayer_;
+}
+
+void GameEngine::setAutomaticMode(bool mode) {
+    isAutomaticMode_ = mode;
+}
+
+bool GameEngine::isAutomaticMode() {
+    return isAutomaticMode_;
 }
 
 
@@ -427,27 +441,20 @@ void GameEngine::setDeck(Deck* deck) {
     deck_ = deck;
 }
 
-void GameEngine::mainGameLoop() {
+std::string GameEngine::mainGameLoop(int maxTurns) {
     bool gameOver = false;
     int turn = 1;
-    GameEngine engine;
-    std::string input;
+    std::string winner = "Draw";
 
     std::cout << "\n=== Starting Main Game Loop ===" << std::endl;
 
-    //std::cout << "Type 'quit' to exit the test." << std::endl;
-    //std::cout << "Type 'continue' to proceed with the game phases." << std::endl;
-
     if (players_.empty() || !map_) {
         std::cout << "Error: Cannot start main game loop without players and map.\n";
-        return;
+        return "";
     }
 
-    while (!gameOver) {
+    while (!gameOver && (maxTurns == -1 ? true : turn <= maxTurns)) {
         std::cout << "\n=== Turn " << turn << " ===" << std::endl;
-        
-        //std::cout << "\nEnter command: ";
-        //std::getline(std::cin, input);
 
          // Clear negotiation records at the start of each turn
         Order::clearNegotiationRecords();
@@ -456,19 +463,6 @@ void GameEngine::mainGameLoop() {
         for (Player* player : players_) {
             player->setConqueredThisTurn(false);
         }
-
-        // Handle special commands
-        /**if (input == "quit") {
-            std::cout << "Exiting Game Engine test." << std::endl;
-            gameOver = true;
-            break;
-        } else if (input == "help") {
-            engine.displayValidCommands();
-            continue;
-        } else if (input == "history") {
-            engine.displayStateHistory();
-            continue;
-        } */
 
         // Reinforcement Phase
         reinforcementPhase();
@@ -504,21 +498,24 @@ void GameEngine::mainGameLoop() {
         
         // --- Check win condition ---
         if (players_.size() == 1) {
-            Player* winner = players_.front();
+            winner = players_.front()->getName();
             transitionState("win");
-            std::cout << "Player " << winner->getName() << " has won the game!" << std::endl;
             gameOver = true;
         } else if (players_.empty()) {
+            winner = "Draw";
             gameOver = true;
-            std::cout << "\n========================================\n";
-            std::cout << "GAME OVER - No players remaining!\n";
-            std::cout << "========================================\n";
         }
 
         turn++;
     }
 
+    // If we hit max turns without a winner, it's a draw
+    if (maxTurns > 0 && turn > maxTurns && !gameOver) {
+        winner = "Draw";
+    }
+
     std::cout << "Game Over. Thanks for playing!" << std::endl;
+    return winner;
 }
 
 void GameEngine::reinforcementPhase() {
@@ -537,7 +534,7 @@ void GameEngine::reinforcementPhase() {
             continentOwnership[continent.get()] = true;
         }
 
-        // Check each continent to see if player owns all territories
+        // Check each continent to see if the player owns all territories
         for (const auto& continent : continents) {
             for (const auto& territory : continent->getTerritories()) {
                 if (territory->getOwner() != player) {
@@ -1101,4 +1098,338 @@ void GameEngine::startupPhase(CommandProcessor& cmdSrc) {
 void GameEngine::startupPhase() {
     CommandProcessor consoleCP;       // reads from stdin
     startupPhase(consoleCP);
+}
+
+// ==================== Tournament Mode Implementation ====================
+
+/**
+ * Parse and execute a tournament command
+ * @param command The full tournament command string
+ */
+void GameEngine::executeTournament(const std::string& command) {
+    std::cout << "\n=== TOURNAMENT MODE ===\n";
+    std::cout << "Parsing tournament command...\n";
+
+    // Find flag positions
+    std::size_t mPos = command.find("-M ");
+    std::size_t pPos = command.find("-P ");
+    std::size_t gPos = command.find("-G ");
+    std::size_t dPos = command.find("-D ");
+
+    // Extract parameter strings
+    std::string mapsStr = command.substr(mPos + 3, pPos - mPos - 3);
+    std::string playersStr = command.substr(pPos + 3, gPos - pPos - 3);
+    std::string gamesStr = command.substr(gPos + 3, dPos - gPos - 3);
+    std::string turnsStr = command.substr(dPos + 3);
+
+    // Helper lambda to trim whitespace
+    auto trim = [](std::string& s) {
+        size_t start = s.find_first_not_of(" \t\n\r");
+        if (start == std::string::npos) {
+            s = "";
+            return;
+        }
+        size_t end = s.find_last_not_of(" \t\n\r");
+        s = s.substr(start, end - start + 1);
+    };
+
+    trim(mapsStr);
+    trim(playersStr);
+    trim(gamesStr);
+    trim(turnsStr);
+
+    // Parse maps (comma-separated)
+    std::vector<std::string> maps;
+    std::istringstream mapsStream(mapsStr);
+    std::string mapToken;
+    while (std::getline(mapsStream, mapToken, ',')) {
+        trim(mapToken);
+        if (!mapToken.empty()) {
+            maps.push_back(mapToken);
+        }
+    }
+
+    // Parse player strategies (comma-separated)
+    std::vector<std::string> strategies;
+    std::istringstream strategiesStream(playersStr);
+    std::string strategyToken;
+    while (std::getline(strategiesStream, strategyToken, ',')) {
+        trim(strategyToken);
+        if (!strategyToken.empty()) {
+            // Convert to lowercase for case-insensitive comparison
+            std::string lower = strategyToken;
+            std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
+            strategies.push_back(lower);
+        }
+    }
+
+    // Parse the number of games and max turns
+    int numGames = std::stoi(gamesStr);
+    int maxTurns = std::stoi(turnsStr);
+
+    // Display tournament configuration
+    std::cout << "\nTournament Configuration:\n";
+    std::cout << "Maps (" << maps.size() << "): ";
+    for (size_t i = 0; i < maps.size(); ++i) {
+        std::cout << maps[i];
+        if (i < maps.size() - 1) std::cout << ", ";
+    }
+    std::cout << "\n";
+
+    std::cout << "Player Strategies (" << strategies.size() << "): ";
+    for (size_t i = 0; i < strategies.size(); ++i) {
+        std::cout << strategies[i];
+        if (i < strategies.size() - 1) std::cout << ", ";
+    }
+    std::cout << "\n";
+
+    std::cout << "Number of Games per Map: " << numGames << "\n";
+    std::cout << "Max Turns per Game: " << maxTurns << "\n\n";
+
+    // Execute tournament: play G games on each of M maps
+    std::vector<std::vector<std::string>> results(maps.size(), std::vector<std::string>(numGames));
+
+    for (size_t mapIdx = 0; mapIdx < maps.size(); ++mapIdx) {
+        std::cout << "\n--- Playing games on map: " << maps[mapIdx] << " ---\n";
+
+        for (int gameIdx = 0; gameIdx < numGames; ++gameIdx) {
+            std::cout << "\nGame " << (gameIdx + 1) << " on " << maps[mapIdx] << "...\n";
+
+            std::string winner = playTournamentGame(maps[mapIdx], strategies, maxTurns);
+            results[mapIdx][gameIdx] = winner;
+
+            std::cout << "Result: " << winner << "\n";
+        }
+    }
+
+    // Log results
+    logTournamentResults(maps, strategies, numGames, maxTurns, results);
+
+    std::cout << "\n=== TOURNAMENT COMPLETE ===\n";
+}
+
+/**
+ * Play a single tournament game
+ * @param mapPath Path to the map file
+ * @param strategies List of player strategy names
+ * @param maxTurns Maximum number of turns before declaring a draw
+ * @return Winner's strategy name or "Draw"
+ */
+std::string GameEngine::playTournamentGame(const std::string& mapPath, const std::vector<std::string>& strategies, int maxTurns) {
+    // Enable automatic mode for tournament
+    setAutomaticMode(true);
+
+    // Load map
+    MapLoader loader;
+
+    // Try to find the map file
+    const fs::path base = fs::current_path() / "maps";
+    fs::path mapFile(mapPath);
+    if (!fs::exists(mapFile)) {
+        mapFile = base / mapPath;
+    }
+
+    auto loadedMap = loader.loadMap(mapFile.string());
+    if (!loadedMap) {
+        std::cout << "Error: Failed to load map " << mapPath << "\n";
+        return "Error";
+    }
+
+    if (!loadedMap->validate()) {
+        std::cout << "Error: Map " << mapPath << " is invalid\n";
+        return "Error";
+    }
+
+    map_ = std::move(loadedMap);
+
+    // Clear existing players
+    for (auto* p : players_) {
+        delete p;
+    }
+    players_.clear();
+
+    // Create players with specified strategies
+    for (size_t i = 0; i < strategies.size(); ++i) {
+        std::string strategyName = strategies[i];
+
+        // Capitalize first letter for display
+        std::string displayName = strategyName;
+        if (!displayName.empty()) {
+            displayName[0] = std::toupper(displayName[0]);
+        }
+
+        Player* player = new Player(displayName, nullptr);
+
+        // Assign strategy based on name
+        if (strategyName == "aggressive") {
+            player->setStrategy(new AggressivePlayerStrategy(player));
+        } else if (strategyName == "benevolent") {
+            player->setStrategy(new BenevolentPlayerStrategy(player));
+        } else if (strategyName == "neutral") {
+            player->setStrategy(new NeutralPlayerStrategy(player));
+        } else if (strategyName == "cheater") {
+            player->setStrategy(new CheaterPlayerStrategy(player));
+        } else {
+            std::cout << "Warning: Unknown strategy " << strategyName << ", using Neutral\n";
+            player->setStrategy(new NeutralPlayerStrategy(player));
+        }
+
+        players_.push_back(player);
+    }
+
+    // Distribute territories
+    std::vector<Territory*> allTerritories;
+    const auto& territories = map_->getTerritories();
+    allTerritories.reserve(territories.size());
+    for (const auto& t : territories) {
+        allTerritories.push_back(t.get());
+    }
+
+    std::mt19937 rng(std::random_device{}());
+    std::shuffle(allTerritories.begin(), allTerritories.end(), rng);
+
+    for (size_t i = 0; i < allTerritories.size(); ++i) {
+        Territory* terr = allTerritories[i];
+        Player* owner = players_[i % players_.size()];
+
+        if (Player* oldOwner = terr->getOwner(); oldOwner && oldOwner != owner) {
+            oldOwner->removeTerritory(terr);
+        }
+        if (!owner->ownsTerritory(terr)) {
+            owner->addTerritory(terr);
+        }
+        if (terr->getOwner() != owner) {
+            terr->setOwner(owner);
+        }
+
+        // Initialize with some armies
+        terr->setArmies(3);
+    }
+
+    // Initialize deck
+    if (deck_) {
+        delete deck_;
+    }
+    deck_ = new Deck();
+
+    // Give each player initial armies
+    for (auto* p : players_) {
+        p->setReinforcementPool(30);
+    }
+
+    // Play the game using mainGameLoop with turn limit
+    std::string winner = mainGameLoop(maxTurns);
+
+    // Disable automatic mode after tournament game
+    setAutomaticMode(false);
+
+    return winner;
+}
+
+/**
+ * Log tournament results to console and file
+ * @param maps List of map names
+ * @param strategies List of player strategy names
+ * @param numGames Number of games played per map
+ * @param maxTurns Maximum turns per game
+ * @param results 2D vector of results [mapIndex][gameIndex] -> winner name or "Draw"
+ */
+void GameEngine::logTournamentResults(const std::vector<std::string>& maps, const std::vector<std::string>& strategies, int numGames, int maxTurns, const std::vector<std::vector<std::string>>& results) {
+    std::cout << "\n========================================\n";
+    std::cout << "TOURNAMENT RESULTS\n";
+    std::cout << "========================================\n\n";
+
+    std::cout << "Tournament mode:\n";
+
+    // display maps
+    std::cout << "M: ";
+    for (size_t i = 0; i < maps.size(); ++i) {
+        std::cout << maps[i];
+        if (i < maps.size() - 1) std::cout << ", ";
+    }
+    std::cout << "\n";
+
+    // display player strategies
+    std::cout << "P: ";
+    for (size_t i = 0; i < strategies.size(); ++i) {
+        std::string strategyDisplay = strategies[i];
+        if (!strategyDisplay.empty()) {
+            strategyDisplay[0] = std::toupper(strategyDisplay[0]);
+        }
+        std::cout << strategyDisplay;
+        if (i < strategies.size() - 1) std::cout << ", ";
+    }
+    std::cout << "\n";
+
+    std::cout << "G: " << numGames << "\n";
+    std::cout << "D: " << maxTurns << "\n\n";
+
+    // display results table
+    std::cout << "Results:\n";
+
+    // header row
+    std::cout << "        ";
+    for (int g = 0; g < numGames; ++g) {
+        std::cout << "Game " << (g + 1) << "    ";
+    }
+    std::cout << "\n";
+
+    // results for each map
+    for (size_t m = 0; m < maps.size(); ++m) {
+        std::cout << maps[m] << "    ";
+        for (int g = 0; g < numGames; ++g) {
+            std::cout << results[m][g] << "    ";
+        }
+        std::cout << "\n";
+    }
+
+    std::cout << "\n========================================\n";
+
+    // also write to log file (gamelog.txt)
+    std::ofstream logFile("gamelog.txt", std::ios::app);
+    if (logFile.is_open()) {
+        logFile << "\n========================================\n";
+        logFile << "TOURNAMENT RESULTS\n";
+        logFile << "========================================\n\n";
+
+        logFile << "Tournament mode:\n";
+        logFile << "M: ";
+        for (size_t i = 0; i < maps.size(); ++i) {
+            logFile << maps[i];
+            if (i < maps.size() - 1) logFile << ", ";
+        }
+        logFile << "\n";
+
+        logFile << "P: ";
+        for (size_t i = 0; i < strategies.size(); ++i) {
+            std::string strategyDisplay = strategies[i];
+            if (!strategyDisplay.empty()) {
+                strategyDisplay[0] = std::toupper(strategyDisplay[0]);
+            }
+            logFile << strategyDisplay;
+            if (i < strategies.size() - 1) logFile << ", ";
+        }
+        logFile << "\n";
+
+        logFile << "G: " << numGames << "\n";
+        logFile << "D: " << maxTurns << "\n\n";
+
+        logFile << "Results:\n";
+        logFile << "        ";
+        for (int g = 0; g < numGames; ++g) {
+            logFile << "Game " << (g + 1) << "    ";
+        }
+        logFile << "\n";
+
+        for (size_t m = 0; m < maps.size(); ++m) {
+            logFile << maps[m] << "    ";
+            for (int g = 0; g < numGames; ++g) {
+                logFile << results[m][g] << "    ";
+            }
+            logFile << "\n";
+        }
+
+        logFile << "\n========================================\n";
+        logFile.close();
+    }
 }
