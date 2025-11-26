@@ -11,6 +11,7 @@
  * Default constructor
  */
 Player::Player() :
+  strategy(nullptr),
   conqueredThisTurn(new bool(false)),
   playerName(new std::string("Unknown Player")),
   territories(new std::vector<Territory*>()),
@@ -27,6 +28,7 @@ Player::Player() :
  * @param name The name of the player
  */
 Player::Player(const std::string& name, Deck* deck) :
+  strategy(nullptr),
   conqueredThisTurn(new bool(false)),
   playerName(new std::string(name)),
   territories(new std::vector<Territory*>()),
@@ -44,6 +46,7 @@ Player::Player(const std::string& name, Deck* deck) :
  * @param other The player to copy from
  */
 Player::Player(const Player& other) :
+  strategy(nullptr),
   conqueredThisTurn(new bool(other.conqueredThisTurn)),
   playerName(new std::string(*other.playerName)),
   territories(new std::vector<Territory*>(*other.territories)),
@@ -63,6 +66,7 @@ Player::Player(const Player& other) :
 Player& Player::operator=(const Player& other) {
   if (this != &other) {
       // Clean up existing resources
+      delete strategy;
       delete conqueredThisTurn;
       delete playerName;
       delete territories;
@@ -74,6 +78,7 @@ Player& Player::operator=(const Player& other) {
       delete gotAttackedThisTurn;
 
       // Copy from other player
+      strategy = nullptr;
       conqueredThisTurn = new bool(other.conqueredThisTurn); 
       playerName = new std::string(*other.playerName);
       territories = new std::vector<Territory*>(*other.territories);
@@ -91,6 +96,7 @@ Player& Player::operator=(const Player& other) {
  * Destructor
  */
 Player::~Player() {
+  delete strategy;
   delete conqueredThisTurn;
   delete playerName;
   delete territories;
