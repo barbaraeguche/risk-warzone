@@ -270,8 +270,8 @@ bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine
       std::cout << "Invalid max number of turns. Must be an integer.\n";
       return false;
     }
-    if (maxTurns < 10 || maxTurns > 200) {
-      std::cout << "Invalid max number of turns. Must be between 10 and 200.\n";
+    if (maxTurns < 10 || maxTurns > 50) {
+      std::cout << "Invalid max number of turns. Must be between 10 and 50.\n";
       return false;
     }
 
