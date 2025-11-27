@@ -82,6 +82,10 @@ void HumanPlayerStrategy::issueOrder() {
     for (auto t : this->player->getTerritories()) {
         std::cout << " - " << t->getName() << " (Armies: " << t->getArmies() << ")\n";
     }
+    std::cout << "Ennemy territories:\n";
+    for (auto t : this->toAttack()) {
+        std::cout << " - " << t->getName() << " (Armies: " << t->getArmies() << ")\n";
+    }
     std::cout << "Enter the name of the source territory for advance order (or 'skip' to skip): ";
     std::string sourceName;
     std::cin >> sourceName;
@@ -98,7 +102,7 @@ void HumanPlayerStrategy::issueOrder() {
             std::string targetName;
             std::cin >> targetName;
             Territory* target = nullptr;
-            for (auto& t : source->getAdjTerritories()) {
+            for (auto& t : this->toAttack()) {
                 if (t->getName() == targetName) {
                     target = t;
                     break;
@@ -133,8 +137,8 @@ void HumanPlayerStrategy::issueOrder() {
         int cardIndex;
         std::cin >> cardIndex;
         if (cardIndex >= 0 && cardIndex < hand->size()) {
-            this->player->playCard(cardIndex, this->player->getDeck());
             std::cout << "Played card: " << hand->getCards()->at(cardIndex)->getType() << "\n";
+            this->player->playCard(cardIndex, this->player->getDeck());
         } else if (cardIndex != -1) {
             std::cout << "Invalid card index.\n";
         }
