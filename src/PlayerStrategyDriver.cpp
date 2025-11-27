@@ -364,7 +364,12 @@ void testHumanVsComputerStrategies() {
     std::cout << "Human player requires user input for decisions\n";
     humanPlayer->displayInfo();
     
-    //TODO: Simulate user interaction for testing purposes
+    std::cout << "\nHuman player issuing orders (user input required):\n";
+    while (*(humanPlayer->getCanIssueOrderFlag())) {
+        humanPlayer->issueOrder();
+        std::cout << "Human player issued " << static_cast<int>(humanPlayer->getOrders()->orders->size())
+              << " orders based on user input\n";
+    }
     
     // Switch human to computer strategy for automated testing
     std::cout << "\n--- Converting Human to Computer Strategy for Testing ---\n";
@@ -405,12 +410,6 @@ void testPlayerStrategies() {
         std::cout << "\n========================================\n";
         std::cout << "    ALL TESTS COMPLETED SUCCESSFULLY\n";
         std::cout << "========================================\n\n";
-        
-        std::cout << "Summary:\n";
-        std::cout << "Test 1: Different players with different strategies show different behaviors\n";
-        std::cout << "Test 2: Player strategies can be changed dynamically during play\n";
-        std::cout << "Test 3: Human and computer players both use Strategy pattern\n";
-        std::cout << "\nAll requirements demonstrated successfully!\n\n";
         
     } catch (const std::exception& e) {
         std::cerr << "\nTEST FAILED WITH EXCEPTION: " << e.what() << "\n";
