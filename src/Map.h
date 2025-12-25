@@ -1,13 +1,10 @@
 #pragma once
-
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
-
-// forward declarations
 class Player;
 class Continent;
 
@@ -24,7 +21,6 @@ private:
   Continent* continent;                    // the continent which the territory belongs to
 
 public:
-  // constructors
   Territory();
   Territory(const std::string& name, int id);
   Territory(const Territory& other); // copy constructor
@@ -68,10 +64,9 @@ private:
   std::string* name;
   int* id;
   int* bonus;
-  std::vector<Territory *>* territories; // territories continents in this continent
+  std::vector<Territory*>* territories; // territories within this continent
 
 public:
-  // constructors
   Continent();
   Continent(const std::string& name, int id, int bonus);
   Continent(const Continent& other); // copy constructor
@@ -85,9 +80,9 @@ public:
   const std::vector<Territory*>& getTerritories() const;
 
   // setters
-  void setName(const std::string& newName) const;
-  void setId(int newId) const;
-  void setControlValue(int newBonus) const;
+  void setName(const std::string& newName);
+  void setId(int newId);
+  void setBonus(int newBonus);
 
   // territory management
   bool containsTerritory(const Territory* terr) const;
@@ -115,11 +110,10 @@ private:
   std::vector<std::unique_ptr<Territory>>* territories;
   std::vector<std::unique_ptr<Continent>>* continents;
   std::unordered_map<std::string, Territory*>* territoryNameMap;
-  std::unordered_map<int, Territory *>* territoryIdMap;
-  std::unordered_map<std::string, Continent *>* continentNameMap;
+  std::unordered_map<int, Territory*>* territoryIdMap;
+  std::unordered_map<std::string, Continent*>* continentNameMap;
 
 public:
-  // constructors
   Map();
   Map(const std::string& name);
   Map(const Map& other); // copy constructor
@@ -166,7 +160,6 @@ public:
 
 private:
   // helpers
-  static void dfsVisit(Territory* territory, std::unordered_set<Territory*>& visited);
   void rebuildMaps();
 };
 
@@ -176,17 +169,13 @@ private:
  */
 class MapLoader {
 private:
-  enum class ParseState {
-    NONE,
-    TERRITORIES,
-    CONTINENTS,
-    MAP_INFO
-  };
+  enum class ParseState { NONE, TERRITORIES, CONTINENTS, MAP_INFO };
+
+  ParseState currentState;
+  std::unordered_map<std::string, std::vector<std::string>>* territoryAdjacency;
 
 public:
-  // constructors
   MapLoader();
-
   MapLoader(const MapLoader& other); // copy constructor
   MapLoader& operator=(const MapLoader& other); // assignment operator
   ~MapLoader(); // destructor
@@ -194,10 +183,11 @@ public:
   // map loading
   std::unique_ptr<Map> loadMap(const std::string& filename);
 
-  bool canReadFile(const std::string& filename);
+  // validation
+  static bool canReadFile(const std::string& filename);
 
   // utility
-  bool operator==(MapLoader* other) const;
+  bool operator==(const MapLoader* other) const;
 
   // stream insertion operator
   friend std::ostream& operator<<(std::ostream& os, const MapLoader& mapLoader);
@@ -205,25 +195,14 @@ public:
 private:
   // helpers
   static std::string trim(const std::string& str);
-
   static std::vector<std::string> split(const std::string& str, char delimiter);
-
   static bool parseMapSection(const Map* map, const std::string& line);
-
   static bool parseContinentSection(Map* map, const std::string& line);
-
   bool parseTerritorySection(Map* map, const std::string& line);
-
-  static void linkTerritoryAdjacencies(const Map* map, Territory* territory,
-                                       const std::vector<std::string>& adjacentNames);
-
-  // state variables
-  ParseState currentState;
-  std::unordered_map<std::string, std::vector<std::string> >* territoryAdjacencies;
+  static void linkTerritoryAdjacency(
+    const Map* map, Territory* territory, const std::vector<std::string>& adjacentNames
+  );
 };
 
 // free function
 void testLoadMaps();
-
-// utility functions
-Territory* chooseTerritory(const std::vector<Territory*>& territories);

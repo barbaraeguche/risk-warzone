@@ -1,39 +1,38 @@
 #include <iostream>
 
 void testLoadMaps(); 
-void testPlayers();
-void testOrderExecution();
-void testCards();
-void testGameStates();
+// void testPlayers();
+// void testOrderExecution();
+// void testCards();
+// void testGameStates();
 
-void testCommandProcessor();
-void testStartupPhase();
-void testOrdersLists();
-void testMainGameLoop();
-void automaticTestMainGameLoop();
-void testLoggingObserver();
+// void testCommandProcessor();
+// void testStartupPhase();
+// void testOrdersLists();
+// void testMainGameLoop();
+// void automaticTestMainGameLoop();
+// void testLoggingObserver();
 
-void testPlayerStrategies();
-void testTournament();
+// void testPlayerStrategies();
+// void testTournament();
 
 
 /**
- * The Main driver function that calls all test functions for each part
- * This demonstrates the execution of all parts of the assignment
+ * The main driver calls the test functions for each part which
+ * demonstrates the execution of all parts of the assignment.
  */
 int main() {
-  std::cout << "=== COMP 345 - Assignment (1-3) - Team Project ===" << std::endl;
-  std::cout << "Advanced Program Design with C++" << std::endl;
-  std::cout << "Warzone Game Implementation" << std::endl;
-  std::cout << "\nRunning all test functions for each part..." << std::endl;
+  std::cout << "=== COMP 345 - Risk Warzone, A Team Project ===" << std::endl;
+  std::cout << "Advanced Program Design, C++" << std::endl;
+  std::cout << "\nRunning the test functions for each part..." << std::endl;
 
   try {
-    // // Part 1: Map Testing
-    // std::cout << "\n" << std::string(50, '=') << std::endl;
-    // std::cout << "PART 1: MAP TESTING" << std::endl;
-    // std::cout << std::string(50, '=') << std::endl;
-    // testLoadMaps();
-    //
+    // Part 1: Map Testing
+    std::cout << "\n" << std::string(50, '=') << std::endl;
+    std::cout << "PART 1: MAP TESTING" << std::endl;
+    std::cout << std::string(50, '=') << std::endl;
+    testLoadMaps();
+
     // // Part 2: Player Testing
     // std::cout << "\n" << std::string(50, '=') << std::endl;
     // std::cout << "PART 2: PLAYER TESTING" << std::endl;
@@ -91,20 +90,20 @@ int main() {
     // testLoggingObserver();
 
 
-    // Part 11: Player Strategy Testing
-    std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "PART 11: PLAYER STRATEGY TESTING" << std::endl;
-    std::cout << std::string(50, '=') << std::endl;
-    testPlayerStrategies();
+    // // Part 11: Player Strategy Testing
+    // std::cout << "\n" << std::string(50, '=') << std::endl;
+    // std::cout << "PART 11: PLAYER STRATEGY TESTING" << std::endl;
+    // std::cout << std::string(50, '=') << std::endl;
+    // testPlayerStrategies();
+    //
+    // // Part 12: Tournament Mode Testing
+    // std::cout << "\n" << std::string(50, '=') << std::endl;
+    // std::cout << "PART 12: TOURNAMENT MODE TESTING" << std::endl;
+    // std::cout << std::string(50, '=') << std::endl;
+    // testTournament();
 
-    // Part 12: Tournament Mode Testing
     std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "PART 12: TOURNAMENT MODE TESTING" << std::endl;
-    std::cout << std::string(50, '=') << std::endl;
-    testTournament();
-
-    std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "ALL TESTS COMPLETED SUCCESSFULLY" << std::endl;
+    std::cout << "ALL WARZONE TESTS COMPLETED SUCCESSFULLY" << std::endl;
     std::cout << std::string(50, '=') << std::endl;
   } catch (const std::exception& e) {
     std::cerr << "Error during testing: " << e.what() << std::endl;

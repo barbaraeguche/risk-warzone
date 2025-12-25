@@ -21,6 +21,6 @@ cmake --build build
 - run a1
 
 ```bash
-./build/Debug/comp_345  # windows
-./build/bin/comp_345   # mac
+./build/Debug/risk_warzone  # windows
+./build/bin/risk_warzone   # mac
 ```
