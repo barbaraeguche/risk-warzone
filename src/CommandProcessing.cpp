@@ -280,24 +280,22 @@ bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine
   }
 
   // validate based on current state according to assignment state diagram
-  if (currState == "startup" && baseCmd == "start") return true;
-  if (currState == "start" && baseCmd == "loadmap") return true;
-  if (currState == "map loaded" && (baseCmd == "loadmap" || baseCmd == "validatemap")) return true;
-  if (currState == "map validated" && baseCmd == "addplayer") return true;
-  if (currState == "players added" && (baseCmd == "addplayer" || baseCmd == "gamestart")) return true;
-  if (currState == "assign reinforcement" && baseCmd == "issueorder") return true;
-  if (currState == "issue orders" && (baseCmd == "issueorder" || baseCmd == "endissueorders")) return true;
-  if (currState == "execute orders" && (baseCmd == "execorder" || baseCmd == "endexecorders" || baseCmd == "win")) return true;
-  if (currState == "win" && (baseCmd == "replay" || baseCmd == "quit")) return true;
+  if (currState == GamePhases::STARTUP && baseCmd == GameStates::START) return true;
+  if (currState == GameStates::START && baseCmd == GameTransitions::LOADMAP) return true;
+  if (currState == GameStates::MAP_LOADED && (baseCmd == GameTransitions::LOADMAP || baseCmd == GameTransitions::VALIDATEMAP)) return true;
+  if (currState == GameStates::MAP_VALIDATED && baseCmd == GameTransitions::ADDPLAYER) return true;
+  if (currState == GameStates::PLAYERS_ADDED && (baseCmd == GameTransitions::ADDPLAYER || baseCmd == "gamestart")) return true;
+  if (currState == GameStates::ASSIGN_REINFORCEMENT && baseCmd == GameTransitions::ISSUEORDER) return true;
+  if (currState == GameStates::ISSUE_ORDERS && (baseCmd == GameTransitions::ISSUEORDER || baseCmd == GameTransitions::ENDISSUEORDERS)) return true;
+  if (currState == GameStates::EXECUTE_ORDERS && (baseCmd == GameTransitions::EXECORDER || baseCmd == GameTransitions::ENDEXECORDERS || baseCmd == GameStates::WIN)) return true;
+  if (currState == GameStates::WIN && (baseCmd == GameTransitions::REPLAY || baseCmd == GameTransitions::QUIT)) return true;
   if (baseCmd == "help") return true;
 
   return false;
 }
 
 std::string CommandProcessor::stringToLog() const {
-  if (lastSavedCommand) {
-    return "CommandProcessor saved: " + lastSavedCommand->getCommand();
-  }
+  if (lastSavedCommand) return "CommandProcessor saved: " + lastSavedCommand->getCommand();
   return "CommandProcessor has no commands saved.";
 }
 
