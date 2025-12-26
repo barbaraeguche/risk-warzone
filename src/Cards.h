@@ -1,159 +1,184 @@
 #pragma once
 #include <iostream>
-#include <vector>
 #include <string>
-#include <cstdlib>
-#include <ctime>
+#include <vector>
 
-namespace CARD_TYPES {
-    constexpr const char* BOMB = "bomb";
-    constexpr const char* REINFORCEMENT = "reinforcement";
-    constexpr const char* BLOCKADE = "blockade";
-    constexpr const char* AIRLIFT = "airlift";
-    constexpr const char* DIPLOMACY = "diplomacy";
-}
-
+class Territory;
 class Player;
 class OrdersList;
-class Deck; // Forward declaration
+class Deck;
 
 /**
  * Abstract base class for all card types.
  */
 class Card {
 public:
-    // Copy constructor
-    Card(const Card& other);
+  Card(const Card& other); // copy constructor
+  Card& operator=(const Card& other); // assignment operator
+  virtual ~Card(); // destructor
 
-    // Assignment operator
-    Card& operator=(const Card& other);
+  // getters
+  virtual std::string getType() const = 0;
 
-    // Destructor
-    virtual ~Card();
+  // utility
+  virtual void play(Player* player, OrdersList* ordersList, Deck* deck) = 0;
 
-    // Returns card type
-    virtual std::string getType() const = 0;
-
-    // Play the card - creates order and returns card to deck
-    virtual void play(Player* player, OrdersList* ordersList, Deck* deck) = 0;
-
-    // Output operator
-    friend std::ostream& operator<<(std::ostream& out, const Card& c);
+  // stream insertion operator
+  friend std::ostream& operator<<(std::ostream& os, const Card& crd);
 
 protected:
-    // Protected constructor since this is abstract
-    Card();
+  Card(); // protected constructor since this is abstract
 };
 
-// Derived Card Types
+
 class BombCard : public Card {
 public:
-    BombCard();
-    BombCard(const BombCard& other);
-    BombCard& operator=(const BombCard& other);
-    ~BombCard() override;
+  BombCard();
+  BombCard(const BombCard& other); // copy constructor
+  BombCard& operator=(const BombCard& other); // assignment operator
+  ~BombCard() override; // destructor
 
-    std::string getType() const override;
-    void play(Player* player, OrdersList* ordersList, Deck* deck) override;
+  // getters
+  std::string getType() const override;
+
+  // utility
+  void play(Player* player, OrdersList* ordersList, Deck* deck) override;
 };
+
 
 class ReinforcementCard : public Card {
 public:
-    ReinforcementCard();
-    ReinforcementCard(const ReinforcementCard& other);
-    ReinforcementCard& operator=(const ReinforcementCard& other);
-    ~ReinforcementCard() override;
+  ReinforcementCard();
+  ReinforcementCard(const ReinforcementCard& other); // copy constructor
+  ReinforcementCard& operator=(const ReinforcementCard& other); // assignment operator
+  ~ReinforcementCard() override; // destructor
 
-    std::string getType() const override;
-    void play(Player* player, OrdersList* ordersList, Deck* deck) override;
+  // getters
+  std::string getType() const override;
+
+  // utility
+  void play(Player* player, OrdersList* ordersList, Deck* deck) override;
 };
+
 
 class BlockadeCard : public Card {
 public:
-    BlockadeCard();
-    BlockadeCard(const BlockadeCard& other);
-    BlockadeCard& operator=(const BlockadeCard& other);
-    ~BlockadeCard() override;
+  BlockadeCard();
+  BlockadeCard(const BlockadeCard& other); // copy constructor
+  BlockadeCard& operator=(const BlockadeCard& other); // assignment operator
+  ~BlockadeCard() override; // destructor
 
-    std::string getType() const override;
-    void play(Player* player, OrdersList* ordersList, Deck* deck) override;
+  // getters
+  std::string getType() const override;
+
+  // utility
+  void play(Player* player, OrdersList* ordersList, Deck* deck) override;
 };
+
 
 class AirliftCard : public Card {
 public:
-    AirliftCard();
-    AirliftCard(const AirliftCard& other);
-    AirliftCard& operator=(const AirliftCard& other);
-    ~AirliftCard() override;
+  AirliftCard();
+  AirliftCard(const AirliftCard& other); // copy constructor
+  AirliftCard& operator=(const AirliftCard& other); // assignment operator
+  ~AirliftCard() override; // destructor
 
-    std::string getType() const override;
-    void play(Player* player, OrdersList* ordersList, Deck* deck) override;
+  // getters
+  std::string getType() const override;
+
+  // utility
+  void play(Player* player, OrdersList* ordersList, Deck* deck) override;
 };
+
 
 class DiplomacyCard : public Card {
 public:
-    DiplomacyCard();
-    DiplomacyCard(const DiplomacyCard& other);
-    DiplomacyCard& operator=(const DiplomacyCard& other);
-    ~DiplomacyCard() override;
+  DiplomacyCard();
+  DiplomacyCard(const DiplomacyCard& other); // copy constructor
+  DiplomacyCard& operator=(const DiplomacyCard& other); // assignment operator
+  ~DiplomacyCard() override; // destructor
 
-    std::string getType() const override;
-    void play(Player* player, OrdersList* ordersList, Deck* deck) override;
+  // getters
+  std::string getType() const override;
+
+  // utility
+  void play(Player* player, OrdersList* ordersList, Deck* deck) override;
 };
 
-/**
- * Represents the deck of cards.
- */
-Card* cloneCard(const Card* card);
 
 class Deck {
 private:
-    std::vector<Card*>* cards;
-    void clearCards();
-    void copyCardsFrom(const std::vector<Card*>* sourceCards);
+  std::vector<Card*>* deckCards;
 
 public:
-    Deck();
-    Deck(const Deck& other);
-    Deck& operator=(const Deck& other);
-    ~Deck();
+  Deck();
+  Deck(const Deck& other); // copy constructor
+  Deck& operator=(const Deck& other); // assignment operator
+  ~Deck(); // destructor
 
-    Card* draw();
-    void returnCard(Card* card);
-    void printDeck() const;
+  // card management
+  void addCard(Card* card);
 
-    // Stream insertion operator
-    friend std::ostream& operator<<(std::ostream& out, const Deck& deck);
+  // utility
+  Card* draw();
+  void displayInfo() const;
+
+  // stream insertion operator
+  friend std::ostream& operator<<(std::ostream& os, const Deck& dec);
+
+private:
+  // utility
+  void clearCards();
+  void copyCardsFrom(const std::vector<Card*>* sourceCards);
 };
+
 
 /**
  * Represents a player's hand of cards.
  */
 class Hand {
 private:
-    std::vector<Card*>* handCards;
-    void clearCards();
-    void copyCardsFrom(const std::vector<Card*>* sourceCards);
+  std::vector<Card*>* handCards;
 
 public:
-    Hand();
-    Hand(const Hand& other);
-    Hand& operator=(const Hand& other);
-    ~Hand();
+  Hand();
+  Hand(const Hand& other); // copy constructor
+  Hand& operator=(const Hand& other); // assignment operator
+  ~Hand(); // destructor
 
-    void addCard(Card* card);
-    void playCard(int index, Player* player, OrdersList* ordersList, Deck* deck);
-    void playAll(Player* player, OrdersList* ordersList, Deck* deck);
-    void printHand() const;
-    int size() const;
-    const std::vector<Card*>* getCards() const {
-        return handCards;
-    }
+  // getters
+  const std::vector<Card*>* getCards() const;
 
-    bool empty() const {
-        return !handCards || handCards->empty();
-    }
+  // card management
+  void addCard(Card* card);
+  void playCard(int index, Player* player, OrdersList* ordersList, Deck* deck);
+  void playAll(Player* player, OrdersList* ordersList, Deck* deck);
 
-    // Stream insertion operator
-    friend std::ostream& operator<<(std::ostream& out, const Hand& hand);
+  // utility
+  int size() const;
+  void displayInfo() const;
+  bool empty() const;
+
+  // stream insertion operator
+  friend std::ostream& operator<<(std::ostream& os, const Hand& hnd);
+
+private:
+  // utility
+  void clearCards();
+  void copyCardsFrom(const std::vector<Card*>* sourceCards);
 };
+
+// namespaces
+namespace CARD_TYPES {
+  constexpr auto BOMB = "bomb";
+  constexpr auto REINFORCEMENT = "reinforcement";
+  constexpr auto BLOCKADE = "blockade";
+  constexpr auto AIRLIFT = "airlift";
+  constexpr auto DIPLOMACY = "diplomacy";
+}
+
+// helpers
+Card* cloneCard(const Card* card);
+
+// utility
+Territory* chooseTerritory(const std::vector<Territory*>& territories);
