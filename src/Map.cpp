@@ -12,7 +12,6 @@
 
 
 // ==================== Territory Class Implementation ====================
-
 Territory::Territory() :
   name(new std::string("")),
   id(new int(0)),
@@ -183,7 +182,6 @@ std::ostream& operator<<(std::ostream& os, const Territory& terr) {
 
 
 // ==================== Continent Class Implementation ====================
-
 Continent::Continent() :
   name(new std::string("")),
   id(new int(0)),
@@ -335,7 +333,6 @@ std::ostream& operator<<(std::ostream& os, const Continent& cont) {
 
 
 // ==================== Map Class Implementation ====================
-
 Map::Map() :
   name(new std::string("Warzone")),
   territories(new std::vector<std::unique_ptr<Territory>>()),
@@ -696,7 +693,6 @@ std::ostream& operator<<(std::ostream& os, const Map& map) {
 
 
 // ==================== MapLoader Class Implementation ====================
-
 MapLoader::MapLoader() :
   currentState(ParseState::NONE),
   territoryAdjacency(new std::unordered_map<std::string, std::vector<std::string>>()) {}

@@ -1,19 +1,19 @@
 #include <iostream>
 
-void testLoadMaps(); 
-// void testPlayers();
+void testLoadMaps();
+void testPlayers();
 // void testOrderExecution();
 // void testCards();
 // void testGameStates();
 
-// void testCommandProcessor();
+void testCommandProcessor();
 // void testStartupPhase();
 // void testOrdersLists();
 // void testMainGameLoop();
 // void automaticTestMainGameLoop();
 // void testLoggingObserver();
 
-// void testPlayerStrategies();
+void testPlayerStrategies();
 // void testTournament();
 
 
@@ -27,18 +27,18 @@ int main() {
   std::cout << "\nRunning the test functions for each part..." << std::endl;
 
   try {
-    // Part 1: Map Testing
-    std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "PART 1: MAP TESTING" << std::endl;
-    std::cout << std::string(50, '=') << std::endl;
-    testLoadMaps();
+    // // Part 1: Map Testing
+    // std::cout << "\n" << std::string(50, '=') << std::endl;
+    // std::cout << "PART 1: MAP TESTING" << std::endl;
+    // std::cout << std::string(50, '=') << std::endl;
+    // testLoadMaps();
 
     // // Part 2: Player Testing
     // std::cout << "\n" << std::string(50, '=') << std::endl;
     // std::cout << "PART 2: PLAYER TESTING" << std::endl;
     // std::cout << std::string(50, '=') << std::endl;
     // testPlayers();
-    //
+
     // // Part 3: Orders Testing
     // std::cout << "\n" << std::string(50, '=') << std::endl;
     // std::cout << "PART 3: ORDERS TESTING" << std::endl;
@@ -64,7 +64,7 @@ int main() {
     // std::cout << "PART 6: COMMAND PROCESSOR TESTING" << std::endl;
     // std::cout << std::string(50, '=') << std::endl;
     // testCommandProcessor();
-    //
+
     // // Part 7: startup phase Testing
     // std::cout << "\n" << std::string(50, '=') << std::endl;
     // std::cout << "PART 7: STARTUP PHASE TESTING" << std::endl;
@@ -95,7 +95,7 @@ int main() {
     // std::cout << "PART 11: PLAYER STRATEGY TESTING" << std::endl;
     // std::cout << std::string(50, '=') << std::endl;
     // testPlayerStrategies();
-    //
+
     // // Part 12: Tournament Mode Testing
     // std::cout << "\n" << std::string(50, '=') << std::endl;
     // std::cout << "PART 12: TOURNAMENT MODE TESTING" << std::endl;

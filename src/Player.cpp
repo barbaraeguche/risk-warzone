@@ -9,7 +9,6 @@
 
 
 // ==================== Player Class Implementation ====================
-
 Player::Player() :
   name(new std::string("Default")),
   territories(new std::vector<Territory*>()),
