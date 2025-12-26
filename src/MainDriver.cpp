@@ -3,7 +3,7 @@
 void testLoadMaps();
 void testPlayers();
 // void testOrderExecution();
-// void testCards();
+void testCards();
 // void testGameStates();
 
 void testCommandProcessor();
@@ -45,13 +45,13 @@ int main() {
     // std::cout << std::string(50, '=') << std::endl;
     // testOrdersLists();
     // testOrderExecution();
-    //
-    // // Part 4: Cards Testing
-    // std::cout << "\n" << std::string(50, '=') << std::endl;
-    // std::cout << "PART 4: CARDS TESTING" << std::endl;
-    // std::cout << std::string(50, '=') << std::endl;
-    // testCards();
-    //
+
+    // Part 4: Cards Testing
+    std::cout << "\n" << std::string(50, '=') << std::endl;
+    std::cout << "PART 4: CARDS TESTING" << std::endl;
+    std::cout << std::string(50, '=') << std::endl;
+    testCards();
+
     // // Part 5: Game Engine Testing
     // std::cout << "\n" << std::string(50, '=') << std::endl;
     // std::cout << "PART 5: GAME ENGINE TESTING" << std::endl;
@@ -70,19 +70,19 @@ int main() {
     // std::cout << "PART 7: STARTUP PHASE TESTING" << std::endl;
     // std::cout << std::string(50, '=') << std::endl;
     // testStartupPhase();
-    //
+
     // // Part 8: Main Game Loop Testing with GameEngine
     // std::cout << "\n" << std::string(50, '=') << std::endl;
     // std::cout << "PART 8: MAIN GAME LOOP TESTING" << std::endl;
     // std::cout << std::string(50, '=') << std::endl;
     // automaticTestMainGameLoop();
-    //
+
     // // Part 9: Testing order execution
     // std::cout << "\n" << std::string(50, '=') << std::endl;
     // std::cout << "PART 9: ORDER EXECUTION TESTING" << std::endl;
     // std::cout << std::string(50, '=') << std::endl;
     // testOrderExecution();
-    //
+
     // // Part 10: logging observer Testing
     // std::cout << "\n" << std::string(50, '=') << std::endl;
     // std::cout << "PART 10: LOGGING OBSERVER TESTING" << std::endl;
