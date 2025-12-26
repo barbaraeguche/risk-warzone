@@ -57,8 +57,7 @@ void Command::saveEffect(const std::string& eff) {
 }
 
 std::string Command::stringToLog() const {
-  return "Command: " + (command ? *command : "<Unknown>") +
-         " Effect: " + (effect ? *effect : "<None>");
+  return "Command: " + (command ? *command : "<Unknown>") + " Effect: " + (effect ? *effect : "<None>");
 }
 
 // --- STREAM INSERTION ---
@@ -83,18 +82,14 @@ CommandProcessor::CommandProcessor(const CommandProcessor& other) :
   for (const Command* cmd : *other.commands) {
     commands->push_back(new Command(*cmd));
   }
-  if (!commands->empty()) {
-    lastSavedCommand = commands->back();
-  }
+  if (!commands->empty()) lastSavedCommand = commands->back();
 }
 
 CommandProcessor& CommandProcessor::operator=(const CommandProcessor& other) {
   if (this != &other) {
     Subject::operator=(other);
     // delete old objects
-    for (const Command* cmd : *commands) {
-      delete cmd;
-    }
+    for (const Command* cmd : *commands) { delete cmd; }
     commands->clear();
 
     // deep copy commands
@@ -107,10 +102,9 @@ CommandProcessor& CommandProcessor::operator=(const CommandProcessor& other) {
 }
 
 CommandProcessor::~CommandProcessor() {
-  for (const Command* cmd : *commands) {
-    delete cmd;
-  }
+  for (const Command* cmd : *commands) { delete cmd; }
   delete commands;
+
   commands = nullptr;
   lastSavedCommand = nullptr;
 }

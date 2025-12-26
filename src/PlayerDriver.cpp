@@ -169,16 +169,16 @@ void testPlayers() {
   std::cout << "\n--- Test 7: Card Playing ---" << std::endl;
 
   std::cout << "Player 1 hand before playing cards:" << std::endl;
-  player1->getHand()->printHand();
+  player1->getHand()->displayInfo();
 
   // play all cards in hand
   player1->getHand()->playAll(player1, player1->getOrders(), deck);
 
   std::cout << "Player 1 hand after playing all cards:" << std::endl;
-  player1->getHand()->printHand();
+  player1->getHand()->displayInfo();
 
   std::cout << "Deck after playing cards:" << std::endl;
-  deck->printDeck();
+  deck->displayInfo();
 
   // ==================== Test 8: Territory Ownership ====================
   std::cout << "\n--- Test 8: Territory Ownership ---" << std::endl;

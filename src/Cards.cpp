@@ -60,7 +60,7 @@ void BombCard::play(Player* player, OrdersList* ordersList, Deck* deck) {
   }
 
   Territory* target = chooseTerritory(attackable);
-  if (target) ordersList->add(new OrderBomb(target, player));
+  if (target) ordersList->addOrder(new OrderBomb(player, target));
   if (deck) deck->addCard(new BombCard());
 }
 
@@ -117,7 +117,7 @@ void BlockadeCard::play(Player* player, OrdersList* ordersList, Deck* deck) {
 
   if (target) {
     Player* neutralPlayer = GameEngine::getNeutralPlayer();
-    ordersList->add(new OrderBlockade(neutralPlayer, player, target));
+    ordersList->addOrder(new OrderBlockade(neutralPlayer, player, target));
   }
 
   if (deck) deck->addCard(new BlockadeCard());
@@ -152,7 +152,9 @@ void AirliftCard::play(Player* player, OrdersList* ordersList, Deck* deck) {
 
   if (source && target && source != target) {
     const int armies = source->getArmies() / 2;
-    if (armies > 0) ordersList->add(new OrderAirlift(player, source, target, new int(armies)));
+    if (armies > 0) {
+      ordersList->addOrder(new OrderAirlift(player, source, target, new int(armies)));
+    }
   }
 
   if (deck) deck->addCard(new AirliftCard());
@@ -188,7 +190,7 @@ void DiplomacyCard::play(Player* player, OrdersList* ordersList, Deck* deck) {
   }
 
   Player* targetPlayer = player->choosePlayer(otherPlayers);
-  if (targetPlayer) ordersList->add(new OrderNegotiate(player, targetPlayer));
+  if (targetPlayer) ordersList->addOrder(new OrderNegotiate(targetPlayer, player));
   if (deck) deck->addCard(new DiplomacyCard());
 }
 
@@ -363,7 +365,7 @@ Card* cloneCard(const Card* card) {
 }
 
 
-// ==================== Class Helpers Implementation ====================
+// ==================== Class Utility Implementation ====================
 Territory* chooseTerritory(const std::vector<Territory*>& territories) {
   if (territories.empty()) return nullptr;
 

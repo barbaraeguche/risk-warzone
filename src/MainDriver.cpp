@@ -2,15 +2,15 @@
 
 void testLoadMaps();
 void testPlayers();
-// void testOrderExecution();
+void testOrdersLists();
 void testCards();
 // void testGameStates();
 
 void testCommandProcessor();
 // void testStartupPhase();
-// void testOrdersLists();
 // void testMainGameLoop();
 // void automaticTestMainGameLoop();
+void testOrderExecution();
 // void testLoggingObserver();
 
 void testPlayerStrategies();
@@ -44,13 +44,12 @@ int main() {
     // std::cout << "PART 3: ORDERS TESTING" << std::endl;
     // std::cout << std::string(50, '=') << std::endl;
     // testOrdersLists();
-    // testOrderExecution();
 
-    // Part 4: Cards Testing
-    std::cout << "\n" << std::string(50, '=') << std::endl;
-    std::cout << "PART 4: CARDS TESTING" << std::endl;
-    std::cout << std::string(50, '=') << std::endl;
-    testCards();
+    // // Part 4: Cards Testing
+    // std::cout << "\n" << std::string(50, '=') << std::endl;
+    // std::cout << "PART 4: CARDS TESTING" << std::endl;
+    // std::cout << std::string(50, '=') << std::endl;
+    // testCards();
 
     // // Part 5: Game Engine Testing
     // std::cout << "\n" << std::string(50, '=') << std::endl;

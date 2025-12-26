@@ -248,7 +248,7 @@ void Player::issueOrder(bool deployPhase, bool& advanceIssued, Deck* gameDeck) {
     if (!canAdvance) {
       if (!hand->empty()) {
         std::cout << "Player " << getName() << "'s cards:\n";
-        hand->printHand();
+        hand->displayInfo();
 
         int cardIndex = -2;
         while (cardIndex < -1 || cardIndex >= hand->size()) {
@@ -293,12 +293,10 @@ void Player::issueOrder(bool deployPhase, bool& advanceIssued, Deck* gameDeck) {
       }
     }
 
-    int sourceIndex = -1;
     Territory *source = nullptr, *target = nullptr;
-
     while (true) { // loop until a valid source + target is chosen
       // pick source territory
-      sourceIndex = -1;
+      int sourceIndex = -1;
       while (sourceIndex < 0 || sourceIndex >= territories->size() || territories->at(sourceIndex)->getArmies() <= 1) {
         std::cout << "Choose source territory (index, must have >1 army): ";
         std::cin >> sourceIndex;
@@ -368,7 +366,7 @@ void Player::issueOrder(bool deployPhase, bool& advanceIssued, Deck* gameDeck) {
 
     if (!hand->empty()) {
       std::cout << "Your cards:\n";
-      hand->printHand();
+      hand->displayInfo();
 
       int cardIndex = -2;
       while (cardIndex < -1 || cardIndex >= hand->size()) {
@@ -383,31 +381,31 @@ void Player::issueOrder(bool deployPhase, bool& advanceIssued, Deck* gameDeck) {
 }
 
 void Player::issueDeployOrder(Territory* target, int armies) {
-  ordersList->add(new OrderDeploy(this, target, new int(armies)));
+  ordersList->addOrder(new OrderDeploy(this, target, new int(armies)));
 }
 
 void Player::issueAdvanceOrder(Territory* source, Territory* target, int armies) {
-  ordersList->add(new OrderAdvance(this, source, target, new int(armies)));
+  ordersList->addOrder(new OrderAdvance(this, source, target, new int(armies)));
 }
 
 void Player::issueAirliftOrder(Territory* source, Territory* target, int armies) {
-  ordersList->add(new OrderAirlift(this, source, target, new int(armies)));
+  ordersList->addOrder(new OrderAirlift(this, source, target, new int(armies)));
 }
 
 void Player::issueBombOrder(Territory* target) {
-  ordersList->add(new OrderBomb(target, this));
+  ordersList->addOrder(new OrderBomb(this, target));
 }
 
 void Player::issueBlockadeOrder(Player* player, Territory* target) {
-  ordersList->add(new OrderBlockade(player, this, target));
+  ordersList->addOrder(new OrderBlockade(player, this, target));
 }
 
 void Player::issueNegotiateOrder(Player* player) {
-  ordersList->add(new OrderNegotiate(this, player));
+  ordersList->addOrder(new OrderNegotiate(player, this));
 }
 
 void Player::issueCheatOrder() {
-  ordersList->add(new OrderCheat(this));
+  ordersList->addOrder(new OrderCheat(this));
 }
 
 // --- STRATEGY MANAGEMENT ---

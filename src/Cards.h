@@ -177,6 +177,9 @@ namespace CARD_TYPES {
   constexpr auto DIPLOMACY = "diplomacy";
 }
 
+// free function
+void testCards();
+
 // helpers
 Card* cloneCard(const Card* card);
 
