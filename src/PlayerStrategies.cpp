@@ -34,7 +34,7 @@ std::string* PlayerStrategy::getStrategy() const {
   return strategy;
 }
 
-// --- STREAM INSERTION ---
+// --- STREAM INSERTION OPERATOR ---
 std::ostream& operator<<(std::ostream& os, const PlayerStrategy& strat) {
   os << "Player Strategy[" << (strat.strategy ? *strat.strategy : "Neutral Player") << "]" << std::endl;
   return os;

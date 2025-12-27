@@ -370,7 +370,7 @@ Territory* chooseTerritory(const std::vector<Territory*>& territories) {
   if (territories.empty()) return nullptr;
 
   // in automatic/tournament mode, automatically select a territory
-  if (GameEngine::isAutomaticMode()) {
+  if (GameEngine::getAutomaticMode()) {
     // randomly select a territory for variety
     static std::mt19937 rng(std::random_device{}());
     std::uniform_int_distribution<size_t> dist(0, territories.size() - 1);
