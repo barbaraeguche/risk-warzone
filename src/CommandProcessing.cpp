@@ -60,7 +60,7 @@ std::string Command::stringToLog() const {
   return "Command: " + (command ? *command : "<Unknown>") + " Effect: " + (effect ? *effect : "<None>");
 }
 
-// --- STREAM INSERTION ---
+// --- STREAM INSERTION OPERATOR ---
 std::ostream& operator<<(std::ostream& os, const Command& cmd) {
   os << "Command[" << (cmd.command ? *cmd.command : "<Unknown>")
      << ", Effect:" << (cmd.effect ? *cmd.effect : "<Nil>") << "]";
@@ -274,15 +274,15 @@ bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine
   }
 
   // validate based on current state according to assignment state diagram
-  if (currState == GamePhases::STARTUP && baseCmd == GameStates::START) return true;
-  if (currState == GameStates::START && baseCmd == GameTransitions::LOADMAP) return true;
-  if (currState == GameStates::MAP_LOADED && (baseCmd == GameTransitions::LOADMAP || baseCmd == GameTransitions::VALIDATEMAP)) return true;
-  if (currState == GameStates::MAP_VALIDATED && baseCmd == GameTransitions::ADDPLAYER) return true;
-  if (currState == GameStates::PLAYERS_ADDED && (baseCmd == GameTransitions::ADDPLAYER || baseCmd == "gamestart")) return true;
-  if (currState == GameStates::ASSIGN_REINFORCEMENT && baseCmd == GameTransitions::ISSUEORDER) return true;
-  if (currState == GameStates::ISSUE_ORDERS && (baseCmd == GameTransitions::ISSUEORDER || baseCmd == GameTransitions::ENDISSUEORDERS)) return true;
-  if (currState == GameStates::EXECUTE_ORDERS && (baseCmd == GameTransitions::EXECORDER || baseCmd == GameTransitions::ENDEXECORDERS || baseCmd == GameStates::WIN)) return true;
-  if (currState == GameStates::WIN && (baseCmd == GameTransitions::REPLAY || baseCmd == GameTransitions::QUIT)) return true;
+  if (currState == GAME_PHASES::STARTUP && baseCmd == GAME_STATES::START) return true;
+  if (currState == GAME_STATES::START && baseCmd == GAME_TRANSITIONS::LOADMAP) return true;
+  if (currState == GAME_STATES::MAP_LOADED && (baseCmd == GAME_TRANSITIONS::LOADMAP || baseCmd == GAME_TRANSITIONS::VALIDATEMAP)) return true;
+  if (currState == GAME_STATES::MAP_VALIDATED && baseCmd == GAME_TRANSITIONS::ADDPLAYER) return true;
+  if (currState == GAME_STATES::PLAYERS_ADDED && (baseCmd == GAME_TRANSITIONS::ADDPLAYER || baseCmd == "gamestart")) return true;
+  if (currState == GAME_STATES::ASSIGN_REINFORCEMENT && baseCmd == GAME_TRANSITIONS::ISSUEORDER) return true;
+  if (currState == GAME_STATES::ISSUE_ORDERS && (baseCmd == GAME_TRANSITIONS::ISSUEORDER || baseCmd == GAME_TRANSITIONS::ENDISSUEORDERS)) return true;
+  if (currState == GAME_STATES::EXECUTE_ORDERS && (baseCmd == GAME_TRANSITIONS::EXECORDER || baseCmd == GAME_TRANSITIONS::ENDEXECORDERS || baseCmd == GAME_STATES::WIN)) return true;
+  if (currState == GAME_STATES::WIN && (baseCmd == GAME_TRANSITIONS::REPLAY || baseCmd == GAME_TRANSITIONS::QUIT)) return true;
   if (baseCmd == "help") return true;
 
   return false;
@@ -293,7 +293,7 @@ std::string CommandProcessor::stringToLog() const {
   return "CommandProcessor has no commands saved.";
 }
 
-// --- STREAM INSERTION ---
+// --- STREAM INSERTION OPERATOR ---
 std::ostream& operator<<(std::ostream& os, const CommandProcessor& cp) {
   os << "CommandProcessor[" << cp.commands->size() << " commands:\n";
   for (size_t i = 0; i < cp.commands->size(); i++) {
@@ -364,7 +364,7 @@ bool FileLineReader::hasMoreLines() const {
   return file->is_open() && !file->eof();
 }
 
-// --- STREAM INSERTION ---
+// --- STREAM INSERTION OPERATOR ---
 std::ostream& operator<<(std::ostream& os, const FileLineReader& flr) {
   os << "FileLineReader[reading from: " << (flr.fileName ? *flr.fileName : "<Nil>") << "]";
   return os;
@@ -407,7 +407,7 @@ std::string FileCommandProcessorAdapter::readCommand() const {
   return line;
 }
 
-// --- STREAM INSERTION ---
+// --- STREAM INSERTION OPERATOR ---
 std::ostream& operator<<(std::ostream& os, const FileCommandProcessorAdapter& fcpa) {
   os << "FileCommandProcessorAdapter[";
   if (fcpa.fileReader) {

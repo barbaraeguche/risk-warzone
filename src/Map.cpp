@@ -166,7 +166,7 @@ bool Territory::operator==(const Territory& other) const {
   return id == other.id && name == other.name;
 }
 
-// --- STREAM INSERTION ---
+// --- STREAM INSERTION OPERATOR ---
 std::ostream& operator<<(std::ostream& os, const Territory& terr) {
   os << "Territory["
      << (terr.name ? *terr.name : "<Unnamed>")
@@ -323,7 +323,7 @@ bool Continent::operator==(const Continent& other) const {
   return id == other.id && name == other.name;
 }
 
-// --- STREAM INSERTION ---
+// --- STREAM INSERTION OPERATOR ---
 std::ostream& operator<<(std::ostream& os, const Continent& cont) {
   os << "Continent[" << (cont.name ? *cont.name : "<Unnamed>")
      << " (ID:" << (cont.id ? *cont.id : -1) << "),"
@@ -681,7 +681,7 @@ void Map::rebuildMaps() {
   }
 }
 
-// --- STREAM INSERTION ---
+// --- STREAM INSERTION OPERATOR ---
 std::ostream& operator<<(std::ostream& os, const Map& map) {
   os << "Map["
       << (map.name ? *map.name : "<Unnamed>") << ", "
@@ -934,7 +934,7 @@ bool MapLoader::operator==(const MapLoader* other) const {
   return currentState == other->currentState;
 }
 
-// --- STREAM INSERTION ---
+// --- STREAM INSERTION OPERATOR ---
 std::ostream& operator<<(std::ostream& os, const MapLoader& mapLoader) {
   os << "MapLoader[Current State: ";
   switch (mapLoader.currentState) {
