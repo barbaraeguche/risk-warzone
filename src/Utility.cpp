@@ -5,7 +5,7 @@
 /**
  * Recursively find all .map files in a directory and its subdirectories
  */
-std::vector<std::string> findMapFiles(const std::string& dir) {
+std::vector<std::string> Utility::findMapFiles(const std::string& dir) {
   std::vector<std::string> dotMapFiles;
 
   try {

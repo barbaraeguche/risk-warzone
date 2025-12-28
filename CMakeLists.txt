@@ -28,6 +28,7 @@ add_executable(risk_warzone
 	src/PlayerStrategies.cpp
 	src/PlayerStrategyDriver.cpp
 	src/TournamentDriver.cpp
+	src/Utility.cpp
 )
 
 # include headers

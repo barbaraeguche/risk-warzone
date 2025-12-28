@@ -66,7 +66,7 @@ private:
   std::map<std::string, State*>* states;
   std::vector<std::string>* stateHistory;
   std::unique_ptr<Map> gameMap;           //  add: holds the loaded/validated map
-  std::vector<Player*> players;           // players created by addplayer
+  std::vector<Player*>* players;           // players created by addplayer
   Deck* deck;
   static Player* neutralPlayer;
   static bool automaticMode;              // flag to indicate if game is in automatic/tournament mode
@@ -79,13 +79,13 @@ public:
 
   // getters
   std::string getCurrentStateName() const;
-  std::vector<Player*> getPlayers() const;
+  const std::vector<Player*>& getPlayers() const;
   static Player* getNeutralPlayer();
   static bool getAutomaticMode();
 
   // setters
   void setMap(Map* map);
-  void setDeck(Deck* d);
+  void setDeck(Deck* newDeck);
   static void setAutomaticMode(bool mode);
 
   // player management
@@ -127,6 +127,7 @@ private:
   // helpers
   void initializeStates();
   void cleanupStates();
+  static std::string trimCopy(const std::string& inp);
 };
 
 // namespaces
@@ -150,6 +151,7 @@ namespace GAME_TRANSITIONS {
   constexpr auto LOADMAP = "loadmap";
   constexpr auto VALIDATEMAP = "validatemap";
   constexpr auto ADDPLAYER = "addplayer";
+  constexpr auto GAMESTART = "gamestart";
   constexpr auto ISSUEORDER = "issueorder";
   constexpr auto ENDISSUEORDERS = "endissueorders";
   constexpr auto EXECORDER = "execorder";

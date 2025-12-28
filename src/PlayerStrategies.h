@@ -97,5 +97,14 @@ public:
   std::vector<Territory*> toAttack() override;
 };
 
+// namespaces
+namespace PLAYER_STRATEGIES {
+  constexpr auto HUMAN = "human";
+  constexpr auto AGGRESSIVE = "aggressive";
+  constexpr auto BENEVOLENT = "benevolent";
+  constexpr auto NEUTRAL = "neutral";
+  constexpr auto CHEATER = "cheater";
+}
+
 // free function
 void testPlayerStrategies();
