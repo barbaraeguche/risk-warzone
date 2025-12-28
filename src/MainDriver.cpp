@@ -1,17 +1,20 @@
 #include <iostream>
 
+// assignment 1
 void testLoadMaps();
 void testPlayers();
 void testOrdersLists();
 void testCards();
 void testGameStates();
 
+// assignment 2
 void testCommandProcessor();
 void testStartupPhase();
 void testMainGameLoop();
 void testOrderExecution();
 void testLoggingObserver();
 
+// assignment 3
 void testPlayerStrategies();
 void testTournament();
 
