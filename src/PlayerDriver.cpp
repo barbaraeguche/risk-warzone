@@ -137,7 +137,7 @@ void testPlayers() {
     }
   }
 
-  // Test toAttack method
+  // test toAttack method
   const std::vector<Territory*> attackList1 = player1->toAttack();
   const std::vector<Territory*> attackList2 = player2->toAttack();
 

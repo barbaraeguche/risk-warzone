@@ -102,7 +102,7 @@ void testDifferentStrategiesDifferentBehavior() {
   // aggressive player gets territories
   if (territories.size() > 0) {
     territories[0]->setOwner(aggressivePlayer);
-    territories[0]->setArmies(10); // Strongest territory
+    territories[0]->setArmies(10); // strongest territory
     aggressivePlayer->addTerritory(territories[0].get());
   }
   if (territories.size() > 1) {
@@ -114,7 +114,7 @@ void testDifferentStrategiesDifferentBehavior() {
   // benevolent player gets territories
   if (territories.size() > 2) {
     territories[2]->setOwner(benevolentPlayer);
-    territories[2]->setArmies(2); // Weakest territory
+    territories[2]->setArmies(2); // weakest territory
     benevolentPlayer->addTerritory(territories[2].get());
   }
   if (territories.size() > 3) {

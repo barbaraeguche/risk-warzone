@@ -1,36 +1,12 @@
 #include "Map.h"
 #include "Player.h"
+#include "Utility.h"
 
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 
 namespace fs = std::filesystem;
-
-/**
- * Recursively find all .map files in a directory and its subdirectories
- */
-std::vector<std::string> findMapFiles(const std::string& directory) {
-  std::vector<std::string> dotMapFiles;
-
-  try {
-    if (!fs::exists(directory)) {
-      std::cerr << "Directory does not exist: " << directory << std::endl;
-      return dotMapFiles;
-    }
-
-    // recursively check all items in the directory
-    for (const auto& entry : fs::recursive_directory_iterator(directory)) {
-      if (entry.is_regular_file() && entry.path().extension() == ".map") {
-        dotMapFiles.push_back(entry.path().string());
-      }
-    }
-  } catch (const fs::filesystem_error& e) {
-    std::cerr << "Filesystem error: " << e.what() << std::endl;
-  }
-
-  return dotMapFiles;
-}
 
 /**
  * Test function that loads map files from /maps directory structure
@@ -49,7 +25,7 @@ void testLoadMaps() {
   const std::string mapDir = mapDirPath.string();
 
   std::cout << "Searching for .map files in: " << mapDir << std::endl;
-  const std::vector<std::string> mapFiles = findMapFiles(mapDir);
+  const std::vector<std::string> mapFiles = Utility::findMapFiles(mapDir);
 
   if (mapFiles.empty()) {
     std::cout << "No .map files found in " << mapDir << std::endl;
@@ -87,9 +63,8 @@ void testLoadMaps() {
     std::cout << "Number of Territories: " << map->getNumberOfTerritories() << std::endl;
     std::cout << "Number of Continents: " << map->getNumberOfContinents() << std::endl;
 
-    // Perform validation tests
+    // perform validation tests
     std::cout << "\n--- VALIDATION TESTS ---" << std::endl;
-
     const bool isConnectedGraph = map->isConnectedGraph();
     std::cout << "1. Map is a connected graph: " << (isConnectedGraph ? "PASS" : "FAIL") << std::endl;
 

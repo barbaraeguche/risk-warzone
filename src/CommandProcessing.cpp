@@ -134,7 +134,7 @@ void CommandProcessor::saveCommand(Command* cmd) {
   commands->push_back(cmd);
   lastSavedCommand = cmd;
 
-  // Propagate observers to newly saved command
+  // propagate observers to newly saved command
   if (cmd) {
     for (Observer* observer : *observers) {
       cmd->attach(observer);
@@ -145,9 +145,7 @@ void CommandProcessor::saveCommand(Command* cmd) {
 }
 
 bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine) const {
-  if (cmd.empty() || engine == nullptr) {
-    return false;
-  }
+  if (cmd.empty() || engine == nullptr) return false;
 
   // get the current state name
   std::string currState = engine->getCurrentStateName();
@@ -177,27 +175,27 @@ bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine
       return false;
     }
 
-    // Ensure flags are in correct order
+    // ensure flags are in correct order
     if (!(mPos < pPos && pPos < gPos && gPos < dPos)) {
       std::cout << "Flags must be in order: -M, -P, -G, -D\n";
       return false;
     }
 
-    // Extract parameter strings
+    // extract parameter strings
     std::string mapsStr = cmd.substr(mPos + 3, pPos - mPos - 3);
     std::string playersStr = cmd.substr(pPos + 3, gPos - pPos - 3);
     std::string gamesStr = cmd.substr(gPos + 3, dPos - gPos - 3);
     std::string turnsStr = cmd.substr(dPos + 3);
 
-    // Helper lambda to trim whitespace
+    // helper lambda to trim whitespace
     auto trim = [](std::string& s) {
-      // Trim leading whitespace
-      size_t start = s.find_first_not_of(" \t\n\r");
+      size_t start = s.find_first_not_of(" \t\n\r"); // trim leading whitespace
       if (start == std::string::npos) {
         s = "";
         return;
       }
-      // Trim trailing whitespace
+
+      // trim trailing whitespace
       size_t end = s.find_last_not_of(" \t\n\r");
       s = s.substr(start, end - start + 1);
     };
@@ -207,7 +205,7 @@ bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine
     trim(gamesStr);
     trim(turnsStr);
 
-    // Validate maps: count comma-separated items (1-5 maps)
+    // validate maps: count comma-separated items (1-5 maps)
     if (mapsStr.empty()) {
       std::cout << "No map files specified.\n";
       return false;
@@ -221,7 +219,7 @@ bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine
       return false;
     }
 
-    // Validate players: count comma-separated items (2-4 strategies)
+    // validate players: count comma-separated items (2-4 strategies)
     if (playersStr.empty()) {
       std::cout << "No player strategies specified.\n";
       return false;
@@ -235,7 +233,7 @@ bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine
       return false;
     }
 
-    // Validate number of games (1-5)
+    // validate number of games (1-5)
     if (gamesStr.empty()) {
       std::cout << "No number of games specified.\n";
       return false;
@@ -252,7 +250,7 @@ bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine
       return false;
     }
 
-    // Validate max turns (10-50)
+    // validate max turns (10-50)
     if (turnsStr.empty()) {
       std::cout << "No max number of turns specified.\n";
       return false;

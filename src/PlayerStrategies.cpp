@@ -213,7 +213,7 @@ void AggressivePlayerStrategy::issueOrder() {
     if (!defendList.empty()) {
       // deploy to first territory in defend list
       Territory* target = defendList[0];
-      const int armiesToDeploy = player->getReinforcementPool(); // Deploy all available armies
+      const int armiesToDeploy = player->getReinforcementPool(); // deploy all available armies
 
       std::cout << player->getName() << "  issuing deploy order: " << armiesToDeploy
                 << " armies to " << target->getName() << "\n";
