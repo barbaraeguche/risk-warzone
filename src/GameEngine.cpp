@@ -1002,10 +1002,9 @@ void GameEngine::logTournamentResults(
   std::cout << "D: " << maxTurns << "\n\n";
 
   // display results table
-  std::cout << "Results:\n";
+  std::cout << "Results:\n                    ";
 
   // header row
-  std::cout << "        ";
   for (int g = 0; g < numGames; ++g) {
     std::cout << "Game " << (g + 1) << "    ";
   }
@@ -1051,8 +1050,7 @@ void GameEngine::logTournamentResults(
     logFile << "G: " << numGames << "\n";
     logFile << "D: " << maxTurns << "\n\n";
 
-    logFile << "Results:\n";
-    logFile << "        ";
+    logFile << "Results:\n                    ";
     for (int g = 0; g < numGames; ++g) { logFile << "Game " << (g + 1) << "    "; }
     logFile << "\n";
 

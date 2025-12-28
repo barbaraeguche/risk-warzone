@@ -13,7 +13,7 @@ void testOrderExecution();
 // void testLoggingObserver();
 
 void testPlayerStrategies();
-// void testTournament();
+void testTournament();
 
 
 /**

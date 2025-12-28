@@ -1,0 +1,18 @@
+
+========================================
+TOURNAMENT RESULTS
+========================================
+
+Tournament mode:
+M: Canada/Canada.map, London/London.map, France/France.map
+P: Aggressive, Benevolent, Neutral
+G: 4
+D: 30
+
+Results:
+                    Game 1    Game 2    Game 3    Game 4
+Canada/Canada.map    Draw    Draw    Draw    Draw
+London/London.map    Draw    Draw    Draw    Aggressive
+France/France.map    Draw    Draw    Draw    Draw
+
+========================================

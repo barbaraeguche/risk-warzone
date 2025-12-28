@@ -106,7 +106,8 @@ public:
   // tournament mode management
   void executeTournament(const std::string& cmd);
   std::string playTournamentGame(const std::string& mapPath, const std::vector<std::string>& strategies, int maxTurns);
-  void logTournamentResults(
+
+  static void logTournamentResults(
     const std::vector<std::string>& maps, const std::vector<std::string>& strategies,
     int numGames, int maxTurns, const std::vector<std::vector<std::string>>& results
   );
@@ -164,3 +165,4 @@ namespace GAME_TRANSITIONS {
 void testGameStates();
 void testStartupPhase();
 void testMainGameLoop();
+void testTournament();
