@@ -57,11 +57,10 @@ void Command::saveEffect(const std::string& eff) {
 }
 
 std::string Command::stringToLog() const {
-  return "Command: " + (command ? *command : "<Unknown>") +
-         " Effect: " + (effect ? *effect : "<None>");
+  return "Command: " + (command ? *command : "<Unknown>") + ", Effect: " + (effect ? *effect : "<None>");
 }
 
-// --- STREAM INSERTION ---
+// --- STREAM INSERTION OPERATOR ---
 std::ostream& operator<<(std::ostream& os, const Command& cmd) {
   os << "Command[" << (cmd.command ? *cmd.command : "<Unknown>")
      << ", Effect:" << (cmd.effect ? *cmd.effect : "<Nil>") << "]";
@@ -83,18 +82,14 @@ CommandProcessor::CommandProcessor(const CommandProcessor& other) :
   for (const Command* cmd : *other.commands) {
     commands->push_back(new Command(*cmd));
   }
-  if (!commands->empty()) {
-    lastSavedCommand = commands->back();
-  }
+  if (!commands->empty()) lastSavedCommand = commands->back();
 }
 
 CommandProcessor& CommandProcessor::operator=(const CommandProcessor& other) {
   if (this != &other) {
     Subject::operator=(other);
     // delete old objects
-    for (const Command* cmd : *commands) {
-      delete cmd;
-    }
+    for (const Command* cmd : *commands) { delete cmd; }
     commands->clear();
 
     // deep copy commands
@@ -107,10 +102,9 @@ CommandProcessor& CommandProcessor::operator=(const CommandProcessor& other) {
 }
 
 CommandProcessor::~CommandProcessor() {
-  for (const Command* cmd : *commands) {
-    delete cmd;
-  }
+  for (const Command* cmd : *commands) { delete cmd; }
   delete commands;
+
   commands = nullptr;
   lastSavedCommand = nullptr;
 }
@@ -140,7 +134,7 @@ void CommandProcessor::saveCommand(Command* cmd) {
   commands->push_back(cmd);
   lastSavedCommand = cmd;
 
-  // Propagate observers to newly saved command
+  // propagate observers to newly saved command
   if (cmd) {
     for (Observer* observer : *observers) {
       cmd->attach(observer);
@@ -151,9 +145,7 @@ void CommandProcessor::saveCommand(Command* cmd) {
 }
 
 bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine) const {
-  if (cmd.empty() || engine == nullptr) {
-    return false;
-  }
+  if (cmd.empty() || engine == nullptr) return false;
 
   // get the current state name
   std::string currState = engine->getCurrentStateName();
@@ -183,27 +175,27 @@ bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine
       return false;
     }
 
-    // Ensure flags are in correct order
+    // ensure flags are in correct order
     if (!(mPos < pPos && pPos < gPos && gPos < dPos)) {
       std::cout << "Flags must be in order: -M, -P, -G, -D\n";
       return false;
     }
 
-    // Extract parameter strings
+    // extract parameter strings
     std::string mapsStr = cmd.substr(mPos + 3, pPos - mPos - 3);
     std::string playersStr = cmd.substr(pPos + 3, gPos - pPos - 3);
     std::string gamesStr = cmd.substr(gPos + 3, dPos - gPos - 3);
     std::string turnsStr = cmd.substr(dPos + 3);
 
-    // Helper lambda to trim whitespace
+    // helper lambda to trim whitespace
     auto trim = [](std::string& s) {
-      // Trim leading whitespace
-      size_t start = s.find_first_not_of(" \t\n\r");
+      size_t start = s.find_first_not_of(" \t\n\r"); // trim leading whitespace
       if (start == std::string::npos) {
         s = "";
         return;
       }
-      // Trim trailing whitespace
+
+      // trim trailing whitespace
       size_t end = s.find_last_not_of(" \t\n\r");
       s = s.substr(start, end - start + 1);
     };
@@ -213,7 +205,7 @@ bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine
     trim(gamesStr);
     trim(turnsStr);
 
-    // Validate maps: count comma-separated items (1-5 maps)
+    // validate maps: count comma-separated items (1-5 maps)
     if (mapsStr.empty()) {
       std::cout << "No map files specified.\n";
       return false;
@@ -227,7 +219,7 @@ bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine
       return false;
     }
 
-    // Validate players: count comma-separated items (2-4 strategies)
+    // validate players: count comma-separated items (2-4 strategies)
     if (playersStr.empty()) {
       std::cout << "No player strategies specified.\n";
       return false;
@@ -241,7 +233,7 @@ bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine
       return false;
     }
 
-    // Validate number of games (1-5)
+    // validate number of games (1-5)
     if (gamesStr.empty()) {
       std::cout << "No number of games specified.\n";
       return false;
@@ -258,7 +250,7 @@ bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine
       return false;
     }
 
-    // Validate max turns (10-50)
+    // validate max turns (10-50)
     if (turnsStr.empty()) {
       std::cout << "No max number of turns specified.\n";
       return false;
@@ -280,28 +272,26 @@ bool CommandProcessor::validate(const std::string& cmd, const GameEngine* engine
   }
 
   // validate based on current state according to assignment state diagram
-  if (currState == "startup" && baseCmd == "start") return true;
-  if (currState == "start" && baseCmd == "loadmap") return true;
-  if (currState == "map loaded" && (baseCmd == "loadmap" || baseCmd == "validatemap")) return true;
-  if (currState == "map validated" && baseCmd == "addplayer") return true;
-  if (currState == "players added" && (baseCmd == "addplayer" || baseCmd == "gamestart")) return true;
-  if (currState == "assign reinforcement" && baseCmd == "issueorder") return true;
-  if (currState == "issue orders" && (baseCmd == "issueorder" || baseCmd == "endissueorders")) return true;
-  if (currState == "execute orders" && (baseCmd == "execorder" || baseCmd == "endexecorders" || baseCmd == "win")) return true;
-  if (currState == "win" && (baseCmd == "replay" || baseCmd == "quit")) return true;
+  if (currState == GAME_PHASES::STARTUP && baseCmd == GAME_STATES::START) return true;
+  if (currState == GAME_STATES::START && baseCmd == GAME_TRANSITIONS::LOADMAP) return true;
+  if (currState == GAME_STATES::MAP_LOADED && (baseCmd == GAME_TRANSITIONS::LOADMAP || baseCmd == GAME_TRANSITIONS::VALIDATEMAP)) return true;
+  if (currState == GAME_STATES::MAP_VALIDATED && baseCmd == GAME_TRANSITIONS::ADDPLAYER) return true;
+  if (currState == GAME_STATES::PLAYERS_ADDED && (baseCmd == GAME_TRANSITIONS::ADDPLAYER || baseCmd == "gamestart")) return true;
+  if (currState == GAME_STATES::ASSIGN_REINFORCEMENT && baseCmd == GAME_TRANSITIONS::ISSUEORDER) return true;
+  if (currState == GAME_STATES::ISSUE_ORDERS && (baseCmd == GAME_TRANSITIONS::ISSUEORDER || baseCmd == GAME_TRANSITIONS::ENDISSUEORDERS)) return true;
+  if (currState == GAME_STATES::EXECUTE_ORDERS && (baseCmd == GAME_TRANSITIONS::EXECORDER || baseCmd == GAME_TRANSITIONS::ENDEXECORDERS || baseCmd == GAME_STATES::WIN)) return true;
+  if (currState == GAME_STATES::WIN && (baseCmd == GAME_TRANSITIONS::REPLAY || baseCmd == GAME_TRANSITIONS::QUIT)) return true;
   if (baseCmd == "help") return true;
 
   return false;
 }
 
 std::string CommandProcessor::stringToLog() const {
-  if (lastSavedCommand) {
-    return "CommandProcessor saved: " + lastSavedCommand->getCommand();
-  }
+  if (lastSavedCommand) return "CommandProcessor saved: " + lastSavedCommand->getCommand();
   return "CommandProcessor has no commands saved.";
 }
 
-// --- STREAM INSERTION ---
+// --- STREAM INSERTION OPERATOR ---
 std::ostream& operator<<(std::ostream& os, const CommandProcessor& cp) {
   os << "CommandProcessor[" << cp.commands->size() << " commands:\n";
   for (size_t i = 0; i < cp.commands->size(); i++) {
@@ -372,7 +362,7 @@ bool FileLineReader::hasMoreLines() const {
   return file->is_open() && !file->eof();
 }
 
-// --- STREAM INSERTION ---
+// --- STREAM INSERTION OPERATOR ---
 std::ostream& operator<<(std::ostream& os, const FileLineReader& flr) {
   os << "FileLineReader[reading from: " << (flr.fileName ? *flr.fileName : "<Nil>") << "]";
   return os;
@@ -415,7 +405,7 @@ std::string FileCommandProcessorAdapter::readCommand() const {
   return line;
 }
 
-// --- STREAM INSERTION ---
+// --- STREAM INSERTION OPERATOR ---
 std::ostream& operator<<(std::ostream& os, const FileCommandProcessorAdapter& fcpa) {
   os << "FileCommandProcessorAdapter[";
   if (fcpa.fileReader) {

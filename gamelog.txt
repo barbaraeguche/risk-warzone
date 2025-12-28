@@ -1,11 +1,12 @@
 CommandProcessor saved: loadmap World.map
-Command: loadmap World.map Effect: Loaded map World.map
+Command: loadmap World.map, Effect: Loaded map World.map
 CommandProcessor saved: validatemap
-Command: validatemap Effect: Map validated successfully
-OrdersList added order: Order [deploy] effect: 
-Order [deploy] effect: Deployed 5 armies to Alpha.
-OrdersList added order: Order [advance] effect: 
-Order [advance] effect: Advance order succeeded and conquered Beta.
+Command: validatemap, Effect: Map validated successfully
+OrdersList added: Order: deploy, Effect:
+Order: deploy, Effect: Deployed 5 armies to Alpha.
+OrdersList added: Order: advance, Effect:
+Order: advance, Effect: Invalid advance order. Not executed.
+Order: advance, Effect: Advance order succeeded and conquered Beta.
 GameEngine state changed to: start
 GameEngine state changed to: map loaded
 GameEngine state changed to: map validated
@@ -15,177 +16,15 @@ TOURNAMENT RESULTS
 ========================================
 
 Tournament mode:
-M: Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map
+M: Canada/Canada.map, London/London.map, France/France.map
 P: Aggressive, Benevolent, Neutral
 G: 4
 D: 30
 
 Results:
-        Game 1    Game 2    Game 3    Game 4    
-Canada/Canada.map    Draw    Draw    Draw    Draw    
-Alberta/Alberta.map    Draw    Draw    Draw    Draw    
-Palmerica/Palmerica.map    Draw    Draw    Draw    Draw    
-
-========================================
-
-========================================
-TOURNAMENT RESULTS
-========================================
-
-Tournament mode:
-M: Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map
-P: Aggressive, Benevolent, Neutral, Cheater
-G: 4
-D: 30
-
-Results:
-        Game 1    Game 2    Game 3    Game 4    
-Canada/Canada.map    Cheater    Cheater    Cheater    Cheater    
-Alberta/Alberta.map    Cheater    Cheater    Cheater    Cheater    
-Palmerica/Palmerica.map    Cheater    Cheater    Cheater    Cheater    
-
-========================================
-
-========================================
-TOURNAMENT RESULTS
-========================================
-
-Tournament mode:
-M: Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map
-P: Aggressive, Benevolent, Neutral
-G: 4
-D: 30
-
-Results:
-        Game 1    Game 2    Game 3    Game 4    
-Canada/Canada.map    Draw    Draw    Draw    Draw    
-Alberta/Alberta.map    Draw    Draw    Draw    Draw    
-Palmerica/Palmerica.map    Draw    Draw    Draw    Draw    
-
-========================================
-
-========================================
-TOURNAMENT RESULTS
-========================================
-
-Tournament mode:
-M: Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map
-P: Aggressive, Aggressive
-G: 4
-D: 30
-
-Results:
-        Game 1    Game 2    Game 3    Game 4    
-Canada/Canada.map    Draw    Draw    Draw    Draw    
-Alberta/Alberta.map    Draw    Draw    Draw    Draw    
-Palmerica/Palmerica.map    Draw    Draw    Draw    Draw    
-
-========================================
-
-========================================
-TOURNAMENT RESULTS
-========================================
-
-Tournament mode:
-M: Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map
-P: Aggressive, Benevolent, Neutral
-G: 4
-D: 30
-
-Results:
-        Game 1    Game 2    Game 3    Game 4    
-Canada/Canada.map    Draw    Draw    Draw    Draw    
-Alberta/Alberta.map    Draw    Draw    Draw    Draw    
-Palmerica/Palmerica.map    Draw    Draw    Draw    Draw    
-
-========================================
-
-========================================
-TOURNAMENT RESULTS
-========================================
-
-Tournament mode:
-M: Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map
-P: Aggressive, Benevolent, Neutral
-G: 4
-D: 30
-
-Results:
-        Game 1    Game 2    Game 3    Game 4    
-Canada/Canada.map    Draw    Draw    Draw    Draw    
-Alberta/Alberta.map    Draw    Draw    Draw    Draw    
-Palmerica/Palmerica.map    Draw    Draw    Draw    Draw    
-
-========================================
-
-========================================
-TOURNAMENT RESULTS
-========================================
-
-Tournament mode:
-M: Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map
-P: Aggressive, Benevolent, Neutral
-G: 4
-D: 30
-
-Results:
-        Game 1    Game 2    Game 3    Game 4    
-Canada/Canada.map    Draw    Draw    Draw    Draw    
-Alberta/Alberta.map    Draw    Draw    Draw    Draw    
-Palmerica/Palmerica.map    Draw    Draw    Draw    Draw    
-
-========================================
-
-========================================
-TOURNAMENT RESULTS
-========================================
-
-Tournament mode:
-M: Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map
-P: Aggressive, Benevolent, Neutral
-G: 2
-D: 50
-
-Results:
-        Game 1    Game 2    
-Canada/Canada.map    Draw    Draw    
-Alberta/Alberta.map    Draw    Draw    
-Palmerica/Palmerica.map    Draw    Draw    
-
-========================================
-
-========================================
-TOURNAMENT RESULTS
-========================================
-
-Tournament mode:
-M: Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map
-P: Aggressive, Benevolent, Neutral
-G: 1
-D: 199
-
-Results:
-        Game 1    
-Canada/Canada.map    Neutral    
-Alberta/Alberta.map    Neutral    
-Palmerica/Palmerica.map    Draw    
-
-========================================
-
-========================================
-TOURNAMENT RESULTS
-========================================
-
-Tournament mode:
-M: Canada/Canada.map, Alberta/Alberta.map, Palmerica/Palmerica.map
-P: Aggressive, Agressive, Aggressive
-G: 1
-D: 199
-
-Results:
-        Game 1    
-Canada/Canada.map    Aggressive    
-Alberta/Alberta.map    Draw    
-Palmerica/Palmerica.map    Draw    
+                    Game 1    Game 2    Game 3    Game 4
+Canada/Canada.map    Draw    Draw    Draw    Draw
+London/London.map    Draw    Draw    Draw    Aggressive
+France/France.map    Draw    Draw    Draw    Draw
 
 ========================================

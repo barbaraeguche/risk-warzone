@@ -1,12 +1,10 @@
 #pragma once
+#include "LoggingObserver.h"
 
 #include <fstream>
 #include <string>
 #include <vector>
 
-#include "LoggingObserver.h"
-
-// forward declarations
 class GameEngine;
 
 /**
@@ -19,7 +17,6 @@ private:
   std::string* effect;  // the effect/result of the command
 
 public:
-  // constructors
   Command();
   Command(const std::string& cmd);
   Command(const Command& other); // copy constructor
@@ -109,7 +106,7 @@ public:
   FileCommandProcessorAdapter(const std::string& fileName);
   FileCommandProcessorAdapter(const FileCommandProcessorAdapter& other); // copy constructor
   FileCommandProcessorAdapter& operator=(const FileCommandProcessorAdapter& other); // assignment operator
-  ~FileCommandProcessorAdapter(); // destructor
+  ~FileCommandProcessorAdapter() override; // destructor
 
   // stream insertion
   friend std::ostream& operator<<(std::ostream& os, const FileCommandProcessorAdapter& fcpa);
