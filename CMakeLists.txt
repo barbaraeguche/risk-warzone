@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(comp_345)
+project(risk_warzone)
 
 # set c++ standard
 set(CMAKE_CXX_STANDARD 20)
@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # executables
-add_executable(comp_345
+add_executable(risk_warzone
 	src/Cards.cpp
 	src/CardsDriver.cpp
 	src/CommandProcessing.cpp
@@ -28,13 +28,14 @@ add_executable(comp_345
 	src/PlayerStrategies.cpp
 	src/PlayerStrategyDriver.cpp
 	src/TournamentDriver.cpp
+	src/Utility.cpp
 )
 
 # include headers
-target_include_directories(comp_345 PRIVATE src)
+target_include_directories(risk_warzone PRIVATE src)
 
 # change compiler warning level
-target_compile_options(comp_345 PRIVATE
+target_compile_options(risk_warzone PRIVATE
 	$<$<CXX_COMPILER_ID:MSVC>:/W3 /WX>
 	$<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Werror -Wno-sign-compare>
 )

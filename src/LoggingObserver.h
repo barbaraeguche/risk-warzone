@@ -1,7 +1,5 @@
 #pragma once
-
 #include <fstream>
-#include <ostream>
 #include <string>
 #include <vector>
 
@@ -9,50 +7,62 @@ class Subject;
 
 class ILoggable {
 public:
-    virtual std::string stringToLog() const = 0;
-    virtual ~ILoggable() = default;
+  virtual ~ILoggable() = default; // destructor
+
+  // utility
+  virtual std::string stringToLog() const = 0;
 };
+
 
 class Observer {
 public:
-    Observer();
-    Observer(const Observer& other);
-    virtual ~Observer();
-    Observer& operator=(const Observer& other);
+  Observer();
+  Observer(const Observer& other); // copy constructor
+  Observer& operator=(const Observer& other); // assignment operator
+  virtual ~Observer(); // destructor
 
-    virtual void update(Subject* subject) = 0;
+  // management
+  virtual void update(Subject* subject) = 0;
 };
+
 
 class Subject {
-public:
-    Subject();
-    Subject(const Subject& other);
-    virtual ~Subject();
-    Subject& operator=(const Subject& other);
-
-    void attach(Observer* observer);
-    void detach(Observer* observer);
-    void notify();
-
 protected:
-    std::vector<Observer*>* observers;
+  std::vector<Observer*>* observers;
+
+public:
+  Subject();
+  Subject(const Subject& other); // copy constructor
+  Subject& operator=(const Subject& other); // assignment operator
+  virtual ~Subject(); // destructor
+
+  // management
+  void attach(Observer* obs);
+  void detach(Observer* obs);
+  void notify();
 };
+
 
 class LogObserver : public Observer {
+private:
+  std::ofstream* logFile;
+
 public:
-    LogObserver();
-    LogObserver(const LogObserver& other);
-    ~LogObserver() override;
+  LogObserver();
+  LogObserver(const LogObserver& other); // copy constructor
+  LogObserver& operator=(const LogObserver& other); // assignment operator
+  ~LogObserver() override; // destructor
 
-    LogObserver& operator=(const LogObserver& other);
-    friend std::ostream& operator<<(std::ostream& os, const LogObserver& observer);
+  // management
+  void update(Subject* sub) override;
 
-    void update(Subject* subject) override;
+  // stream insertion operator
+  friend std::ostream& operator<<(std::ostream& os, const LogObserver& obs);
 
 private:
-    std::ofstream* logfile;
-
-    void openLog();
-    void closeLog();
+  // helpers
+  void openLog();
+  void closeLog();
 };
 
+constexpr auto GAMELOG_FILE = "gamelog.txt";

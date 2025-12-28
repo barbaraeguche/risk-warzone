@@ -1,67 +1,110 @@
 #pragma once
 #include "Map.h"
 
-#include <string>
 #include <iostream>
+#include <string>
 #include <vector>
-#include "Player.h"
 
 class PlayerStrategy {
 protected:
-    Player* player;
-    std::string* strategyDescription;
+  Player* player;
+  std::string* strategy;
+
 public:
-    PlayerStrategy(Player* p, std::string* desc);
-    PlayerStrategy(const PlayerStrategy& other);
-    PlayerStrategy& operator=(const PlayerStrategy& other);
-    virtual ~PlayerStrategy();
+  PlayerStrategy(Player* play, std::string* strat);
+  PlayerStrategy(const PlayerStrategy& other); // copy constructor
+  PlayerStrategy& operator=(const PlayerStrategy& other); // assignment operator
+  virtual ~PlayerStrategy(); // destructor
 
-    virtual void issueOrder() = 0;
-    virtual std::vector<Territory*> toDefend() = 0;
-    virtual std::vector<Territory*> toAttack() = 0;
+  // getters
+  std::string* getStrategy() const;
 
-    std::string* getStrategyDescription() const;
-    friend std::ostream& operator<<(std::ostream& os, const PlayerStrategy& playerStrategy);
+  // strategy management
+  virtual void issueOrder() = 0;
+  virtual std::vector<Territory*> toDefend() = 0;
+  virtual std::vector<Territory*> toAttack() = 0;
+
+  // stream insertion operator
+  friend std::ostream& operator<<(std::ostream& os, const PlayerStrategy& strat);
 };
+
 
 class HumanPlayerStrategy : public PlayerStrategy {
 public:
-    HumanPlayerStrategy(Player* p);
-    void issueOrder() override;
-    std::vector<Territory*> toDefend() override;
-    std::vector<Territory*> toAttack() override;
+  HumanPlayerStrategy(Player* play);
+  HumanPlayerStrategy(const HumanPlayerStrategy& other); // copy constructor
+  HumanPlayerStrategy& operator=(const HumanPlayerStrategy& other); // assignment operator
+
+  // strategy management
+  void issueOrder() override;
+  std::vector<Territory*> toDefend() override;
+  std::vector<Territory*> toAttack() override;
 };
+
 
 class AggressivePlayerStrategy : public PlayerStrategy {
 public:
-    AggressivePlayerStrategy(Player* p);
-    void issueOrder() override;
-    std::vector<Territory*> toDefend() override;
-    std::vector<Territory*> toAttack() override;
+  AggressivePlayerStrategy(Player* play);
+  AggressivePlayerStrategy(const AggressivePlayerStrategy& other); // copy constructor
+  AggressivePlayerStrategy& operator=(const AggressivePlayerStrategy& other); // assignment operator
+
+  // strategy management
+  void issueOrder() override;
+  std::vector<Territory*> toDefend() override;
+  std::vector<Territory*> toAttack() override;
+
 private:
-    Territory* strongestTerritory();
+  // utility
+  Territory* strongestTerritory();
 };
+
 
 class BenevolentPlayerStrategy : public PlayerStrategy {
 public:
-    BenevolentPlayerStrategy(Player* p);
-    void issueOrder() override;
-    std::vector<Territory*> toDefend() override;
-    std::vector<Territory*> toAttack() override;
+  BenevolentPlayerStrategy(Player* play);
+  BenevolentPlayerStrategy(const BenevolentPlayerStrategy& other); // copy constructor
+  BenevolentPlayerStrategy& operator=(const BenevolentPlayerStrategy& other); // assignment operator
+
+  // strategy management
+  void issueOrder() override;
+  std::vector<Territory*> toDefend() override;
+  std::vector<Territory*> toAttack() override;
 };
+
 
 class NeutralPlayerStrategy : public PlayerStrategy {
 public:
-    NeutralPlayerStrategy(Player* p);
-    void issueOrder() override;
-    std::vector<Territory*> toDefend() override;
-    std::vector<Territory*> toAttack() override;
+  NeutralPlayerStrategy(Player* play);
+  NeutralPlayerStrategy(const NeutralPlayerStrategy& other); // copy constructor
+  NeutralPlayerStrategy& operator=(const NeutralPlayerStrategy& other); // assignment operator
+
+  // strategy management
+  void issueOrder() override;
+  std::vector<Territory*> toDefend() override;
+  std::vector<Territory*> toAttack() override;
 };
+
 
 class CheaterPlayerStrategy : public PlayerStrategy {
 public:
-    CheaterPlayerStrategy(Player* p);
-    void issueOrder() override;
-    std::vector<Territory*> toDefend() override;
-    std::vector<Territory*> toAttack() override;
+  CheaterPlayerStrategy(Player* play);
+  CheaterPlayerStrategy(const CheaterPlayerStrategy& other); // copy constructor
+  CheaterPlayerStrategy& operator=(const CheaterPlayerStrategy& other); // assignment operator
+
+  // strategy management
+  void issueOrder() override;
+  std::vector<Territory*> toDefend() override;
+  std::vector<Territory*> toAttack() override;
 };
+
+// namespaces
+namespace PLAYER_STRATEGIES {
+  constexpr auto HUMAN = "human";
+  constexpr auto AGGRESSIVE = "aggressive";
+  constexpr auto BENEVOLENT = "benevolent";
+  constexpr auto NEUTRAL = "neutral";
+  constexpr auto CHEATER = "cheater";
+}
+
+// free function
+void testPlayerStrategies();
