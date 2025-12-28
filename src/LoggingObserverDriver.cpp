@@ -1,10 +1,10 @@
-#include "LoggingObserver.h"
-#include "CommandProcessing.h"
-#include "Orders.h"
-#include "GameEngine.h"
-#include "Player.h"
-#include "Map.h"
 #include "Cards.h"
+#include "CommandProcessing.h"
+#include "GameEngine.h"
+#include "LoggingObserver.h"
+#include "Map.h"
+#include "Orders.h"
+#include "Player.h"
 
 #include <fstream>
 #include <iostream>
@@ -12,13 +12,13 @@
 void testLoggingObserver() {
   std::cout << "=== Logging Observer Test ===" << std::endl;
 
-  // Reset log file
-  std::ofstream clearFile("gamelog.txt", std::ios::trunc);
+  // reset log file
+  std::ofstream clearFile(GAMELOG_FILE, std::ios::trunc);
   clearFile.close();
 
   LogObserver logger;
 
-  // ---- Command logging ----
+  // ---- command logging ----
   CommandProcessor processor;
   processor.attach(&logger);
 
@@ -30,7 +30,7 @@ void testLoggingObserver() {
   processor.saveCommand(cmdValidate);
   cmdValidate->saveEffect("Map validated successfully");
 
-  // ---- Order logging ----
+  // ---- order logging ----
   OrdersList ordersList;
   ordersList.attach(&logger);
 
@@ -52,15 +52,15 @@ void testLoggingObserver() {
 
   int deployArmies = 5;
   OrderDeploy* deployOrder = new OrderDeploy(&playerOne, &territoryAlpha, &deployArmies);
-  ordersList.add(deployOrder);
+  ordersList.addOrder(deployOrder);
   deployOrder->execute();
 
   int advanceArmies = 3;
   OrderAdvance* advanceOrder = new OrderAdvance(&playerOne, &territoryAlpha, &territoryBeta, &advanceArmies);
-  ordersList.add(advanceOrder);
+  ordersList.addOrder(advanceOrder);
   advanceOrder->execute();
 
-  // ---- Game engine logging ----
+  // ---- game engine logging ----
   GameEngine engine;
   engine.attach(&logger);
   engine.transitionState("start");
@@ -69,4 +69,3 @@ void testLoggingObserver() {
 
   std::cout << "Logging complete. Review gamelog.txt for entries." << std::endl;
 }
-

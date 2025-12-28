@@ -57,7 +57,7 @@ void Command::saveEffect(const std::string& eff) {
 }
 
 std::string Command::stringToLog() const {
-  return "Command: " + (command ? *command : "<Unknown>") + " Effect: " + (effect ? *effect : "<None>");
+  return "Command: " + (command ? *command : "<Unknown>") + ", Effect: " + (effect ? *effect : "<None>");
 }
 
 // --- STREAM INSERTION OPERATOR ---

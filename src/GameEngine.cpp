@@ -1022,7 +1022,7 @@ void GameEngine::logTournamentResults(
   std::cout << "\n========================================\n";
 
   // also write to log file (gamelog.txt)
-  std::ofstream logFile("gamelog.txt", std::ios::app);
+  std::ofstream logFile(GAMELOG_FILE, std::ios::app);
   if (logFile.is_open()) {
     logFile << "\n========================================\n";
     logFile << "TOURNAMENT RESULTS\n";

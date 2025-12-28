@@ -1,3 +1,15 @@
+CommandProcessor saved: loadmap World.map
+Command: loadmap World.map, Effect: Loaded map World.map
+CommandProcessor saved: validatemap
+Command: validatemap, Effect: Map validated successfully
+OrdersList added: Order: deploy, Effect:
+Order: deploy, Effect: Deployed 5 armies to Alpha.
+OrdersList added: Order: advance, Effect:
+Order: advance, Effect: Invalid advance order. Not executed.
+Order: advance, Effect: Advance order succeeded and conquered Beta.
+GameEngine state changed to: start
+GameEngine state changed to: map loaded
+GameEngine state changed to: map validated
 
 ========================================
 TOURNAMENT RESULTS

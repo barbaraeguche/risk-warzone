@@ -1,155 +1,135 @@
 #include "LoggingObserver.h"
-
-#include <algorithm>
 #include <iostream>
 
-// ===== Observer =====
+
+// ==================== Observer Class Implementation ====================
 Observer::Observer() = default;
 
 Observer::Observer(const Observer& other) {
-    (void)other;
+  (void) other;
+}
+
+Observer& Observer::operator=(const Observer& other) {
+  if (this != &other) {
+    (void) other;
+  }
+  return *this;
 }
 
 Observer::~Observer() = default;
 
-Observer& Observer::operator=(const Observer& other) {
-    if (this != &other) {
-        (void)other;
-    }
-    return *this;
-}
 
-// ===== Subject =====
-Subject::Subject() {
-    observers = new std::vector<Observer*>();
-}
+// ==================== Subject Class Implementation ====================
+Subject::Subject() : observers(new std::vector<Observer*>()) {}
 
-Subject::Subject(const Subject& other) {
-    observers = new std::vector<Observer*>(*other.observers);
+Subject::Subject(const Subject& other) : observers(new std::vector(*other.observers)) {}
+
+Subject& Subject::operator=(const Subject& other) {
+  if (this != &other) {
+    delete observers;
+    observers = new std::vector(*other.observers);
+  }
+  return *this;
 }
 
 Subject::~Subject() {
-    delete observers;
+  delete observers;
 }
 
-Subject& Subject::operator=(const Subject& other) {
-    if (this != &other) {
-        delete observers;
-        observers = new std::vector<Observer*>(*other.observers);
-    }
-    return *this;
+// --- MANAGEMENT ---
+void Subject::attach(Observer* obs) {
+  if (!obs) return;
+
+  for (Observer* oldObs : *observers) {
+    if (oldObs == obs) return;
+  }
+  observers->push_back(obs);
 }
 
-void Subject::attach(Observer* observer) {
-    if (!observer) {
-        return;
-    }
-    for (Observer* existing : *observers) {
-        if (existing == observer) {
-            return;
-        }
-    }
-    observers->push_back(observer);
-}
-
-void Subject::detach(Observer* observer) {
-    if (!observer) {
-        return;
-    }
-    observers->erase(
-        std::remove(observers->begin(), observers->end(), observer),
-        observers->end());
+void Subject::detach(Observer* obs) {
+  if (!obs) return;
+  std::erase(*observers, obs);
 }
 
 void Subject::notify() {
-    for (Observer* observer : *observers) {
-        if (observer) {
-            observer->update(this);
-        }
-    }
+  for (Observer* obs : *observers) {
+    if (obs) { obs->update(this); }
+  }
 }
 
-// ===== LogObserver =====
-LogObserver::LogObserver() {
-    logfile = new std::ofstream();
-    openLog();
+
+// ==================== LogObserver Class Implementation ====================
+LogObserver::LogObserver() : logFile(new std::ofstream()) {
+  openLog();
 }
 
-LogObserver::LogObserver(const LogObserver& other) : Observer(other) {
-    logfile = new std::ofstream();
-    openLog();
-    if (other.logfile && other.logfile->is_open()) {
-        (*logfile) << std::flush;
-    }
-}
-
-LogObserver::~LogObserver() {
-    closeLog();
-    delete logfile;
+LogObserver::LogObserver(const LogObserver& other) :
+  Observer(other),
+  logFile(new std::ofstream()) {
+  openLog();
+  if (other.logFile && other.logFile->is_open()) {
+    (*logFile) << std::flush;
+  }
 }
 
 LogObserver& LogObserver::operator=(const LogObserver& other) {
-    if (this != &other) {
-        closeLog();
-        if (!logfile) {
-            logfile = new std::ofstream();
-        }
-        openLog();
-        if (other.logfile && other.logfile->is_open()) {
-            (*logfile) << std::flush;
-        }
+  if (this != &other) {
+    closeLog();
+    if (!logFile) logFile = new std::ofstream();
+
+    openLog();
+    if (other.logFile && other.logFile->is_open()) {
+      (*logFile) << std::flush;
     }
-    return *this;
+  }
+  return *this;
 }
 
-std::ostream& operator<<(std::ostream& os, const LogObserver& observer) {
-    os << "LogObserver writing to gamelog.txt";
-    if (observer.logfile && observer.logfile->is_open()) {
-        os << " (open)";
-    } else {
-        os << " (closed)";
-    }
-    return os;
+LogObserver::~LogObserver() {
+  closeLog();
+  delete logFile;
 }
 
-void LogObserver::update(Subject* subject) {
-    if (!subject) {
-        return;
-    }
+// --- MANAGEMENT ---
+void LogObserver::update(Subject* sub) {
+  if (!sub) return;
 
-    ILoggable* loggable = dynamic_cast<ILoggable*>(subject);
-    if (!loggable) {
-        return;
-    }
+  ILoggable* loggable = dynamic_cast<ILoggable*>(sub);
+  if (!loggable) return;
 
-    if (!logfile || !logfile->is_open()) {
-        openLog();
-    }
-
-    if (logfile && logfile->is_open()) {
-        (*logfile) << loggable->stringToLog() << std::endl;
-        logfile->flush();
-    }
+  if (!logFile || !logFile->is_open()) {
+    openLog();
+  }
+  if (logFile && logFile->is_open()) {
+    (*logFile) << loggable->stringToLog() << std::endl;
+    logFile->flush();
+  }
 }
 
+// --- HELPERS ---
 void LogObserver::openLog() {
-    if (!logfile) {
-        return;
-    }
+  if (!logFile || logFile->is_open()) return;
 
-    if (logfile->is_open()) {
-        return;
-    }
-
-    logfile->open("gamelog.txt", std::ios::out | std::ios::app);
-    if (!(*logfile)) {
-        std::cerr << "Unable to open gamelog.txt for writing." << std::endl;
-    }
+  logFile->open(GAMELOG_FILE, std::ios::out | std::ios::app);
+  if (!(*logFile)) {
+    std::cerr << "Unable to open gamelog.txt for writing." << std::endl;
+  }
 }
 
 void LogObserver::closeLog() {
-    if (logfile && logfile->is_open()) {
-        logfile->close();
-    }
+  if (logFile && logFile->is_open()) {
+    logFile->close();
+  }
 }
 
+// --- STREAM INSERTION OPERATOR ---
+std::ostream& operator<<(std::ostream& os, const LogObserver& obs) {
+  os << "LogObserver[";
+  if (obs.logFile && obs.logFile->is_open()) {
+    os << "(open) for writing to" << GAMELOG_FILE;
+  } else {
+    os << "(closed) for no writing to" << GAMELOG_FILE;
+  }
+  os << "]" << std::endl;
+  return os;
+}

@@ -19,9 +19,9 @@ void testTournament() {
   std::cout << std::string(60, '=') << "\n\n";
 
   // clear any leftover input buffer state from previous tests
-  // NOTE: YOU MUST COMMENT OUT BOTH LINES IF YOU RUN A FUNCTION IN MAIN BEFORE THIS
-  // std::cin.clear();
-  // std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+  // NOTE: YOU MUST COMMENT OUT BOTH LINES IF YOU RUN THIS AS A STAND-ALONE FUNCTION
+  std::cin.clear();
+  std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
   // select input mode
   std::cout << "Select input mode: " << std::endl;

@@ -10,7 +10,7 @@ void testCommandProcessor();
 void testStartupPhase();
 void testMainGameLoop();
 void testOrderExecution();
-// void testLoggingObserver();
+void testLoggingObserver();
 
 void testPlayerStrategies();
 void testTournament();

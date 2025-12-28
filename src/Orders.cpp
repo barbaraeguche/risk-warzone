@@ -52,7 +52,7 @@ void Order::saveEffect(const std::string& eff) {
 }
 
 std::string Order::stringToLog() const {
-  return "Order: " + (type ? *type : "<Unknown>") + " Effect: " + (effect ? *effect : "<None>");
+  return "Order: " + (type ? *type : "<Unknown>") + ", Effect: " + (effect ? *effect : "<None>");
 }
 
 void Order::clearNegotiationRecords() {
