@@ -855,7 +855,7 @@ bool MapLoader::parseContinentSection(Map* map, const std::string& line) {
   int bonus = 0;
 
   try {
-    bonus = std::stoi(parts[1]);  // Parse the bonus value
+    bonus = std::stoi(parts[1]);  // parse the bonus value
   } catch (...) {
     std::cout << "Warning: Invalid control value for continent " << continentName << std::endl;
     return false;

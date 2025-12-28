@@ -19,11 +19,11 @@ void testTournament() {
     std::cout << "TOURNAMENT MODE TEST DRIVER\n";
     std::cout << std::string(60, '=') << "\n\n";
 
-    // Clear any leftover input buffer state from previous tests
+    // clear any leftover input buffer state from previous tests
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-    // Select input mode
+    // select input mode
     std::cout << "Select input mode: " << std::endl;
     std::cout << "1. Console input (-console)" << std::endl;
     std::cout << "2. File input (-file <filename>)" << std::endl;
@@ -34,21 +34,21 @@ void testTournament() {
 
     CommandProcessor* processor = nullptr;
 
-    // Determine the input mode
+    // determine the input mode
     if (choice.find("-file") == std::string::npos) {
-        // Commands can be read from the console using the CommandProcessor class
+        // commands can be read from the console using the CommandProcessor class
         processor = new CommandProcessor();
         std::cout << "Reading commands from console\n\n";
     } else {
-        // Extract the file name
+        // extract the file name
         const size_t pos = choice.find("-file");
         std::string filename = choice.substr(pos + 6);
 
-        // Trim any whitespace
+        // trim any whitespace
         filename.erase(0, filename.find_first_not_of(" \t"));
         filename.erase(filename.find_last_not_of(" \t") + 1);
 
-        // Commands can be read from a saved text file using the FileCommandProcessorAdapter
+        // commands can be read from a saved text file using the FileCommandProcessorAdapter
         processor = new FileCommandProcessorAdapter(filename);
         std::cout << "Reading commands from file: " << filename << "\n\n";
     }
@@ -56,12 +56,12 @@ void testTournament() {
     GameEngine engine;
     std::cout << "Current game state: " << engine.getCurrentStateName() << "\n\n";
 
-    // Transition to start state (required for tournament command)
+    // transition to start state (required for tournament command)
     std::cout << "Step 1: Transitioning to 'start' state...\n";
     engine.transitionState("start");
     std::cout << "Current game state: " << engine.getCurrentStateName() << "\n\n";
 
-    // Get tournament command from processor
+    // get tournament command from processor
     std::cout << "Step 2: Reading tournament command...\n";
     Command* cmd = processor->getCommand();
     std::string tournamentCmd = cmd->getCommand();
@@ -76,14 +76,14 @@ void testTournament() {
     std::cout << "Command: " << tournamentCmd << "\n";
     std::cout << "\nStep 3: Validating tournament command...\n";
 
-    // Validate the tournament command
+    // validate the tournament command
     bool isValid = processor->validate(tournamentCmd, &engine);
 
     if (isValid) {
         std::cout << "Validation: PASSED\n\n";
         std::cout << "Step 4: Executing tournament...\n";
 
-        // Execute the tournament
+        // execute the tournament
         engine.executeTournament(tournamentCmd);
         cmd->saveEffect("Tournament executed successfully");
 
@@ -95,7 +95,7 @@ void testTournament() {
         cmd->saveEffect("Invalid tournament command");
     }
 
-    // Display command history
+    // display command history
     std::cout << "\n=== Command History ===" << std::endl;
     std::cout << *processor << std::endl;
 
@@ -103,6 +103,6 @@ void testTournament() {
     std::cout << "END OF TOURNAMENT MODE TEST\n";
     std::cout << std::string(60, '=') << "\n";
 
-    // Free memory
+    // free memory
     delete processor;
 }

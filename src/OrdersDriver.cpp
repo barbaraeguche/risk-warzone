@@ -26,12 +26,12 @@ void testOrdersLists() {
   // testing addOrder()
   std::cout << ordersList << std::endl;
 
-  // Testing removeOrder()
+  // testing removeOrder()
   std::cout << "\nRemove 2nd Order:" << '\n';
   ordersList.removeOrder(1);
   std::cout << ordersList << std::endl;
 
-  // Testing moveOrder()
+  // testing moveOrder()
   std::cout << "\nMove 1st Order to 4th Index:" << '\n';
   ordersList.moveOrder(0, 3);
   std::cout << ordersList << std::endl;
